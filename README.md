@@ -40,16 +40,31 @@ variation_name = vwo_client_instance.getVariation(ab_campaign_test_key, user_id)
 vwo_client_instance.track(ab_campaign_test_key, user_id, ab_campaign_goal_identifeir, revenue_value)
 ```
 
-**Custom Logger**
+**Custom Logger** - change log level only
 
 ```python
 import vwo
-from vwo.user_profile import UserProfileService
+from vwo import logger
 
 custom_logger = logger.DefaultLogger(logger.DEBUG)
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
 vwo_client_instance = vwo.VWO(settings_file, logger = custom_logger)
+```
+
+**Custom Logger** - implement your own logger method
+
+```python
+import vwo
+from vwo import logger
+
+class CustomLogger:
+   def log(self, level, message):
+      print(level, message)
+      # ...write to file or database or integrate with any third-party service
+
+settings_file = vwo.get_settings_file(account_id, sdk_key)
+vwo_client_instance = vwo.VWO(settings_file, logger = CustomLogger())
 ```
 
 **User Profile Service**
