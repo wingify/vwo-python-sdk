@@ -1,16 +1,15 @@
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.develop import develop
-from setuptools import find_packages
 
-here = os.path.join(os.path.dirname(__file__))
+current_directory = os.path.join(os.path.dirname(__file__))
 
-with open(os.path.join(here, 'requirements.txt')) as _file:
-  REQUIREMENTS = _file.read().splitlines()
+with open(os.path.join(current_directory, 'requirements.txt')) as f:
+  REQUIREMENTS = f.read().splitlines()
 
-with open(os.path.join(here, 'README.md')) as _file:
-  README = _file.read()
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 
 class PostDevelopCommand(develop):
@@ -33,8 +32,7 @@ setup(
     name='vwo-python-sdk',
     version='1.0.0',
     description='Python SDK for VWO server-side A/B Testing',
-    long_description=README,
-    long_description_content_type='text/markdown',
+    long_description='Some issue with twine rendering markdown README.md',
     author='VWO',
     author_email='dev@wingify.com',
     url='https://github.com/wingify/vwo-python-sdk',
