@@ -20,7 +20,10 @@ class PostDevelopCommand(develop):
         import subprocess
 
         print '\nRUNNING POST INSTALL DEVELOP SCRIPT \n'
+
+        subprocess.call("pre-commit install;", shell=True)
         subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)  # noqa:E501
+
         print '\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n'
 
         develop.run(self)
