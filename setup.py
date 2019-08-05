@@ -1,6 +1,7 @@
 import os
 
 from setuptools import setup
+from setuptools.command.develop import develop
 from setuptools import find_packages
 
 here = os.path.join(os.path.dirname(__file__))
@@ -10,6 +11,20 @@ with open(os.path.join(here, 'requirements.txt')) as _file:
 
 with open(os.path.join(here, 'README.md')) as _file:
   README = _file.read()
+
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
+        import subprocess
+
+        print '\nRUNNING POST INSTALL DEVELOP SCRIPT \n'
+        subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)  # noqa:E501
+        print '\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n'
+
+        develop.run(self)
+
 
 setup(
     name='vwo-python-sdk',
@@ -25,6 +40,9 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7'
     ],
+    cmdclass={
+        'develop': PostDevelopCommand
+    },
     packages=find_packages(
         exclude=['tests']
     ),
