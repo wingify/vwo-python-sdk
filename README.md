@@ -12,7 +12,7 @@ This open source library allows you to A/B Test your Website at server-side.
 
 It's recommended you use [virtualenv](https://virtualenv.pypa.io/en/latest/) to create isolated Python environments.
 
-```python
+```bash
 pip install vwo-python-sdk
 ```
 
@@ -75,6 +75,18 @@ vwo_client_instance = vwo.VWO(settings_file, user_profile_service = ups)
 ## Documentation
 
 Refer [Official VWO Documentation](https://developers.vwo.com/reference#server-side-introduction)
+
+## Local development
+
+```bash
+python setup.py develop
+```
+
+## Running Unit Tests
+
+```bash
+python setup.py test
+```
 
 ## Demo Python application
 
