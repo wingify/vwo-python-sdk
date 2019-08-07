@@ -47,13 +47,14 @@ def get(account_id, sdk_key):
             params=parameters
         )
         if settings_file_response.status_code != 200:
-            print(('Request failed for fetching account settings.',
-                   'Got Status Code: {status_code}',
-                   'and message: {settings_file_response}'
-                   ).format(
-                status_code=settings_file_response.status_code,
-                settings_file_response=settings_file_response.content
-            ), file=sys.stderr)
+            print('Request failed for fetching account settings.'
+                  'Got Status Code: {status_code}'
+                  'and message: {settings_file_response}'.
+                  format(status_code=settings_file_response.status_code,
+                         settings_file_response=settings_file_response.content
+                         ),
+                  file=sys.stderr
+                  )
             return None
         settings_file = settings_file_response.text
     except requests.exceptions.RequestException as e:
