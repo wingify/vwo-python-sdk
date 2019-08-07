@@ -39,7 +39,7 @@ class VWO(object):
         if not validate_util.is_valid_settings_file(settings_file):
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_CONFIGURATION.format(
+                LogMessageEnum.ERROR_MESSAGES.SETTINGS_FILE_CORRUPTED.format(
                     file=FileNameEnum.VWO
                 )
             )
