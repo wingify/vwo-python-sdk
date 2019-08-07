@@ -13,7 +13,6 @@ def generator_for(user_id, account_id):
     Args:
         user_id (int|string): User identifier
         account_id (int|string): Account identifier
-        logger (object): For logging
 
     Returns:
         int : Desired Uuid
