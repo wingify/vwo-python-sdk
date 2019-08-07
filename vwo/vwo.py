@@ -351,6 +351,5 @@ class VWO(object):
                         campaign_test_key=campaign_test_key
                     )
                 )
-            return True
-
+                return False
         return False
