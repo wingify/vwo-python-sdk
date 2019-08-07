@@ -7,6 +7,8 @@ from .helpers import validate_util
 from .helpers.enums import LogMessageEnum, FileNameEnum, LogLevelEnum
 from .logger import Logger
 
+U_MAX_32_BIT = 0xFFFFFFFF
+
 
 class Bucketer(object):
     """ Bucketer class encapsulating bucketing logic """
@@ -74,7 +76,7 @@ class Bucketer(object):
                 )
             )
             return 0
-        hash_value = Hasher.hash(user_id, constants.SEED_VALUE, signed=False)
+        hash_value = Hasher.hash(user_id, constants.SEED_VALUE) & U_MAX_32_BIT
         bucket_value = self._generate_bucket_value(hash_value,
                                                    constants.MAX_TRAFFIC_PERCENT
                                                    )
@@ -170,7 +172,7 @@ class Bucketer(object):
             )
             return None
 
-        hash_value = Hasher.hash(user_id, constants.SEED_VALUE, signed=False)
+        hash_value = Hasher.hash(user_id, constants.SEED_VALUE) & U_MAX_32_BIT
         normalize = constants.MAX_TRAFFIC_VALUE / campaign.get('percentTraffic')
         multiplier = normalize / 100
         bucket_value = self._generate_bucket_value(hash_value,
