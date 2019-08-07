@@ -44,17 +44,17 @@ class DecisionService(object):
             variation_id and variation_name if variation alloted, else None
         """
 
-        campaign_bucket_map = self.__resolve_campaign_bucket_map(user_id)
-        variation = self.__get_stored_variation(user_id,
-                                                campaign_test_key,
-                                                campaign_bucket_map
-                                                )
+        campaign_bucket_map = self._resolve_campaign_bucket_map(user_id)
+        variation = self._get_stored_variation(user_id,
+                                               campaign_test_key,
+                                               campaign_bucket_map
+                                               )
 
         if variation:
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id,
                     variation_name=variation.get('name')
@@ -67,11 +67,11 @@ class DecisionService(object):
                                                                    )
 
         if variation_name:
-            self.__save_user_profile(user_id, campaign_test_key, variation_name)
+            self._save_user_profile(user_id, campaign_test_key, variation_name)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.VARIATION_ALLOCATED.format(
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id,
                     variation_name=variation_name
@@ -81,7 +81,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.NO_VARIATION_ALLOCATED.format(
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id
                 )
@@ -117,7 +117,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.GOT_VARIATION_FOR_USER.format(
-                    file=FileNameEnum.VariationDecider,
+                    file=FileNameEnum.DecisionService,
                     variation_name=variation_name,
                     user_id=user_id,
                     campaign_test_key=campaign.get('key'),
@@ -129,7 +129,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.USER_NOT_PART_OF_CAMPAIGN.format(  # noqa:E501
-                    file=FileNameEnum.VariationDecider,
+                    file=FileNameEnum.DecisionService,
                     user_id=user_id,
                     campaign_test_key=campaign.get('key'),
                     method='get_variation_allotted'
@@ -165,7 +165,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
-                    file=FileNameEnum.VariationDecider,
+                    file=FileNameEnum.DecisionService,
                     variation_name=variation.get('name'),
                     user_id=user_id,
                     campaign_test_key=campaign.get('key')
@@ -176,7 +176,7 @@ class DecisionService(object):
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_GOT_NO_VARIATION.format(
-                file=FileNameEnum.VariationDecider,
+                file=FileNameEnum.DecisionService,
                 user_id=user_id,
                 campaign_test_key=campaign.get('key')
             )
@@ -185,11 +185,11 @@ class DecisionService(object):
 
     # Private helper methods for UserProfileService
 
-    def __get_stored_variation(self,
-                               user_id,
-                               campaign_test_key,
-                               campaign_bucket_map
-                               ):
+    def _get_stored_variation(self,
+                              user_id,
+                              campaign_test_key,
+                              campaign_bucket_map
+                              ):
         """ If userProfileService is provided and variation was stored,
         get the stored variation
 
@@ -210,7 +210,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.GETTING_STORED_VARIATION.format(
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id,
                     variation_name=variation_name
@@ -224,15 +224,15 @@ class DecisionService(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.NO_STORED_VARIATION.format(
-                file=FileNameEnum.VWO,
+                file=FileNameEnum.DecisionService,
                 campaign_test_key=campaign_test_key,
                 user_id=user_id
             )
         )
         return None
 
-    def __resolve_campaign_bucket_map(self, user_id):
-        """ Returns the campaign mapping to the user_id
+    def _resolve_campaign_bucket_map(self, user_id):
+        """ Returns the campaign bucket map corresponding to the user_id
 
         Args:
             user_id (string): Unique user identifier
@@ -241,13 +241,13 @@ class DecisionService(object):
             dict: data
         """
 
-        user_data = self.__get_user_profile(user_id)
+        user_data = self._get_user_profile(user_id)
         campaign_bucket_map = {}
         if user_data:
-            campaign_bucket_map = user_data
+            campaign_bucket_map = user_data.get('campaignBucketMap')
         return copy.deepcopy(campaign_bucket_map)
 
-    def __get_user_profile(self, user_id):
+    def _get_user_profile(self, user_id):
         """ Get the UserProfileData after looking up into lookup method
         being provided via UserProfileService
 
@@ -262,7 +262,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_PROFILE_SERVICE_LOOKUP.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FileNameEnum.DecisionService
                 )
             )
             return False
@@ -271,7 +271,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_PROFILE_SERVICE.format(  # noqa:E501
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     user_id=user_id
                 )
             )
@@ -280,13 +280,13 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.LOOK_UP_USER_PROFILE_SERVICE_FAILED.format(  # noqa:E501
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     user_id=user_id
                 )
             )
             return False
 
-    def __save_user_profile(self, user_id, campaign_test_key, variation_name):
+    def _save_user_profile(self, user_id, campaign_test_key, variation_name):
         """ If userProfileService is provided and variation was stored,
         save the assigned variation
             It creates bucket and then stores.
@@ -304,7 +304,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_PROFILE_SERVICE_SAVE.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FileNameEnum.DecisionService
                 )
             )
             return False
@@ -323,7 +323,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_PROFILE_SERVICE.format(  # noqa:E501
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     user_id=user_id
                 )
             )
@@ -332,7 +332,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SAVE_USER_PROFILE_SERVICE_FAILED.format(  # noqa:E501
-                    file=FileNameEnum.VWO,
+                    file=FileNameEnum.DecisionService,
                     user_id=user_id
                 )
             )

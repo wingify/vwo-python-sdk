@@ -31,8 +31,6 @@ class VWO(object):
             user_profile_service: Optional component which provides
                 methods to store and manage user profiles.
         """
-        # Set development mode
-        self.is_development_mode = is_development_mode
 
         # Verify and assign a/the logger
         self.logger = Logger(logger)
@@ -41,8 +39,8 @@ class VWO(object):
         if not validate_util.is_valid_settings_file(settings_file):
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_CONFIGURATION.format(
-                    file=FileNameEnum.INDEX
+                LogMessageEnum.ERROR_MESSAGES.SETTINGS_FILE_CORRUPTED.format(
+                    file=FileNameEnum.VWO
                 )
             )
             self.is_valid = False
@@ -54,7 +52,7 @@ class VWO(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(
-                file=FileNameEnum.INDEX
+                file=FileNameEnum.VWO
             )
         )
 
@@ -68,7 +66,14 @@ class VWO(object):
                                                 )
 
         # Assigne event dispatcher
-        self.event_dispatcher = EventDispatcher(self.is_development_mode)
+        if is_development_mode:
+            self.logger.log(
+                LogLevelEnum.DEBUG,
+                LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(
+                    file=FileNameEnum.VWO
+                )
+            )
+        self.event_dispatcher = EventDispatcher(is_development_mode)
 
         # Log successfully initiazlized SDK
         self.logger.log(

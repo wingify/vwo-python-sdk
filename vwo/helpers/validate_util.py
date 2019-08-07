@@ -38,18 +38,14 @@ def is_valid_settings_file(settings_file):
     """
     try:
         settings_file = json.loads(settings_file)
-    except Exception as e:
+    except Exception:
         return False
     try:
         jsonschema.validate(
             instance=settings_file,
             schema=SETTINGS_FILE_SCHEMA
         )
-    except jsonschema.exceptions.SchemaError as e:
-        print('Settings File Schema not properly defined', e)
-        return False
-    except jsonschema.exceptions.ValidationError as e:
-        print('Settings File Validation error', e)
+    except Exception:
         return False
     return True
 

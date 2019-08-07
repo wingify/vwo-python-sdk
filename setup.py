@@ -18,12 +18,12 @@ class PostDevelopCommand(develop):
         # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
         import subprocess
 
-        print '\nRUNNING POST INSTALL DEVELOP SCRIPT \n'
+        print('\nRUNNING POST INSTALL DEVELOP SCRIPT \n')
 
         subprocess.call("pre-commit install;", shell=True)
         subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)  # noqa:E501
 
-        print '\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n'
+        print('\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n')
 
         develop.run(self)
 
