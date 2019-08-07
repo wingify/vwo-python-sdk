@@ -20,5 +20,4 @@ from .vwo import VWO
 from .settings_file_util import get as get_settings_file
 from .user_profile import UserProfileService
 
-from .import logger
-import logging
+from . import logger

@@ -7,26 +7,21 @@ import logging
 class FileNameEnum:
     """ Classobj encapsulating locations various files of the SDK """
 
-    LIB_PATH = 'vwo'
-    CORE_PATH = 'vwo/core'
-    UTIL_PATH = 'vwo/utils'
-    SERVICES_PATH = 'vwo/services'
+    VWO_PATH = 'vwo'
+    HELPERS_PATH = 'vwo/helpers'
 
-    INDEX = LIB_PATH + '/index'
-    VWO = LIB_PATH + '/VWO'
+    VWO = VWO_PATH + '/vwo'
+    BucketingService = VWO_PATH + '/bucketing_service'
+    DecisionService = VWO_PATH + '/decision_service'
+    EventDispatcher = VWO_PATH + '/event_dispatcher'
+    Logger = VWO_PATH + '/logger'
+    ProjectConfigManager = VWO_PATH + '/project_config_manager'
 
-    AudienceEvaluator = CORE_PATH + '/AudienceEvaluator'
-    BucketingService = CORE_PATH + '/BucketingService'
-    VariationDecider = CORE_PATH + '/VariationDecider'
-
-    ProjectConfigManager = SERVICES_PATH + '/ProjectConfigManager'
-
-    CampaignUtil = UTIL_PATH + '/CampaignUtil'
-    EventDispatcher = UTIL_PATH + '/EventDispatcher'
-    Functionutil = UTIL_PATH + '/Functionutil'
-    ImpressionUtil = UTIL_PATH + '/ImpressionUtil'
-    UuidUtil = UTIL_PATH + '/UuidUtil'
-    ValidateUtil = UTIL_PATH + '/ValidateUtil'
+    CampaignUtil = HELPERS_PATH + '/campaign_util'
+    Functionutil = HELPERS_PATH + '/function_util'
+    ImpressionUtil = HELPERS_PATH + '/impression_util'
+    UuidUtil = HELPERS_PATH + '/uuid_util'
+    ValidateUtil = HELPERS_PATH + '/validate_util'
 
 
 class LogMessageEnum:
@@ -97,7 +92,7 @@ class LogMessageEnum:
         INVALID_CAMPAIGN = '({file}): Invalid campaign passed to {method} of this file'
         INVALID_USER_ID = '({file}): Invalid userId:{user_id} passed to {method} of this file'
         IMPRESSION_FAILED = '({file}): Impression event could not be sent to VWO - {end_point}'
-        CUSTOM_LOGGER_MISCONFIGURED = '({file}): Custom logger is provided but seems to have misconfigured. Please check the API Docs. Using default logger.'
+        CUSTOM_LOGGER_MISCONFIGURED = '({file}): Custom logger is provided but seems to have misconfigured. {extra_info} Please check the API Docs. Using default logger.'
 
 
 class LogLevelEnum:
