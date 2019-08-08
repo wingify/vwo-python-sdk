@@ -30,7 +30,7 @@ class PostDevelopCommand(develop):
 
 setup(
     name='vwo-python-sdk',
-    version='1.0.1',
+    version='1.0.2',
     description='Python SDK for VWO server-side A/B Testing',
     long_description='Some issue with twine rendering markdown README.md',
     author='VWO',
@@ -42,7 +42,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.5.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'
     ],
