@@ -46,22 +46,23 @@ class DecisionService(object):
         """
 
         campaign_bucket_map = self._resolve_campaign_bucket_map(user_id)
-        variation = self._get_stored_variation(user_id,
-                                               campaign_test_key,
-                                               campaign_bucket_map
-                                               )
+        if campaign_bucket_map:
+            variation = self._get_stored_variation(user_id,
+                                                   campaign_test_key,
+                                                   campaign_bucket_map
+                                                   )
 
-        if variation:
-            self.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
-                    file=FILE,
-                    campaign_test_key=campaign_test_key,
-                    user_id=user_id,
-                    variation_name=variation.get('name')
+            if variation:
+                self.logger.log(
+                    LogLevelEnum.INFO,
+                    LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
+                        file=FILE,
+                        campaign_test_key=campaign_test_key,
+                        user_id=user_id,
+                        variation_name=variation.get('name')
+                    )
                 )
-            )
-            return variation.get('id'), variation.get('name')
+                return variation.get('id'), variation.get('name')
 
         variation_id, variation_name = self.get_variation_allotted(user_id,
                                                                    campaign
