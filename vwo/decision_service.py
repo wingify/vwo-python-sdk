@@ -4,6 +4,8 @@ from .bucketing_service import Bucketer
 from .helpers import validate_util, campaign_util
 from .logger import Logger
 
+FILE = FileNameEnum.DecisionService
+
 
 class DecisionService(object):
     """ Class encapsulating all decision related capabilities. """
@@ -14,7 +16,6 @@ class DecisionService(object):
 
         Args:
             settings_file (dict): Settings file of the project.
-            logger (object): Common project logger.
             user_profile_service: Class instance having the capabilty of
                 lookup and save.
         """
@@ -45,22 +46,23 @@ class DecisionService(object):
         """
 
         campaign_bucket_map = self._resolve_campaign_bucket_map(user_id)
-        variation = self._get_stored_variation(user_id,
-                                               campaign_test_key,
-                                               campaign_bucket_map
-                                               )
+        if campaign_bucket_map:
+            variation = self._get_stored_variation(user_id,
+                                                   campaign_test_key,
+                                                   campaign_bucket_map
+                                                   )
 
-        if variation:
-            self.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
-                    file=FileNameEnum.DecisionService,
-                    campaign_test_key=campaign_test_key,
-                    user_id=user_id,
-                    variation_name=variation.get('name')
+            if variation:
+                self.logger.log(
+                    LogLevelEnum.INFO,
+                    LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
+                        file=FILE,
+                        campaign_test_key=campaign_test_key,
+                        user_id=user_id,
+                        variation_name=variation.get('name')
+                    )
                 )
-            )
-            return variation.get('id'), variation.get('name')
+                return variation.get('id'), variation.get('name')
 
         variation_id, variation_name = self.get_variation_allotted(user_id,
                                                                    campaign
@@ -71,7 +73,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.VARIATION_ALLOCATED.format(
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id,
                     variation_name=variation_name
@@ -81,7 +83,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.NO_VARIATION_ALLOCATED.format(
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id
                 )
@@ -105,7 +107,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     user_id=user_id,
                     method='get_variation_alloted'
                 )
@@ -117,7 +119,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.GOT_VARIATION_FOR_USER.format(
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     variation_name=variation_name,
                     user_id=user_id,
                     campaign_test_key=campaign.get('key'),
@@ -129,7 +131,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.USER_NOT_PART_OF_CAMPAIGN.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     user_id=user_id,
                     campaign_test_key=campaign.get('key'),
                     method='get_variation_allotted'
@@ -153,7 +155,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     method='get_variation_of_campaign_for_user'
                 )
             )
@@ -165,7 +167,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     variation_name=variation.get('name'),
                     user_id=user_id,
                     campaign_test_key=campaign.get('key')
@@ -176,7 +178,7 @@ class DecisionService(object):
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_GOT_NO_VARIATION.format(
-                file=FileNameEnum.DecisionService,
+                file=FILE,
                 user_id=user_id,
                 campaign_test_key=campaign.get('key')
             )
@@ -210,7 +212,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.GETTING_STORED_VARIATION.format(
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     user_id=user_id,
                     variation_name=variation_name
@@ -224,7 +226,7 @@ class DecisionService(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.NO_STORED_VARIATION.format(
-                file=FileNameEnum.DecisionService,
+                file=FILE,
                 campaign_test_key=campaign_test_key,
                 user_id=user_id
             )
@@ -262,7 +264,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_PROFILE_SERVICE_LOOKUP.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService
+                    file=FILE
                 )
             )
             return False
@@ -271,7 +273,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_PROFILE_SERVICE.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     user_id=user_id
                 )
             )
@@ -280,7 +282,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.LOOK_UP_USER_PROFILE_SERVICE_FAILED.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     user_id=user_id
                 )
             )
@@ -304,7 +306,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_PROFILE_SERVICE_SAVE.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService
+                    file=FILE
                 )
             )
             return False
@@ -323,7 +325,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_PROFILE_SERVICE.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     user_id=user_id
                 )
             )
@@ -332,7 +334,7 @@ class DecisionService(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SAVE_USER_PROFILE_SERVICE_FAILED.format(  # noqa:E501
-                    file=FileNameEnum.DecisionService,
+                    file=FILE,
                     user_id=user_id
                 )
             )

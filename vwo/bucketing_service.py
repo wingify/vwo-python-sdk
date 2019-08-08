@@ -8,6 +8,7 @@ from .helpers.enums import LogMessageEnum, FileNameEnum, LogLevelEnum
 from .logger import Logger
 
 U_MAX_32_BIT = 0xFFFFFFFF
+FILE = FileNameEnum.BucketingService
 
 
 class Bucketer(object):
@@ -15,9 +16,6 @@ class Bucketer(object):
 
     def __init__(self):
         """ Initializes bucketer with project common logger
-
-        Args:
-            logger (object): Common project logger
         """
         self.logger = Logger()
 
@@ -70,7 +68,7 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     user_id=user_id,
                     method='_get_bucket_value_for_user'
                 )
@@ -84,7 +82,7 @@ class Bucketer(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.USER_HASH_BUCKET_VALUE.format(
-                file=FileNameEnum.BucketingService,
+                file=FILE,
                 hash_value=hash_value,
                 bucket_value=bucket_value,
                 user_id=user_id
@@ -107,7 +105,7 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     user_id=user_id,
                     method='is_user_part_of_campaign'
                 )
@@ -118,7 +116,7 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     method='is_user_part_of_campaign'
                 )
             )
@@ -131,7 +129,7 @@ class Bucketer(object):
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_ELIGIBILITY_FOR_CAMPAIGN.format(
-                file=FileNameEnum.BucketingService,
+                file=FILE,
                 user_id=user_id,
                 is_user_part=is_user_part
             )
@@ -155,7 +153,7 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     user_id=user_id,
                     method='bucket_user_to_variation'
                 )
@@ -166,7 +164,7 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(
-                    file=FileNameEnum.BucketingService,
+                    file=FILE,
                     method='is_user_part_of_campaign'
                 )
             )
@@ -183,7 +181,7 @@ class Bucketer(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VARIATION_HASH_BUCKET_VALUE.format(
-                file=FileNameEnum.BucketingService,
+                file=FILE,
                 user_id=user_id,
                 campaign_test_key=campaign.get('key'),
                 percent_traffic=campaign.get('percentTraffic'),

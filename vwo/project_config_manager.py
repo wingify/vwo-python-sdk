@@ -13,7 +13,6 @@ class ProjectConfigManager(object):
         Args:
             settings_file (dict): Dict object
                 representing the project settings_file.
-            logger (object): Provides a logger instance.
         """
         self.settings_file = json.loads(settings_file)
         self.logger = Logger()

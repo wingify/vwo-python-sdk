@@ -16,7 +16,8 @@ class EventDispatcher(object):
         """ Initialize the dispatcher with logger
 
         Args:
-            logger: Logger being used in the project
+            is_development_mode: To specify whether the request
+            to our server should be made or not.
         """
         self.logger = Logger()
         self.is_development_mode = is_development_mode

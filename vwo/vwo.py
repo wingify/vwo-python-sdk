@@ -8,6 +8,8 @@ from .helpers.enums import LogMessageEnum, FileNameEnum, LogLevelEnum
 from .decision_service import DecisionService
 from .logger import Logger
 
+FILE = FileNameEnum.VWO
+
 
 class VWO(object):
     """ Class encapsulating all SDK functionality. """
@@ -30,6 +32,8 @@ class VWO(object):
                 to log messages. By default everything would be logged.
             user_profile_service: Optional component which provides
                 methods to store and manage user profiles.
+            is_development_mode=False: To specify whether the request
+                to our server should be sent or not.
         """
 
         # Verify and assign a/the logger
@@ -40,7 +44,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SETTINGS_FILE_CORRUPTED.format(
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             self.is_valid = False
@@ -52,7 +56,7 @@ class VWO(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(
-                file=FileNameEnum.VWO
+                file=FILE
             )
         )
 
@@ -70,7 +74,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
         self.event_dispatcher = EventDispatcher(is_development_mode)
@@ -79,7 +83,7 @@ class VWO(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(
-                file=FileNameEnum.VWO
+                file=FILE
             )
         )
 
@@ -111,7 +115,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.ACTIVATE_API_MISSING_PARAMS.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return None
@@ -121,7 +125,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.ACTIVATE_API_CONFIG_CORRUPTED.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return None
@@ -137,7 +141,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-                    file=FileNameEnum.VWO,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     api='activate'
                 )
@@ -157,7 +161,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.INVALID_VARIATION_KEY.format(
-                    file=FileNameEnum.VWO,
+                    file=FILE,
                     user_id=user_id,
                     campaign_test_key=campaign_test_key
                 )
@@ -200,7 +204,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.GET_VARIATION_API_MISSING_PARAMS.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return None
@@ -210,7 +214,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.ACTIVATE_API_CONFIG_CORRUPTED.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return None
@@ -226,7 +230,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-                    file=FileNameEnum.VWO,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     api='get_variation'
                 )
@@ -244,7 +248,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.INVALID_VARIATION_KEY.format(
-                    file=FileNameEnum.VWO,
+                    file=FILE,
                     user_id=user_id,
                     campaign_test_key=campaign_test_key
                 )
@@ -291,7 +295,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.TRACK_API_MISSING_PARAMS.format(
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return False
@@ -300,7 +304,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.ACTIVATE_API_CONFIG_CORRUPTED.format(  # noqa:E501
-                    file=FileNameEnum.VWO
+                    file=FILE
                 )
             )
             return None
@@ -316,7 +320,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-                    file=FileNameEnum.VWO,
+                    file=FILE,
                     campaign_test_key=campaign_test_key,
                     api='track'
                 )
@@ -346,11 +350,11 @@ class VWO(object):
                 self.logger.log(
                     LogLevelEnum.ERROR,
                     LogMessageEnum.ERROR_MESSAGES.TRACK_API_GOAL_NOT_FOUND.format(  # noqa:E501
-                        file=FileNameEnum.VWO,
+                        file=FILE,
+                        goal=goal_identifier,
                         user_id=user_id,
                         campaign_test_key=campaign_test_key
                     )
                 )
-            return True
-
+                return False
         return False
