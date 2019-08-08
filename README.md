@@ -6,7 +6,7 @@ This open source library allows you to A/B Test your Website at server-side.
 
 ## Requirements
 
-* Python 2.7. Support for 3.x will be coming soon.
+* Works with Python versions: 2.7, 3.5, 3.5.5, 3.6, and 3.7
 
 ## Installation
 
