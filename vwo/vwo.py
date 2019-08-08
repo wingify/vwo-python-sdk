@@ -351,6 +351,7 @@ class VWO(object):
                     LogLevelEnum.ERROR,
                     LogMessageEnum.ERROR_MESSAGES.TRACK_API_GOAL_NOT_FOUND.format(  # noqa:E501
                         file=FILE,
+                        goal=goal_identifier,
                         user_id=user_id,
                         campaign_test_key=campaign_test_key
                     )

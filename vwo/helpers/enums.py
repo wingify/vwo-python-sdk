@@ -84,7 +84,7 @@ class LogMessageEnum:
         GET_VARIATION_API_CONFIG_CORRUPTED = '({file}): "getVariation" API has corrupted configuration'
         TRACK_API_MISSING_PARAMS = '({file}): "track" API got bad parameters. It expects campaignTestKey(String) as first userId(String) as second and goalIdentifier(String/Number) as third argument. Fourth is revenueValue(Float/Number/String) and is required for revenue goal only.'
         TRACK_API_CONFIG_CORRUPTED = '({file}): "track" API has corrupted configuration'
-        TRACK_API_GOAL_NOT_FOUND = '({file}): Goal not found for campaign:{campaign_test_key} and userId:{user_id}'
+        TRACK_API_GOAL_NOT_FOUND = '({file}): Goal {goal} not found for campaign:{campaign_test_key} and userId:{user_id}'
         TRACK_API_VARIATION_NOT_FOUND = '({file}): Variation not found for campaign:{campaign_test_key} and userId:{user_id}'
         CAMPAIGN_NOT_RUNNING = '({file}): API used:{api} - Campaign:{campaign_test_key} is not RUNNING. Please verify from VWO App'
         LOOK_UP_USER_PROFILE_SERVICE_FAILED = '({file}): Looking data from UserProfileService failed for userId:{user_id}'
