@@ -20,7 +20,8 @@ class PostDevelopCommand(develop):
 
         print('\nRUNNING POST INSTALL DEVELOP SCRIPT \n')
 
-        subprocess.call("pre-commit install;", shell=True)
+        subprocess.call("pre-commit install;", shell=True)  # skipcq: BAN-B602
+        # skipcq: BAN-B602
         subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)  # noqa:E501
 
         print('\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n')
