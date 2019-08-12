@@ -2,6 +2,10 @@
 .DS_STORE
 *.vscode
 
+# Development tools
+sdk_test.py
+server_app.py
+venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
