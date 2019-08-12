@@ -2,6 +2,9 @@ import os
 
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
+from setuptools import Command
+
+import subprocess
 
 current_directory = os.path.join(os.path.dirname(__file__))
 
@@ -12,12 +15,51 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 
+class ReleasePatchCommand(Command):
+    description = "Patch Release"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call("bumpversion patch", shell=True)
+
+
+class ReleaseMinorCommand(Command):
+    description = "Minor Release"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call("bumpversion minor", shell=True)
+
+
+class ReleaseMajorCommand(Command):
+    description = "Major Release"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call("bumpversion major", shell=True)
+
+
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
     def run(self):
-        # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
-        import subprocess
-
         print('\nRUNNING POST INSTALL DEVELOP SCRIPT \n')
 
         subprocess.call("pre-commit install;", shell=True)
@@ -46,7 +88,10 @@ setup(
         'Programming Language :: Python :: 3.7'
     ],
     cmdclass={
-        'develop': PostDevelopCommand
+        'develop': PostDevelopCommand,
+        'patch': ReleasePatchCommand,
+        'minor': ReleaseMinorCommand,
+        'major': ReleaseMajorCommand
     },
     packages=find_packages(
         exclude=['tests']
