@@ -1,6 +1,7 @@
 """ Helper utility that creates an impression to send to server """
 
 import json
+import pkg_resources
 from ..helpers import constants
 from . import function_util
 from . import uuid_util
@@ -11,6 +12,8 @@ try:
     from urllib import quote  # Python 2.X
 except ImportError:
     from urllib.parse import quote  # Python 3+
+
+logger = Logger()
 
 
 def build_event(
@@ -56,13 +59,16 @@ def build_event(
         sId=function_util.get_current_unix_timestamp(),
         u=uuid_util.generator_for(user_id, account_id)
     )
+    # Version and SDK constants
+    properties['sdk'] = 'python'
+    properties['sdk-v'] = pkg_resources.require("vwo-python-sdk")[0].version
 
     url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL
 
     if is_track_user_api:
         properties.update(ed=json.dumps({'p': 'server'}))
         properties.update(url=url + constants.ENDPOINTS.TRACK_USER)
-        Logger().log(
+        logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_USER.format(
                 file=FileNameEnum.ImpressionUtil,
@@ -74,7 +80,7 @@ def build_event(
         properties.update(goal_id=goal_id)
         if revenue:
             properties.update(r=revenue)
-        Logger().log(
+        logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_GOAL.format(
                 file=FileNameEnum.ImpressionUtil,
