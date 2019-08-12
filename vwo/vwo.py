@@ -26,13 +26,11 @@ class VWO(object):
 
         Args:
             settings_file: JSON string representing the project.
-            event_dispatcher: Provides a dispatch_event method which
-                if given a URL and params sends a request to it.
-            logger: Optional component which provides a log method
+            logger(object): Optional component which provides a log method
                 to log messages. By default everything would be logged.
-            user_profile_service: Optional component which provides
+            user_profile_service(object): Optional component which provides
                 methods to store and manage user profiles.
-            is_development_mode=False: To specify whether the request
+            is_development_mode(bool): To specify whether the request
                 to our server should be sent or not.
         """
 
