@@ -5,7 +5,8 @@
 # Development tools
 sdk_test.py
 server_app.py
-venv
+venv*
+.coverage
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
