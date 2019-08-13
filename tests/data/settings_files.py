@@ -1,6 +1,8 @@
 """ Various settings_file for testings """
 
 SETTINGS_FILES = {
+    0: {},
+
     1: {
         'sdkKey': 'someuniquestuff1234567',
         'campaigns': [
@@ -226,5 +228,39 @@ SETTINGS_FILES = {
         ],
         'accountId': 60781,
         'version': 1
-    }
+    },
+
+    7: {
+        'sdkKey': 'someuniquestuff1234567',
+        'campaigns': [
+            {
+                'goals': [
+                    {
+                        'identifier': 'GOAL_NEW',
+                        'id': 203,
+                        'type': 'CUSTOM_GOAL'
+                    }
+                ],
+                'variations': [
+                    {
+                        'id': '1',
+                        'name': 'Control',
+                        'weight': 40
+                    },
+                    {
+                        'id': '2',
+                        'name': 'Variation-1',
+                        'weight': 60
+                    }
+                ],
+                'id': 22,
+                'percentTraffic': 50,
+                'key': 'UNIQUE_KEY',
+                'status': 'RUNNING',
+                'type': 'VISUAL_AB'
+            }
+        ],
+        'accountId': 60781,
+        'version': 1
+    },
 }
