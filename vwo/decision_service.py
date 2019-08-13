@@ -10,7 +10,7 @@ FILE = FileNameEnum.DecisionService
 class DecisionService(object):
     """ Class encapsulating all decision related capabilities. """
 
-    def __init__(self, settings_file, user_profile_service):
+    def __init__(self, settings_file, user_profile_service=None):
         """ Initializes DecisionService with settings_file,
             UserProfileService and logger.
 
@@ -133,7 +133,7 @@ class DecisionService(object):
                 LogMessageEnum.DEBUG_MESSAGES.USER_NOT_PART_OF_CAMPAIGN.format(  # noqa:E501
                     file=FILE,
                     user_id=user_id,
-                    campaign_test_key=campaign.get('key'),
+                    campaign_test_key=None,
                     method='get_variation_allotted'
                 )
             )
@@ -159,7 +159,7 @@ class DecisionService(object):
                     method='get_variation_of_campaign_for_user'
                 )
             )
-            return None
+            return None, None
 
         variation = self.bucketer.bucket_user_to_variation(user_id, campaign)
 
@@ -183,7 +183,7 @@ class DecisionService(object):
                 campaign_test_key=campaign.get('key')
             )
         )
-        return None
+        return None, None
 
     # Private helper methods for UserProfileService
 
