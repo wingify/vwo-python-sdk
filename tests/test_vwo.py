@@ -17,8 +17,16 @@ class VWOTest(unittest.TestCase):
                            is_development_mode=True,
                            logger=vwo.logger.DefaultLogger(100))
         self.campaign_key = DEV_TEST.format(config_variant)
-        self.goal_identifier = \
-            SETTINGS_FILES[config_variant]['campaigns'][0]['goals'][0]['identifier']  # noqa: E501
+        try:
+            self.goal_identifier = \
+                SETTINGS_FILES[config_variant]['campaigns'][0]['goals'][0]['identifier']  # noqa: E501
+        except Exception:
+            pass
+
+    # Test initialization
+    def test_init_vwo_with_invalid_settings_file(self):
+        self.set_up(0)
+        self.assertIs(self.vwo.is_valid, False)
 
     # Test get_variation
     def test_get_variation_with_no_campaign_key_found(self):
