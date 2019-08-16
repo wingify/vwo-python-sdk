@@ -19,7 +19,7 @@ class DecisionService(object):
             user_profile_service: Class instance having the capabilty of
                 lookup and save.
         """
-        self.logger = Logger()
+        self.logger = Logger.getInstance()
         self.user_profile_service = None
         # Check if user_profile_service provided is valid or not
         if validate_util.is_valid_utility(user_profile_service,
@@ -44,9 +44,8 @@ class DecisionService(object):
             ({variation_id, variation_name}|None): Tuple of
             variation_id and variation_name if variation alloted, else None
         """
-
         campaign_bucket_map = self._resolve_campaign_bucket_map(user_id)
-        if campaign_bucket_map:
+        if type(campaign_bucket_map) is dict:
             variation = self._get_stored_variation(user_id,
                                                    campaign_test_key,
                                                    campaign_bucket_map
