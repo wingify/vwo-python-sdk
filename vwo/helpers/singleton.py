@@ -136,7 +136,7 @@ def _createSingletonInstance(cls, args, kwargs):
         instance = cls.__new__(cls)
         try:
             instance.__init__(*args, **kwargs)
-        except TypeError, e:
+        except TypeError as e:
             if str(e).find('__init__() takes') != -1:
                 raise SingletonException('If the singleton requires __init__ args, supply \
                     them on first call to getInstance().')

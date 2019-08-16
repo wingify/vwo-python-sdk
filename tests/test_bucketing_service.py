@@ -2,7 +2,8 @@ import unittest
 import random
 
 from vwo import bucketing_service
-from vwo.helpers import campaign_util
+from vwo.helpers import campaign_util, singleton
+from .data.settings_files import SETTINGS_FILES
 
 
 class BucketingTest(unittest.TestCase):
@@ -38,6 +39,9 @@ class BucketingTest(unittest.TestCase):
         }
         campaign_util.set_variation_allocation(self.dummy_campaign)
         self.bucketer = bucketing_service.Bucketer()
+
+    def tearDown(self):
+        singleton.forgetAllSingletons()
 
     def test_user_part_of_campaign_none_campaign_passed(self):
         result = self.bucketer.is_user_part_of_campaign(self.user_id, None)
@@ -98,3 +102,11 @@ class BucketingTest(unittest.TestCase):
                                                         self.dummy_campaign
                                                         )
         self.assertEqual(result.get('name'), 'Variation-1')
+
+    def test_get_variation_return_none(self):
+        campaign = SETTINGS_FILES[1].get('campaigns')[0]
+        campaign_util.set_variation_allocation(campaign)
+        result = self.bucketer._get_variation(campaign,
+                                              10001
+                                              )
+        self.assertIsNone(result)
