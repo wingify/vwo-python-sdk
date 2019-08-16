@@ -17,7 +17,7 @@ class Bucketer(object):
     def __init__(self):
         """ Initializes bucketer with project common logger
         """
-        self.logger = Logger()
+        self.logger = Logger.getInstance()
 
     def _generate_bucket_value(self, hash_value, max_value, multiplier=1):
         """ Generates Bucket Value of the User by hashing the User ID by murmurHash
@@ -64,16 +64,6 @@ class Bucketer(object):
             (between 1 to $this->$MAX_TRAFFIC_PERCENT)
         """
 
-        if not validate_util.is_valid_value(user_id):
-            self.logger.log(
-                LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FILE,
-                    user_id=user_id,
-                    method='_get_bucket_value_for_user'
-                )
-            )
-            return 0
         hash_value = Hasher.hash(user_id, constants.SEED_VALUE) & U_MAX_32_BIT
         bucket_value = self._generate_bucket_value(hash_value,
                                                    constants.MAX_TRAFFIC_PERCENT
