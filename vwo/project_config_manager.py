@@ -15,7 +15,7 @@ class ProjectConfigManager(object):
                 representing the project settings_file.
         """
         self.settings_file = json.loads(settings_file)
-        self.logger = Logger()
+        self.logger = Logger.getInstance()
 
     # PUBLIC METHODS
 

@@ -44,8 +44,7 @@ def set_variation_allocation(campaign):
             variation.update(start_variation_allocation=-1,
                              end_variation_allocation=-1
                              )
-
-        Logger().log(
+        Logger.getInstance().log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.VARIATION_RANGE_ALLOCATION.format(
                 file=FileNameEnum.CampaignUtil,
