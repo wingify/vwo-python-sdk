@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 from logging import INFO, DEBUG, WARNING, ERROR  # noqa: F401
 from .helpers import singleton
