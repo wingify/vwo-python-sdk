@@ -6,6 +6,7 @@
 sdk_test.py
 server_app.py
 venv
+seecov.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
