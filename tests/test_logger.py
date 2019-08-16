@@ -52,6 +52,8 @@ class LoggerTest(unittest.TestCase):
         self.assertIsInstance(logger_instance.logger, logging.Logger)
         self.assertEqual(logger_instance.logger.level, logging.INFO)
 
+        default_logging_logger = logger_instance.logger.log
+
         # Break the log method
         def dummy_log_method():
             pass
@@ -67,4 +69,6 @@ class LoggerTest(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
             logger_instance.log(logging.ERROR, 'This logger instance used print for log')  # noqa: 501
             self.assertEqual(fakeOutput.getvalue().strip(),
-                             str(logging.ERROR) + ' ' + 'This logger instance used print for log')  # noqa: 501        
+                             str(logging.ERROR) + ' ' + 'This logger instance used print for log')  # noqa: 501
+
+        logger_instance.logger.log = default_logging_logger
