@@ -24,7 +24,8 @@ def generator_for(user_id, account_id):
     uuid_for_account_user_id = generate(user_id_namespace, user_id)
 
     desired_uuid = str(uuid_for_account_user_id).replace('-', '').upper()
-    Logger().log(
+
+    Logger.getInstance().log(
         LogLevelEnum.DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.UUID_FOR_USER.format(
             file=FileNameEnum.UuidUtil,

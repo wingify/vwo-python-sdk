@@ -13,8 +13,6 @@ try:
 except ImportError:
     from urllib.parse import quote  # Python 3+
 
-logger = Logger()
-
 
 def build_event(
     settings_file,
@@ -64,6 +62,7 @@ def build_event(
     properties['sdk-v'] = pkg_resources.require("vwo-python-sdk")[0].version
 
     url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL
+    logger = Logger.getInstance()
 
     if is_track_user_api:
         properties.update(ed=json.dumps({'p': 'server'}))

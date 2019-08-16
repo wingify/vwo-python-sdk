@@ -35,7 +35,7 @@ class VWO(object):
         """
 
         # Verify and assign a/the logger
-        self.logger = Logger(logger)
+        self.logger = Logger.getInstance(logger)
 
         # Verify the settings_file for json object and correct schema
         if not validate_util.is_valid_settings_file(settings_file):
@@ -280,7 +280,7 @@ class VWO(object):
             triggering the goal
         """
 
-        if len(args) > 0:
+        if args:
             revenue_value = args[0]
         elif kwargs:
             revenue_value = kwargs.get('revenue_value', None)
@@ -305,7 +305,7 @@ class VWO(object):
                     file=FILE
                 )
             )
-            return None
+            return False
 
         # Get the campaign settings
         campaign = campaign_util.get_campaign(self.settings_file,
@@ -333,26 +333,37 @@ class VWO(object):
                                                    campaign.get('key'),
                                                    goal_identifier
                                                    )
-            if goal:
-                properties = impression_util.build_event(self.settings_file,
-                                                         campaign_id,
-                                                         variation_id,
-                                                         user_id,
-                                                         goal.get('id'),
-                                                         revenue_value
-                                                         )
-                self.event_dispatcher.dispatch(properties)
-                return True
-            else:
-                # log error
+            if not goal:
                 self.logger.log(
                     LogLevelEnum.ERROR,
                     LogMessageEnum.ERROR_MESSAGES.TRACK_API_GOAL_NOT_FOUND.format(  # noqa:E501
                         file=FILE,
-                        goal=goal_identifier,
+                        goal_identifier=goal_identifier,
                         user_id=user_id,
                         campaign_test_key=campaign_test_key
                     )
                 )
                 return False
+            elif goal.get('type') == constants.GOAL_TYPES.REVENUE and \
+                    not validate_util.is_valid_value(revenue_value):
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(  # noqa:E501
+                        file=FILE,
+                        user_id=user_id,
+                        goal_identifier=goal_identifier,
+                        campaign_test_key=campaign_test_key
+                    )
+                )
+                return False
+
+            properties = impression_util.build_event(self.settings_file,
+                                                     campaign_id,
+                                                     variation_id,
+                                                     user_id,
+                                                     goal.get('id'),
+                                                     revenue_value
+                                                     )
+            self.event_dispatcher.dispatch(properties)
+            return True
         return False

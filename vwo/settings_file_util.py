@@ -6,7 +6,7 @@ from __future__ import print_function
 import sys
 import requests
 from .helpers import constants
-from .helpers import function_util
+from .helpers import function_util, validate_util
 
 
 def get(account_id, sdk_key):
@@ -23,7 +23,11 @@ def get(account_id, sdk_key):
             None if no settings_file is found or sdk_key is incorrect
     """
 
-    if account_id is None or sdk_key is None:
+    is_valid_sdk_key = validate_util.is_valid_number(account_id) or \
+        validate_util.is_valid_string(account_id)
+
+    if not is_valid_sdk_key or \
+       not validate_util.is_valid_string(sdk_key):
         print(('account_id and sdk_key are required',
                'for fetching account settings. Aborting!'
                ), file=sys.stderr)
@@ -47,9 +51,9 @@ def get(account_id, sdk_key):
             params=parameters
         )
         if settings_file_response.status_code != 200:
-            print('Request failed for fetching account settings.'
-                  'Got Status Code: {status_code}'
-                  'and message: {settings_file_response}'.
+            print('Request failed for fetching account settings. '
+                  'Got Status Code: {status_code} '
+                  'and message: {settings_file_response}.'.
                   format(status_code=settings_file_response.status_code,
                          settings_file_response=settings_file_response.content
                          ),

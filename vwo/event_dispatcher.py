@@ -19,7 +19,7 @@ class EventDispatcher(object):
             is_development_mode: To specify whether the request
             to our server should be made or not.
         """
-        self.logger = Logger()
+        self.logger = Logger.getInstance()
         self.is_development_mode = is_development_mode
 
     def dispatch(self, properties):
@@ -63,12 +63,13 @@ class EventDispatcher(object):
                         end_point=properties.get('url')
                     )
                 )
+                return False
         except Exception:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(
                     file=FileNameEnum.EventDispatcher,
-                    end_point=resp.url
+                    end_point=properties.get('url')
                 )
             )
         return False

@@ -62,7 +62,8 @@ class PostDevelopCommand(develop):
     def run(self):
         print('\nRUNNING POST INSTALL DEVELOP SCRIPT \n')
 
-        subprocess.call("pre-commit install;", shell=True)
+        subprocess.call("pre-commit install;", shell=True)  # skipcq: BAN-B602
+        # skipcq: BAN-B602
         subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)  # noqa:E501
 
         print('\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n')
@@ -72,7 +73,7 @@ class PostDevelopCommand(develop):
 
 setup(
     name='vwo-python-sdk',
-    version='1.0.3',
+    version='1.0.4',
     description='Python SDK for VWO server-side A/B Testing',
     long_description='Some issue with twine rendering markdown README.md',
     author='VWO',
