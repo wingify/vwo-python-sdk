@@ -1,6 +1,6 @@
 from __future__ import print_function
 import logging
-from logging import INFO, DEBUG, WARNING, ERROR  # noqa: F401
+from logging import INFO, DEBUG, WARNING, ERROR  # noqa: F401, skipcq: PYL-W0611
 from .helpers import singleton
 from .helpers import validate_util
 from .helpers.enums import LogLevelEnum, LogMessageEnum, FileNameEnum

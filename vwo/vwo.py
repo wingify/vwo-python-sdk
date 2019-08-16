@@ -280,7 +280,7 @@ class VWO(object):
             triggering the goal
         """
 
-        if len(args) > 0:
+        if args:
             revenue_value = args[0]
         elif kwargs:
             revenue_value = kwargs.get('revenue_value', None)
