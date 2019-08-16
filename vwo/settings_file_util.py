@@ -23,8 +23,11 @@ def get(account_id, sdk_key):
             None if no settings_file is found or sdk_key is incorrect
     """
 
-    if not validate_util.is_valid_number(account_id) or \
-            not validate_util.is_valid_string(sdk_key):
+    is_valid_sdk_key = validate_util.is_valid_number(account_id) or \
+        validate_util.is_valid_string(account_id)
+
+    if not is_valid_sdk_key or \
+       not validate_util.is_valid_string(sdk_key):
         print(('account_id and sdk_key are required',
                'for fetching account settings. Aborting!'
                ), file=sys.stderr)
