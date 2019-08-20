@@ -50,11 +50,11 @@ class SettingsFileTest(unittest.TestCase):
         with mock.patch('requests.get') as mock_request_get, \
                 mock.patch('sys.stderr', new=StringIO()) as fakeOutput:
             mock_request_get.return_value.status_code = 503
-            mock_request_get.return_value.content = 'Nothing'
+            mock_request_get.return_value.text = '{"message":"Invalid api key"}'
             result = get_settings_file(60781, 'ea87170ad94079aa190bc7c9b85d26fb')  # noqa: E501
-            self.assertIsNone(result)
+            self.assertEqual(result, '{"message":"Invalid api key"}')
             self.assertEqual(fakeOutput.getvalue().strip(),
-                             'Request failed for fetching account settings. Got Status Code: 503 and message: Nothing.'  # noqa: E501
+                             'Request failed for fetching account settings. Got Status Code: 503 and message: {"message":"Invalid api key"}.'  # noqa: E501
                              )
         random.random = default_random
 
@@ -71,7 +71,7 @@ class SettingsFileTest(unittest.TestCase):
                                                 ) as fakeOutput:
             result = get_settings_file(60781,
                                        'ea87170ad94079aa190bc7c9b85d26fb')
-            self.assertIsNone(result)
+            self.assertEqual(result, '{}')
             self.assertEqual(fakeOutput.getvalue().strip(),
                              'Error fetching Settings File Failed Request'
                              )
@@ -89,8 +89,8 @@ class SettingsFileTest(unittest.TestCase):
 
     def test_account_id_0_return_none(self):
         result = get_settings_file(0, sdk_key)
-        self.assertIsNone(result)
+        self.assertEqual(result, '{}')
 
     def test_empty_sdk_key_return_none(self):
         result = get_settings_file(account_id, "")
-        self.assertIsNone(result)
+        self.assertEqual(result, '{}')

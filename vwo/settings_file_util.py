@@ -31,7 +31,7 @@ def get(account_id, sdk_key):
         print(('account_id and sdk_key are required',
                'for fetching account settings. Aborting!'
                ), file=sys.stderr)
-        return None
+        return '{}'
 
     protocol = 'https'
     hostname = constants.ENDPOINTS.BASE_URL
@@ -55,13 +55,12 @@ def get(account_id, sdk_key):
                   'Got Status Code: {status_code} '
                   'and message: {settings_file_response}.'.
                   format(status_code=settings_file_response.status_code,
-                         settings_file_response=settings_file_response.content
+                         settings_file_response=settings_file_response.text
                          ),
                   file=sys.stderr
                   )
-            return None
         settings_file = settings_file_response.text
     except requests.exceptions.RequestException as e:
         print('Error fetching Settings File', e, file=sys.stderr)
-        return None
+        return '{}'
     return settings_file
