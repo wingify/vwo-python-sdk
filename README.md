@@ -118,8 +118,8 @@ We use the following open-source projects which are published under MIT License.
 
 ## Authors
 
-[Shravan Chaudhary](https://github.com/shravanchaudhary)
-[Varun Malhotra](https://github.com/softvar) [@s0ftvar](https://twitter.com/s0ftvar)
+* Main Contributor - [Shravan Chaudhary](https://github.com/shravanchaudhary)
+* Repo health maintainer - [Varun Malhotra](https://github.com/softvar)([@s0ftvar](https://twitter.com/s0ftvar))
 
 ## Contributing
 
