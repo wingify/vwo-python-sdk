@@ -147,7 +147,7 @@ class DecisionTest(unittest.TestCase):
         client_db = {}
 
         class UPS(UserProfileService):
-            def lookup(self, user_id):
+            def lookup(self, user_id, campaing_test_key):
                 return client_db.get(user_id)
 
             def save(self, user_profile_obj):
