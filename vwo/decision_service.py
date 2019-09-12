@@ -44,7 +44,7 @@ class DecisionService(object):
             ({variation_id, variation_name}|None): Tuple of
             variation_id and variation_name if variation alloted, else None
         """
-        campaign_bucket_map = self._resolve_campaign_bucket_map(user_id)
+        campaign_bucket_map = self._resolve_campaign_bucket_map(user_id, campaign_test_key)  # noqa:E501
         if type(campaign_bucket_map) is dict:
             variation = self._get_stored_variation(user_id,
                                                    campaign_test_key,
@@ -232,7 +232,7 @@ class DecisionService(object):
         )
         return None
 
-    def _resolve_campaign_bucket_map(self, user_id):
+    def _resolve_campaign_bucket_map(self, user_id, campaign_test_key):
         """ Returns the campaign bucket map corresponding to the user_id
 
         Args:
@@ -242,13 +242,13 @@ class DecisionService(object):
             dict: data
         """
 
-        user_data = self._get_user_profile(user_id)
+        user_data = self._get_user_profile(user_id, campaign_test_key)
         campaign_bucket_map = {}
         if user_data:
             campaign_bucket_map = user_data.get('campaignBucketMap')
         return copy.deepcopy(campaign_bucket_map)
 
-    def _get_user_profile(self, user_id):
+    def _get_user_profile(self, user_id, campaign_test_key):
         """ Get the UserProfileData after looking up into lookup method
         being provided via UserProfileService
 
@@ -268,7 +268,7 @@ class DecisionService(object):
             )
             return False
         try:
-            data = self.user_profile_service.lookup(user_id)
+            data = self.user_profile_service.lookup(user_id, campaign_test_key)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_PROFILE_SERVICE.format(  # noqa:E501
