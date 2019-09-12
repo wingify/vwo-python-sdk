@@ -73,7 +73,7 @@ class PostDevelopCommand(develop):
 
 setup(
     name='vwo-python-sdk',
-    version='1.0.6',
+    version='1.0.7',
     description='Python SDK for VWO server-side A/B Testing',
     long_description='Some issue with twine rendering markdown README.md',
     author='VWO',
