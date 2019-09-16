@@ -357,6 +357,9 @@ class VWO(object):
                 )
                 return False
 
+            if goal.get('type') == constants.GOAL_TYPES.CUSTOM:
+                revenue_value = None
+
             properties = impression_util.build_event(self.settings_file,
                                                      campaign_id,
                                                      variation_id,
