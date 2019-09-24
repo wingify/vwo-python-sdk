@@ -3,7 +3,7 @@
 from .project_config_manager import ProjectConfigManager
 from .helpers import impression_util, validate_util
 from .event_dispatcher import EventDispatcher
-from .helpers import constants, campaign_util
+from .helpers import constants, campaign_util, singleton
 from .helpers.enums import LogMessageEnum, FileNameEnum, LogLevelEnum
 from .decision_service import DecisionService
 from .logger import Logger
@@ -33,6 +33,8 @@ class VWO(object):
             is_development_mode(bool): To specify whether the request
                 to our server should be sent or not.
         """
+        # Remove all instances of Singleton logger
+        singleton.forgetAllSingletons()
 
         # Verify and assign a/the logger
         self.logger = Logger.getInstance(logger)
