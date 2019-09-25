@@ -1,4 +1,5 @@
-# Author : Romain Guy <romainguy@android.com>
+# Took reference from:
+# Author: Romain Guy <romainguy@android.com>
 # Code repo:
 # https://android.googlesource.com/platform/development/+/eclair-release/tools/axl/singletonmixin.py
 
@@ -122,7 +123,7 @@ class SingletonException(Exception):
     pass
 
 
-_stSingletons = set()
+_setSingletons = set()
 _lockForSingletons = threading.RLock()
 _lockForSingletonCreation = threading.RLock()
 
@@ -151,8 +152,8 @@ def _createSingletonInstance(cls, args, kwargs):
 def _addSingleton(cls):
     _lockForSingletons.acquire()
     try:
-        assert cls not in _stSingletons
-        _stSingletons.add(cls)
+        assert cls not in _setSingletons
+        _setSingletons.add(cls)
     finally:
         _lockForSingletons.release()
 
@@ -160,8 +161,8 @@ def _addSingleton(cls):
 def _removeSingleton(cls):
     _lockForSingletons.acquire()
     try:
-        if cls in _stSingletons:
-            _stSingletons.remove(cls)
+        if cls in _setSingletons:
+            _setSingletons.remove(cls)
     finally:
         _lockForSingletons.release()
 
@@ -172,20 +173,20 @@ def forgetAllSingletons():
 
     _lockForSingletons.acquire()
     try:
-        for cls in _stSingletons.copy():
+        for cls in _setSingletons.copy():
             cls._forgetClassInstanceReferenceForTesting()
 
         # Might have created some Singletons in the process of tearing down.
         # Try one more time - there should be a limit to this.
 
-        iNumSingletons = len(_stSingletons)
-        if len(_stSingletons) > 0:
-            for cls in _stSingletons.copy():
+        iNumSingletons = len(_setSingletons)
+        if len(_setSingletons) > 0:
+            for cls in _setSingletons.copy():
                 cls._forgetClassInstanceReferenceForTesting()
                 iNumSingletons -= 1
-                assert iNumSingletons == len(_stSingletons), \
+                assert iNumSingletons == len(_setSingletons), \
                     'Added a singleton while destroying ' + str(cls)
-        assert len(_stSingletons) == 0, _stSingletons
+        assert len(_setSingletons) == 0, _setSingletons
     finally:
         _lockForSingletons.release()
 
