@@ -1,0 +1,6 @@
+repos:
+-   repo: https://github.com/PyCQA/flake8
+    rev: 3.7.8
+    hooks:
+    - id: flake8
+      language_version: python2.7
