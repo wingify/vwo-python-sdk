@@ -43,6 +43,12 @@ class LogMessageEnum:
         INVALID_VARIATION_KEY = '({file}): Variation was not assigned to userId:{user_id} for campaign:{campaign_key}'
         RETRY_FAILED_IMPRESSION_AFTER_DELAY = '({file}): Failed impression event for {end_point} will be retried after {retry_timeout} milliseconds delay'
 
+        USER_IN_FEATURE_ROLLOUT = '({file}): User ID:{user_id} is in feature rollout:{campaign_key}'
+        USER_NOT_IN_FEATURE_ROLLOUT = '({file}): User ID:{user_id} is NOT in feature rollout:{campaign_key}'
+        FEATURE_ENABLED_FOR_USER = '({file}): Feature having feature-key:{feature_key} for user ID:{user_id} is enabled'
+        FEATURE_NOT_ENABLED_FOR_USER = '({file}): Feature having feature-key:{feature_key} for user ID:{user_id} is not enabled'
+
+        VARIABLE_FOUND = '({file}): Value for variable:{variable_key} of campaign:{campaign_key} and campaign type: {campaign_type} is:{variable_value} for user:{user_id}'
         USER_IN_CAMPAIGN = '({file}): userId:{user_id} did become part of campaign:{campaign_key} and campaign type:{campaign_type} having variation {variation_name}'
 
     class WARNING_MESSAGES:
@@ -71,4 +77,15 @@ class LogMessageEnum:
         IMPRESSION_FAILED = '({file}): Impression event could not be sent to VWO - {end_point}'
         CUSTOM_LOGGER_MISCONFIGURED = '({file}): Custom logger is provided but seems to have misconfigured. {extra_info} Please check the API Docs. Using default logger.'
 
+        INVALID_API = '({file}): {api_name} API is not valid for user ID: {user_id} in campaign ID: {campaign_key} having campaign type: {campaign_type}.'
+        IS_FEATURE_ENABLED_API_MISSING_PARAMS = '({file}): "is_feature_enabled" API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument'
+        IS_FEATURE_ENABLED_API_CONFIG_CORRUPTED = '({file}): "is_feature_enabled" API has corrupted configuration'
+        GET_FEATURE_VARIABLE_CONFIG_CORRUPTED = '({file}): "get_feature_variable_type" API has corrupted configuration'
+        GET_FEATURE_VARIABLE_MISSING_PARAMS = '({file}): "get_feature_variable" API got bad parameters. It expects campaign_key(String) as first, variable_key(string) as second and user_id(String) as third argument'
+
+        VARIABLE_NOT_FOUND = '({file}): Variable {variable_key} not found for campaing {campaign_key} and type {campaign_type} for user ID {user_id}'
+        UNABLE_TO_TYPE_CAST = '({file}): Unable to typecast value: {value} of type: {of_type} to type: {variable_type}.'
+        VARIABLE_REQUESTED_WITH_WRONG_TYPE = '({file}): Got variable type:{got_variable_type}, but expected variable is of type:{expected_variable_type}. Please read docs and use correct API. Returning None.'
+
+        USER_NOT_IN_CAMPAIGN = '({file}): userId:{user_id} did not become part of campaign:{campaign_key} and campaign type:{campaign_type}'
         API_NOT_WORKING = '({file}): API: {api_name} not working, exception caught: {exception}. Please contact VWO Support for help.'
