@@ -40,3 +40,24 @@ class API_METHODS:
 class GOAL_TYPES:
     REVENUE = 'REVENUE_TRACKING'
     CUSTOM = 'CUSTOM_GOAL'
+
+
+class CAMPAIGN_TYPES:
+    VISUAL_AB = 'VISUAL_AB'
+    FEATURE_TEST = 'FEATURE_TEST'
+    FEATURE_ROLLOUT = 'FEATURE_ROLLOUT'
+
+
+class VARIABLE_TYPES:
+    STRING = 'string'
+    INTEGER = 'integer'
+    DOUBLE = 'double'
+    BOOLEAN = 'boolean'
+
+
+PY_VARIABLE_TYPES = {
+    'string': str,
+    'integer': int,
+    'double': float,
+    'boolean': bool,
+}
