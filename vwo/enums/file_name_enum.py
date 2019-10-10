@@ -14,6 +14,7 @@ class FileNameEnum:
     Functionutil = UTILS_PATH + 'function_util'
     UuidUtil = UTILS_PATH + 'uuid_util'
     ValidateUtil = UTILS_PATH + 'validate_util'
+    FeatureUtil = UTILS_PATH + 'feature_util'
 
     SettingsFileManager = SERVICES_PATH + 'settings_file_manager'
 

@@ -1,3 +1,4 @@
+from .variable_schema import VARIABLE
 from .empty_object_schema import EMPTY_OBJECT
 
 
@@ -12,6 +13,15 @@ VARIATION = {
         },
         'weight': {
             'type': ['number', 'string']
+        },
+        'variables': {
+            'if': {
+                'type': 'array',
+            },
+            'then': {
+                'items': VARIABLE
+            },
+            'else': EMPTY_OBJECT
         },
         'isFeatureEnabled': {
             'type': 'boolean'

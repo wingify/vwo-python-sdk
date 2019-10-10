@@ -12,7 +12,7 @@ def get(account_id, sdk_key):
     """ Get method to retrieve settings_file for customer from dacdn server
 
     Args:
-        account_id (int): Acount ID of user
+        account_id (string): Acount ID of user
         sdk_key (string): Unique sdk key for user,
             can be retrieved from our webside
 

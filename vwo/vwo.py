@@ -2,13 +2,12 @@ from .services.settings_file_manager import SettingsFileManager
 from .event.event_dispatcher import EventDispatcher
 from .helpers import impression_util
 from .constants import constants
-from .helpers import campaign_util, validate_util
+from .helpers import campaign_util, validate_util, feature_util
 from .enums.log_message_enum import LogMessageEnum
 from .enums.file_name_enum import FileNameEnum
 from .enums.log_level_enum import LogLevelEnum
 from .core.variation_decider import VariationDecider
 from .logger.logger_manager import VWOLogger, configure_logger
-from .services import singleton
 
 FILE = FileNameEnum.VWO
 
@@ -35,9 +34,6 @@ class VWO(object):
             is_development_mode(bool): To specify whether the request
                 to our server should be sent or not.
         """
-
-        # Remove all instances of Singleton logger
-        singleton.forgetAllSingletons()
 
         # Retrieve log level from args/kwargs
         if not logger:
@@ -161,6 +157,20 @@ class VWO(object):
             # Get campaing type
             campaign_type = campaign.get('type')
 
+            # Validate valid api call
+            if campaign_type != constants.CAMPAIGN_TYPES.VISUAL_AB:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
+                        file=FILE,
+                        api_name='activate',
+                        user_id=user_id,
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type
+                    )
+                )
+                return None
+
             # Once the matching RUNNING campaign is found, assign the
             # deterministic variation to the user_id provided
             variation = self.variation_decider.get_variation(user_id,
@@ -250,6 +260,19 @@ class VWO(object):
                 return None
 
             campaign_type = campaign.get('type')
+
+            if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
+                        file=FILE,
+                        api_name='get_variation_name',
+                        user_id=user_id,
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type
+                    )
+                )
+                return None
 
             variation = self.variation_decider.get_variation(user_id,
                                                              campaign,
@@ -346,6 +369,19 @@ class VWO(object):
 
             campaign_type = campaign.get('type')
 
+            if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
+                        file=FILE,
+                        api_name='track',
+                        user_id=user_id,
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type
+                    )
+                )
+                return False
+
             campaign_id = campaign.get('id')
             variation = self.variation_decider.get_variation_allotted(user_id,
                                                                       campaign)
@@ -395,6 +431,263 @@ class VWO(object):
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
                     file=FILE,
                     api_name='track',
+                    exception=e
+                )
+            )
+
+    def is_feature_enabled(self, campaign_key, user_id):
+        """ This API method: Identifies whether the user becomes a part
+        of feature rollout/test or not.
+
+        1. Validates the arguments being passed
+        2. Checks if user is eligible to get bucketed into the
+            feature test/rollout,
+        3. Assigns the determinitic variation to the user(based on userId),
+            if user becomes part of feature test/rollout
+            If UserStorage is used, it will look into it for the
+                variation and if found, no further processing is done
+
+        Args:
+            campaign_key (string): unique campaign test key
+            user_id (string): ID assigned to a user
+
+        Returns:
+            Booleann: True if user becomes part of feature test/rollout,
+            otherwise false in case user doesn't becomes part of it.
+        """
+
+        try:
+            if not validate_util.is_valid_string(campaign_key) or not validate_util.is_valid_string(user_id):
+                # log invalid params
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_MISSING_PARAMS.format(
+                        file=FILE
+                    )
+                )
+                return False
+
+            if not self.is_valid:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_CONFIG_CORRUPTED.format(
+                        file=FILE
+                    )
+                )
+                return False
+
+            # Get the campaign settings
+            campaign = campaign_util.get_campaign(self.settings_file,
+                                                  campaign_key)
+
+            # Validate campaign
+            if not campaign or campaign.get('status') != constants.STATUS_RUNNING:
+                # log error
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
+                        file=FILE,
+                        campaign_key=campaign_key,
+                        api_name='is_feature_enabled'
+                    )
+                )
+                return False
+
+            # Validate campaign_type
+            campaign_type = campaign.get('type')
+
+            if campaign_type == constants.CAMPAIGN_TYPES.VISUAL_AB:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
+                        file=FILE,
+                        api_name='is_feature_enabled',
+                        user_id=user_id,
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type
+                    )
+                )
+                return False
+
+            # Get variation
+            variation = self.variation_decider.get_variation(user_id,
+                                                             campaign,
+                                                             campaign_key
+                                                             )
+
+            # If no variation, did not become part of feature_test/rollout
+            if not variation:
+                return False
+
+            # if campaign type is feature_test Send track call to server
+            if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                impression = impression_util.create_impression(self.settings_file,
+                                                               campaign.get('id'),
+                                                               variation.get('id'),
+                                                               user_id)
+                self.event_dispatcher.dispatch(impression)
+
+            return True
+        except Exception as e:
+            self.logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
+                    file=FILE,
+                    api_name='is_feature_enabled',
+                    exception=e
+                )
+            )
+
+    def get_feature_variable_value(self, campaign_key, variable_key, user_id):
+        """ Returns the feature variable corresponding to the variable_key
+        passed. It typecasts the value to the corresponding value type
+        found in settings_file
+
+        1. Validates the arguments being passed
+        2. Checks if user is eligible to get bucketed into the feature test/rollout,
+        3. Assigns the determinitic variation to the user(based on userId),
+            if user becomes part of campaign
+            If UserStorage is used, it will look into it for the
+                variation and if found, no further processing is done
+        4. Retrieves the corresponding variable from variation assigned.
+
+        Args:
+            campaign_key (string): unique campaign test key
+            variable_key (string): variable key
+            user_id (string): ID assigned to a user
+
+        Returns:
+            variable(bool, str, int, float)|None: If variation is assigned then
+            variable corresponding to variation assigned else None
+        """
+
+        try:
+            if not validate_util.is_valid_string(campaign_key) or \
+                not validate_util.is_valid_string(variable_key) or \
+                    not validate_util.is_valid_string(user_id):
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_MISSING_PARAMS.format(
+                        file=FILE
+                    )
+                )
+                return None
+
+            if not self.is_valid:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_CONFIG_CORRUPTED.format(
+                        file=FILE
+                    )
+                )
+                return None
+
+            # Get the campaign settings
+            campaign = campaign_util.get_campaign(self.settings_file,
+                                                  campaign_key)
+
+            # Validate campaign
+            if not campaign or campaign.get('status') != constants.STATUS_RUNNING:
+                # log error
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
+                        file=FILE,
+                        campaign_key=campaign_key,
+                        api_name='get_feature_variable_value'
+                    )
+                )
+                return None
+
+            campaign_type = campaign.get('type')
+
+            if campaign_type == constants.CAMPAIGN_TYPES.VISUAL_AB:
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
+                        file=FILE,
+                        api_name='get_feature_variable',
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type,
+                        user_id=user_id
+                    )
+                )
+                return None
+
+            variation = self.variation_decider.get_variation(user_id,
+                                                             campaign,
+                                                             campaign_key
+                                                             )
+
+            # Check if variation has been assigned to user
+            if not variation:
+                return None
+
+            # Variation recieved, find variable
+            variable = None
+
+            if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                variables = campaign.get('variables')
+
+            elif campaign_type == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                if variation.get('isFeatureEnabled') is False:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
+                            file=FILE,
+                            feature_key=campaign_key,
+                            user_id=user_id
+                        )
+                    )
+                    variation = campaign_util.get_control_variation(campaign)
+                else:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
+                            file=FILE,
+                            feature_key=campaign_key,
+                            user_id=user_id
+                        )
+                    )
+                variables = variation.get('variables')
+
+            variable = campaign_util.get_variable(variables, variable_key)
+
+            if not variable:
+                # Log variable not found
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.VARIABLE_NOT_FOUND.format(
+                        file=FILE,
+                        variable_key=variable_key,
+                        campaign_key=campaign_key,
+                        campaign_type=campaign_type,
+                        user_id=user_id
+                    )
+                )
+                return None
+
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.VARIABLE_FOUND.format(
+                    file=FILE,
+                    variable_key=variable_key,
+                    variable_value=variable.get('value'),
+                    campaign_key=campaign_key,
+                    campaign_type=campaign_type,
+                    user_id=user_id
+                )
+            )
+
+            return feature_util.get_type_casted_feature_value(variable.get('value'),
+                                                              variable.get('type'))
+
+        except Exception as e:
+            self.logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
+                    file=FILE,
+                    api_name='get_feature_variable',
                     exception=e
                 )
             )

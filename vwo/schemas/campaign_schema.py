@@ -1,5 +1,6 @@
 from .variation_schema import VARIATION
 from .goal_schema import GOAL
+from .variable_schema import VARIABLE
 from .empty_object_schema import EMPTY_OBJECT
 
 
@@ -39,6 +40,15 @@ CAMPAIGN = {
             },
             'else': EMPTY_OBJECT
         },
+        'variables': {
+            'if': {
+                'type': 'array',
+            },
+            'then': {
+                'items': VARIABLE
+            },
+            'else': EMPTY_OBJECT
+        }
     },
     'required': [
         'id',

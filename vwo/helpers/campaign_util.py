@@ -111,3 +111,35 @@ def get_campaign_variation(campaign, variation_name):
         if variation.get('name') == variation_name:
             return variation
     return None
+
+
+def get_variable(variables, variable_key):
+    """ Returns variable from given variables list.
+
+    Args:
+        variables (list): List of variables, whether in campaigns or
+        inside variation
+        variable_key (string): Variable identifier
+
+    Returns:
+        dict: Variable corresponding to variable_key in given variable list
+    """
+    for variable in variables:
+        if variable.get('key') == variable_key:
+            return variable
+    return None
+
+
+def get_control_variation(campaign):
+    """ Returns control variation from a given campaing
+
+    Args:
+        campaing (dict): Running campaign
+    Returns:
+        variation (dict): Control variation from the campaign, ie having id = 1
+    """
+
+    for variation in campaign.get('variations'):
+        if int(variation.get('id')) == 1:
+            return variation
+    return None
