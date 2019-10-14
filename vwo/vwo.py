@@ -108,7 +108,7 @@ class VWO(object):
         4. Sends an impression call to VWO server to track user
 
         Args:
-            campaign_key (string): unique campaign test key
+            campaign_key (string): unique campaign key
             user_id (string): ID assigned to a user
 
         Returns:
@@ -212,7 +212,7 @@ class VWO(object):
                 variation and if found, no further processing is done
 
         Args:
-            campaign_key (string): unique campaign test key
+            campaign_key (string): unique campaign key
             user_id (string): ID assigned to a user
 
         Returns:
@@ -312,7 +312,7 @@ class VWO(object):
         4. Sends an impression call to VWO server to track goal data
 
         Args:
-            campaign_key (string): unique campaign test key
+            campaign_key (string): unique campaign key
             user_id (string): ID assigned to a user
             goal_identifier (string): unique campaign's goal identifier
             revenue_value (int|float|string): revenue generated on
@@ -448,7 +448,7 @@ class VWO(object):
                 variation and if found, no further processing is done
 
         Args:
-            campaign_key (string): unique campaign test key
+            campaign_key (string): unique campaign key
             user_id (string): ID assigned to a user
 
         Returns:
@@ -552,7 +552,7 @@ class VWO(object):
         4. Retrieves the corresponding variable from variation assigned.
 
         Args:
-            campaign_key (string): unique campaign test key
+            campaign_key (string): unique campaign key
             variable_key (string): variable key
             user_id (string): ID assigned to a user
 
