@@ -214,7 +214,7 @@ class VariationDecider(object):
                 otherwise None
         """
 
-        if user_campaign_map.get('campaignTestKey') == campaign_key:
+        if user_campaign_map.get('campaignKey') == campaign_key:
             variation_name = user_campaign_map.get('variationName')
             if variation_name:
                 self.logger.log(
@@ -306,7 +306,7 @@ class VariationDecider(object):
 
         new_user_campaign_map = {
             "userId": user_id,
-            "campaignTestKey": campaign_key,
+            "campaignKey": campaign_key,
             "variationName": variation_name
         }
         try:
