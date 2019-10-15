@@ -1,4 +1,5 @@
 from .services.settings_file_manager import SettingsFileManager
+from .services import singleton
 from .event.event_dispatcher import EventDispatcher
 from .helpers import impression_util
 from .constants import constants
@@ -34,6 +35,8 @@ class VWO(object):
             is_development_mode(bool): To specify whether the request
                 to our server should be sent or not.
         """
+        # Remove all instances of Singleton logger
+        singleton.forgetAllSingletons()
 
         # Retrieve log level from args/kwargs
         if not logger:
