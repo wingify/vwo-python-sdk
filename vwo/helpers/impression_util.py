@@ -39,7 +39,7 @@ def create_impression(
             else impression(dict)
     """
 
-    if (not validate_util.is_valid_number(campaign_id) or not
+    if (not validate_util.is_valid_non_zero_number(campaign_id) or not
             validate_util.is_valid_string(user_id)):
         return None
 
