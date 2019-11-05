@@ -11,6 +11,7 @@ class LogMessageEnum:
         SET_DEVELOPMENT_MODE = '({file}): DEVELOPMENT mode is ON'
         VALID_CONFIGURATION = '({file}): SDK configuration and account settings are valid.'
         CUSTOM_LOGGER_USED = '({file}): Custom logger used'
+        LOGGING_LOGGER_INSTANCE_USED = '({file}): Python logging module"s logger instantiated'
         SDK_INITIALIZED = '({file}): SDK properly initialzed'
         SETTINGS_FILE_PROCESSED = '({file}): Settings file processed'
         NO_STORED_VARIATION = '({file}): No stored variation for UserId:{user_id} for Campaign:{campaign_key} found in UserStorage'

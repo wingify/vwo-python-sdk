@@ -83,8 +83,15 @@ class VWOLogger(singleton.Singleton):
         """
 
         if not logger:
-            # simply log to stdout
             self.logger = configure_logger(__name__)
+        elif isinstance(logger, logging.Logger):
+            logger.log(
+                DEBUG,
+                LogMessageEnum.DEBUG_MESSAGES.LOGGING_LOGGER_INSTANCE_USED.format(
+                    file=FileNameEnum.LoggerManager
+                )
+            )
+            self.logger = logger
         elif validate_util.is_valid_service(logger, 'logger'):
             try:
                 logger.log(
