@@ -56,12 +56,33 @@ def is_valid_service(service, service_name):
     return True
 
 
+def is_valid_log_level(level):
+    string_levels = [
+        'CRITICAL',
+        'FATAL',
+        'ERROR',
+        'WARN',
+        'WARNING',
+        'INFO',
+        'DEBUG',
+        'NOTSET',
+    ]
+    if isinstance(level, str) and level not in string_levels:
+        return False
+    else:
+        return is_valid_number(level)
+
+
 def is_valid_value(val):
     return val is not None and bool(val)
 
 
-def is_valid_number(val):
+def is_valid_non_zero_number(val):
     return type(val) == int and is_valid_value(val)
+
+
+def is_valid_number(val):
+    return type(val) == int
 
 
 def is_valid_string(val):

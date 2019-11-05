@@ -6,7 +6,6 @@ from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from logging import DEBUG, INFO, WARNING, ERROR
 
-
 _VWO_LOG_FORMAT = 'VWO-SDK - [%(levelname)s]: %(asctime)s %(message)s'
 _DEFAULT_LOGGING_LEVEL = logging.ERROR
 
@@ -19,7 +18,7 @@ def set_log_handler(logger, handler):
     logger.handlers = [handler]
 
 
-def configure_logger(name=__name__, level=_DEFAULT_LOGGING_LEVEL, handler=logging.StreamHandler()):
+def configure_logger(name=__name__, level=None, handler=logging.StreamHandler()):
     """ Creates a new logger instance with given name if it does not
     exists, else retrives existing logger. Then it configures logging.Logger
     instance recieved with given level and handler.
@@ -43,6 +42,8 @@ def configure_logger(name=__name__, level=_DEFAULT_LOGGING_LEVEL, handler=loggin
     logger = logging.getLogger(name)
 
     # Set logger level
+    if not validate_util.is_valid_log_level(level):
+        level = _DEFAULT_LOGGING_LEVEL
     set_log_level(logger, level)
 
     # Set logger handler
