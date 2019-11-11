@@ -385,9 +385,10 @@ class VWO(object):
                 )
                 return False
 
-            campaign_id = campaign.get('id')
-            variation = self.variation_decider.get_variation_allotted(user_id,
-                                                                      campaign)
+            variation = self.variation_decider.get_variation(user_id,
+                                                             campaign,
+                                                             campaign_key
+                                                             )
 
             if variation:
                 goal = campaign_util.get_campaign_goal(campaign,
@@ -420,7 +421,7 @@ class VWO(object):
                     revenue_value = None
 
                 impression = impression_util.create_impression(self.settings_file,
-                                                               campaign_id,
+                                                               campaign.get('id'),
                                                                variation.get('id'),
                                                                user_id,
                                                                goal.get('id'),
