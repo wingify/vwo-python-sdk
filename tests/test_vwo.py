@@ -589,3 +589,19 @@ class VWOTest(unittest.TestCase):
     def test_vwo_initialized_with_provided_log_level_50(self):
         vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), log_level=50)
         self.assertEquals(vwo_instance.logger.logger.level, 50)
+
+    def test_vwo_initialized_with_no_logger_no_log_level(self):
+        vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'))
+        self.assertEquals(vwo_instance.logger.logger.level, 40)
+
+    def test_vwo_initialized_with_logger_as_false(self):
+        vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), logger=False)
+        self.assertEquals(vwo_instance.logger.logger.level, 40)
+
+    def test_vwo_initialized_with_loglevel_as_false(self):
+        vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), log_level=False)
+        self.assertEquals(vwo_instance.logger.logger.level, 40)
+
+    def test_vwo_initialized_with_loglevel_as_anythoing_bad(self):
+        vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), log_level='{}')
+        self.assertEquals(vwo_instance.logger.logger.level, 40)

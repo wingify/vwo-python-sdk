@@ -22,7 +22,7 @@ def get(account_id, sdk_key):
             None if no settings_file is found or sdk_key is incorrect
     """
 
-    is_valid_sdk_key = validate_util.is_valid_number(account_id) or \
+    is_valid_sdk_key = validate_util.is_valid_non_zero_number(account_id) or \
         validate_util.is_valid_string(account_id)
 
     if not is_valid_sdk_key or \
