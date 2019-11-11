@@ -9,8 +9,8 @@ if sys.version_info[0] < 3:
     from io import BytesIO as StringIO
 else:
     from io import StringIO
-account_id = 60781
-sdk_key = 'ea87170ad94079aa190bc7c9b85d26fb'
+account_id = 88888888
+sdk_key = 'dummy_sdk_key'
 
 
 class SettingsFileTest(unittest.TestCase):
@@ -26,13 +26,13 @@ class SettingsFileTest(unittest.TestCase):
         with mock.patch('requests.get') as mock_request_get:
             mock_request_get.return_value.status_code = 200
             mock_request_get.return_value.text = 'dummy_setting_file'
-            result = get_settings_file(60781, 'ea87170ad94079aa190bc7c9b85d26fb')
+            result = get_settings_file(88888888, 'dummy_sdk_key')
             self.assertEqual(result, 'dummy_setting_file')
 
         url = 'https://dev.visualwebsiteoptimizer.com/server-side/settings'
         params = {
-            'a': 60781,
-            'i': 'ea87170ad94079aa190bc7c9b85d26fb',
+            'a': 88888888,
+            'i': 'dummy_sdk_key',
             'api-version': 2,
             'r': 0.05353966086631112,
             'platform': 'server',
@@ -51,7 +51,7 @@ class SettingsFileTest(unittest.TestCase):
                 mock.patch('sys.stderr', new=StringIO()) as fakeOutput:
             mock_request_get.return_value.status_code = 503
             mock_request_get.return_value.text = '{"message":"Invalid api key"}'
-            result = get_settings_file(60781, 'ea87170ad94079aa190bc7c9b85d26fb')
+            result = get_settings_file(88888888, 'dummy_sdk_key')
             self.assertEqual(result, '{"message":"Invalid api key"}')
             self.assertEqual(fakeOutput.getvalue().strip(),
                              'Request failed for fetching account settings. Got Status Code: 503 and message: {"message":"Invalid api key"}.'  # noqa: E501
@@ -70,8 +70,8 @@ class SettingsFileTest(unittest.TestCase):
             as mock_request_get, mock.patch('sys.stderr',
                                             new=StringIO()
                                             ) as fakeOutput:
-            result = get_settings_file(60781,
-                                       'ea87170ad94079aa190bc7c9b85d26fb')
+            result = get_settings_file(88888888,
+                                       'dummy_sdk_key')
             self.assertEqual(result, '{}')
             self.assertEqual(fakeOutput.getvalue().strip(),
                              'Error fetching Settings File Failed Request'
@@ -79,8 +79,8 @@ class SettingsFileTest(unittest.TestCase):
 
         url = 'https://dev.visualwebsiteoptimizer.com/server-side/settings'
         params = {
-            'a': 60781,
-            'i': 'ea87170ad94079aa190bc7c9b85d26fb',
+            'a': 88888888,
+            'i': 'dummy_sdk_key',
             'api-version': 2,
             'r': 0.05353966086631112,
             'platform': 'server',

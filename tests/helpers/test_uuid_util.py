@@ -9,7 +9,7 @@ from ..data.settings_files import SETTINGS_FILES
 VWO_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, 'https://vwo.com')
 
 
-class UuidTest(unittest.TestCase):
+class UuidUtilTest(unittest.TestCase):
     def setUp(self):
         self.user_id = str(random.random())
         self.settings_file = SETTINGS_FILES["DUMMY_SETTINGS_FILE"]
