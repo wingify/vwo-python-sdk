@@ -6,7 +6,7 @@ from vwo.helpers import campaign_util
 from ..data.settings_files import SETTINGS_FILES
 
 
-class CampaingTest(unittest.TestCase):
+class CampaingUtilTest(unittest.TestCase):
 
     def setUp(self):
         self.user_id = str(random.random())

@@ -5,7 +5,7 @@ from vwo.helpers import validate_util
 from ..data.settings_files import SETTINGS_FILES
 
 
-class ValidatorTest(unittest.TestCase):
+class ValidateUtilTest(unittest.TestCase):
 
     def test_is_valid_settings_file_return_false(self):
         result = validate_util.is_valid_settings_file('')
