@@ -1,7 +1,20 @@
-# Took reference from:
-# Author : Romain Guy <romainguy@android.com>
-# Code repo:
-# https://android.googlesource.com/platform/development/+/eclair-release/tools/axl/singletonmixin.py
+# This file has code referenced from "milo-lab" project, under MIT License
+# URL - https://code.google.com/archive/p/milo-lab/
+#
+# Author - Elad Noor(https://github.com/eladnoor)
+# References - https://code.google.com/archive/p/milo-lab/ references
+# Repo - https://github.com/eladnoor/milo-lab
+# Source - https://github.com/eladnoor/milo-lab/blob/master/src/toolbox/singletonmixin.py
+
+# By Gary Robinson, grobinson@flyfi.com. No rights reserved --
+# placed in the public domain -- which is only reasonable considering
+# how much it owes to other people's code and ideas which are in the
+# public domain. The idea of using a metaclass came from
+# a  comment on Gary's blog (see
+# http://www.garyrobinson.net/2004/03/python_singleto.html#comments).
+# Other improvements came from comments and email from other
+# people who saw it online. (See the blog post and comments
+# for further credits.)
 
 """
 A Python Singleton mixin class that makes use of some of the ideas

@@ -1,10 +1,28 @@
+# This file has test cases referenced from "milo-lab" project, under MIT License
+# URL - https://code.google.com/archive/p/milo-lab/
+#
+# Author - Elad Noor(https://github.com/eladnoor)
+# References - https://code.google.com/archive/p/milo-lab/ references
+# Repo - https://github.com/eladnoor/milo-lab
+# Source - https://github.com/eladnoor/milo-lab/blob/master/src/toolbox/singletonmixin.py#L242
+
+# By Gary Robinson, grobinson@flyfi.com. No rights reserved --
+# placed in the public domain -- which is only reasonable considering
+# how much it owes to other people's code and ideas which are in the
+# public domain. The idea of using a metaclass came from
+# a  comment on Gary's blog (see
+# http://www.garyrobinson.net/2004/03/python_singleto.html#comments).
+# Other improvements came from comments and email from other
+# people who saw it online. (See the blog post and comments
+# for further credits.)
+
+# Tests causing error in compatibility with python3 are commented
+
 import unittest
 import time
 from vwo.services.singleton import Singleton, SingletonException, forgetAllSingletons
 from vwo.services.singleton import *  # noqa:  F403
 import threading
-
-# Tests causing error in compatibility with python3 are commented
 
 
 class singletonmixin_Public_TestCase(unittest.TestCase):

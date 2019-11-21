@@ -1,3 +1,17 @@
+# Copyright 2019 Wingify Software Pvt. Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from __future__ import division
 import mmh3 as Hasher
 from ..constants import constants
@@ -7,6 +21,10 @@ from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
 
+# Took reference from StackOverflow(https://stackoverflow.com/) to:
+# convert signed to unsigned integer in python from StackOverflow
+# Author - Duncan (https://stackoverflow.com/users/107660/duncan)
+# Source - https://stackoverflow.com/a/20766900/2494535
 U_MAX_32_BIT = 0xFFFFFFFF
 FILE = FileNameEnum.Bucketer
 

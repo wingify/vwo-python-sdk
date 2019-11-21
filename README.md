@@ -1,6 +1,9 @@
 # VWO Python SDK
 
-[![PyPI version](https://badge.fury.io/py/vwo-python-sdk.svg)](https://pypi.org/project/vwo-python-sdk) [![Build Status](http://img.shields.io/travis/wingify/vwo-python-sdk/master.svg?style=flat)](http://travis-ci.org/wingify/vwo-python-sdk) [![Coverage Status](https://coveralls.io/repos/github/wingify/vwo-python-sdk/badge.svg?branch=master)](https://coveralls.io/github/wingify/vwo-python-sdk?branch=master)
+[![PyPI version](https://badge.fury.io/py/vwo-python-sdk.svg)](https://pypi.org/project/vwo-python-sdk)
+[![Build Status](http://img.shields.io/travis/wingify/vwo-python-sdk/master.svg?style=flat)](http://travis-ci.org/wingify/vwo-python-sdk)
+[![Coverage Status](https://coveralls.io/repos/github/wingify/vwo-python-sdk/badge.svg?branch=master)](https://coveralls.io/github/wingify/vwo-python-sdk?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 This open source library allows you to A/B Test your Website at server-side.
 
@@ -104,14 +107,9 @@ python setup.py test
 
 [vwo-python-sdk-example](https://github.com/wingify/vwo-python-sdk-example)
 
-## Credits
+## Third-party Resources and Credits
 
-We use the following open-source projects which are published under MIT License. Thanks to the authors and maintainers of the corresponding projects.
-
-* [mmh3](https://pypi.org/project/mmh3/) by Hajime Senuma
-* [requests](https://github.com/psf/requests) by [@psf](https://github.com/psf)
-* [jsonschema](https://github.com/Julian/jsonschema) by [@Julian](https://github.com/Julian)
-
+Refer [third-party-attributions.txt](https://github.com/wingify/vwo-python-sdk/blob/master/third-party-attributions.txt)
 
 ## Authors
 
@@ -122,32 +120,13 @@ We use the following open-source projects which are published under MIT License.
 
 Please go through our [contributing guidelines](https://github.com/wingify/vwo-python-sdk/blob/master/CONTRIBUTING.md)
 
+
 ## Code of Conduct
 
 [Code of Conduct](https://github.com/wingify/vwo-python-sdk/blob/master/CODE_OF_CONDUCT.md)
 
 ## License
 
-```text
-    MIT License
+[Apache License, Version 2.0](https://github.com/wingify/vwo-python-sdk/blob/master/LICENSE)
 
-    Copyright (c) 2019 Wingify Software Pvt. Ltd.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
-```
+Copyright 2019 Wingify Software Pvt. Ltd.
