@@ -1,3 +1,17 @@
+# Copyright 2019 Wingify Software Pvt. Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # flake8: noqa
 
 class LogMessageEnum:
@@ -37,7 +51,6 @@ class LogMessageEnum:
         GOT_STORED_VARIATION = '({file}): Got stored variation:{variation_name} of campaign:{campaign_key} for userId:{user_id} from UserStorage'
         NO_VARIATION_ALLOCATED = '({file}): UserId:{user_id} of Campaign:{campaign_key} type: {campaign_type} did not get any variation'
         USER_ELIGIBILITY_FOR_CAMPAIGN = '({file}): Is userId:{user_id} part of campaign? {is_user_part}'
-        AUDIENCE_CONDITION_NOT_MET = '({file}): userId:{user_id} does not become part of campaign because of not meeting audience conditions'
         GOT_VARIATION_FOR_USER = '({file}): userId:{user_id} for campaign:{campaign_key} type: {campaign_type} got variationName:{variation_name}'
         USER_GOT_NO_VARIATION = '({file}): userId:{user_id} for campaign:{campaign_key} type: {campaign_type} did not allot any variation'
         IMPRESSION_SUCCESS = '({file}): Impression event - {end_point} was successfully received by VWO having main keys: accountId:{account_id} userId:{user_id} campaignId:{campaign_id} and variationId:{variation_id}'
@@ -86,7 +99,6 @@ class LogMessageEnum:
 
         VARIABLE_NOT_FOUND = '({file}): Variable {variable_key} not found for campaing {campaign_key} and type {campaign_type} for user ID {user_id}'
         UNABLE_TO_TYPE_CAST = '({file}): Unable to typecast value: {value} of type: {of_type} to type: {variable_type}.'
-        VARIABLE_REQUESTED_WITH_WRONG_TYPE = '({file}): Got variable type:{got_variable_type}, but expected variable is of type:{expected_variable_type}. Please read docs and use correct API. Returning None.'
-
+        
         USER_NOT_IN_CAMPAIGN = '({file}): userId:{user_id} did not become part of campaign:{campaign_key} and campaign type:{campaign_type}'
         API_NOT_WORKING = '({file}): API: {api_name} not working, exception caught: {exception}. Please contact VWO Support for help.'

@@ -1,3 +1,17 @@
+# Copyright 2019 Wingify Software Pvt. Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from ..http.connection import Connection
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
@@ -20,6 +34,9 @@ class EventDispatcher(object):
         self.connection = Connection()
         self.EXCLUDE_KEYS = ['url']
 
+    # The method dispatch has references from "Optimizely Python SDK, version 3.2.0",
+    # Copyright 2016-2019, Optimizely, used under Apache 2.0 License.
+    # Source - https://github.com/optimizely/python-sdk/blob/master/optimizely/event_dispatcher.py
     def dispatch(self, impression):
         """ Dispatch the event represented by the impression object.
 

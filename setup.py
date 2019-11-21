@@ -1,3 +1,19 @@
+# Copyright 2019 Wingify Software Pvt. Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# flake8: noqa
+
 import os
 
 from setuptools import setup, find_packages
@@ -13,6 +29,20 @@ with open(os.path.join(current_directory, 'requirements.txt')) as f:
 
 with open("README.md", "r") as f:
     long_description = f.read()
+
+
+class LicenseCheckCommand(Command):
+    description = "License Check"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call('python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "Wingify Software Pvt. Ltd."', shell=True)
 
 
 class ReleasePatchCommand(Command):
@@ -79,12 +109,12 @@ setup(
     author='VWO',
     author_email='dev@wingify.com',
     url='https://github.com/wingify/vwo-python-sdk',
-    license='MIT',
+    license='Apache License 2.0',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
@@ -97,7 +127,8 @@ setup(
         'develop': PostDevelopCommand,
         'patch': ReleasePatchCommand,
         'minor': ReleaseMinorCommand,
-        'major': ReleaseMajorCommand
+        'major': ReleaseMajorCommand,
+        'license_check': LicenseCheckCommand,
     },
     packages=find_packages(
         exclude=['tests']
