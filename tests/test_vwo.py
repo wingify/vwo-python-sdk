@@ -336,10 +336,11 @@ class VWOTest(unittest.TestCase):
 
     def test_is_feature_enabled_FT_T_75_W_10_20_30_40(self):
         self.set_up('FT_T_75_W_10_20_30_40')
+        is_feature_not_enabled_variations = ['Control']
         for test in USER_EXPECTATIONS['T_75_W_10_20_30_40']:
             self.assertIs(
                 self.vwo.is_feature_enabled('FT_T_75_W_10_20_30_40', test['user']),
-                test['variation'] is not None
+                test['variation'] is not None and test['variation'] not in is_feature_not_enabled_variations
             )
 
     # Test get_feature_variable_value from rollout

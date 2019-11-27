@@ -547,7 +547,26 @@ class VWO(object):
                                                                variation.get('id'),
                                                                user_id)
                 self.event_dispatcher.dispatch(impression)
-
+                result = variation.get('isFeatureEnabled')
+                if result:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
+                            file=FILE,
+                            user_id=user_id,
+                            feature_key=campaign_key
+                        )
+                    )
+                else:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
+                            file=FILE,
+                            user_id=user_id,
+                            feature_key=campaign_key
+                        )
+                    )
+                return result
             return True
         except Exception as e:
             self.logger.log(
@@ -627,7 +646,7 @@ class VWO(object):
                     LogLevelEnum.ERROR,
                     LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
                         file=FILE,
-                        api_name='get_feature_variable',
+                        api_name='get_feature_variable_value',
                         campaign_key=campaign_key,
                         campaign_type=campaign_type,
                         user_id=user_id
@@ -708,7 +727,7 @@ class VWO(object):
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
                     file=FILE,
-                    api_name='get_feature_variable',
+                    api_name='get_feature_variable_value',
                     exception=e
                 )
             )
