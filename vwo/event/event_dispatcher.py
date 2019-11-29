@@ -32,7 +32,6 @@ class EventDispatcher(object):
         self.logger = VWOLogger.getInstance()
         self.is_development_mode = is_development_mode
         self.connection = Connection()
-        self.EXCLUDE_KEYS = ['url']
 
     # The method dispatch has references from "Optimizely Python SDK, version 3.2.0",
     # Copyright 2016-2019, Optimizely, used under Apache 2.0 License.
@@ -47,25 +46,19 @@ class EventDispatcher(object):
         Returns:
             bool: True for success, false for failure
         """
+        url = impression.pop('url')
         if self.is_development_mode:
-            return True
+            result = True
+        else:
+            resp = self.connection.get(url, params=impression)
+            result = resp.get('status_code') == 200
 
-        modified_event = {
-            key: impression[key] for key in impression if key not in self.EXCLUDE_KEYS
-        }
-        resp = self.connection.get(impression.get('url'),
-                                   params=modified_event
-                                   )
-        if resp.get('status_code') == 200:
+        if result is True:
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(
                     file=FileNameEnum.EventDispatcher,
-                    end_point=impression.get('url'),
-                    campaign_id=impression.get('experiment_id'),
-                    user_id=impression.get('uId'),
-                    account_id=impression.get('account_id'),
-                    variation_id=impression.get('combination')
+                    end_point=url,
                 )
             )
             return True
@@ -74,7 +67,7 @@ class EventDispatcher(object):
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(
                     file=FileNameEnum.EventDispatcher,
-                    end_point=impression.get('url')
+                    end_point=url,
                 )
             )
             return False

@@ -81,10 +81,10 @@ class user_storage(UserStorage):
   def set(self, user_storage_data):
     # ...code to persist data
 
-ups = user_storage()
+us = user_storage()
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
-vwo_client_instance = vwo.VWO(settings_file, user_storage = ups)
+vwo_client_instance = vwo.VWO(settings_file, user_storage = us)
 ```
 
 ## Documentation

@@ -16,12 +16,12 @@ import unittest
 import json
 import random
 import logging
+import mock
 
 import vwo
 from .data.settings_files import SETTINGS_FILES
 from .data.settings_file_and_user_expectations import USER_EXPECTATIONS
 from vwo.services import singleton
-from vwo.helpers import validate_util
 
 
 class VWOTest(unittest.TestCase):
@@ -207,7 +207,7 @@ class VWOTest(unittest.TestCase):
         self.set_up('AB_T_100_W_50_50')
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertIs(self.vwo.track(self.campaign_key, test['user'],
-                          self.goal_identifier, 23), test['variation']
+                          self.goal_identifier, revenue_value=23), test['variation']
                           is not None)
 
     def test_track_against_campaign_traffic_100_and_split_50_50_r_float(self):
@@ -215,7 +215,7 @@ class VWOTest(unittest.TestCase):
         self.set_up('AB_T_100_W_50_50')
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertIs(self.vwo.track(self.campaign_key, test['user'],
-                          self.goal_identifier, 23.3), test['variation']
+                          self.goal_identifier, revenue_value=23.3), test['variation']
                           is not None)
 
     def test_track_against_campaign_traffic_100_and_split_50_50_r_str(self):
@@ -223,7 +223,7 @@ class VWOTest(unittest.TestCase):
         self.set_up('AB_T_100_W_50_50')
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertIs(self.vwo.track(self.campaign_key, test['user'],
-                          self.goal_identifier, '23.3'), test['variation']
+                          self.goal_identifier, revenue_value='23.3'), test['variation']
                           is not None)
 
     def test_track_against_campaign_traffic_100_and_split_50_50_no_r(self):
@@ -545,53 +545,41 @@ class VWOTest(unittest.TestCase):
         )
 
     # test each api raises exception
+    # mock.patch referenced from https://stackoverflow.com/a/19107511
 
     def test_activate_raises_exception(self):
-        def mock_is_valid_string():
-            return None
-        is_valid_string, validate_util.is_valid_string = \
-            validate_util.is_valid_string, mock_is_valid_string
-        self.set_up()
-        self.assertIs(None, self.vwo.activate('SOME_CAMPAIGN', 'USER'))
-        validate_util.is_valid_string = is_valid_string
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(None, self.vwo.activate('SOME_CAMPAIGN', 'USER'))
 
     def test_get_variation_name_raises_exception(self):
-        def mock_is_valid_string():
-            return None
-        is_valid_string, validate_util.is_valid_string = \
-            validate_util.is_valid_string, mock_is_valid_string
-        self.set_up()
-        self.assertIs(None, self.vwo.get_variation_name('SOME_CAMPAIGN', 'USER'))
-        validate_util.is_valid_string = is_valid_string
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(None, self.vwo.get_variation_name('SOME_CAMPAIGN', 'USER'))
 
     def test_track_raises_exception(self):
-        def mock_is_valid_string():
-            return None
-        is_valid_string, validate_util.is_valid_string = \
-            validate_util.is_valid_string, mock_is_valid_string
-        self.set_up()
-        self.assertIs(None, self.vwo.track('SOME_CAMPAIGN', 'USER', 'GOAL'))
-        validate_util.is_valid_string = is_valid_string
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(False, self.vwo.track('SOME_CAMPAIGN', 'USER', 'GOAL'))
 
     def test_is_feature_enabled_raises_exception(self):
-        def mock_is_valid_string():
-            return None
-        is_valid_string, validate_util.is_valid_string = \
-            validate_util.is_valid_string, mock_is_valid_string
-        self.set_up()
-        self.assertIs(None, self.vwo.is_feature_enabled('SOME_CAMPAIGN', 'USER'))
-        validate_util.is_valid_string = is_valid_string
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(False, self.vwo.is_feature_enabled('SOME_CAMPAIGN', 'USER'))
 
     def test_get_feature_variable_raises_exception(self):
-        def mock_is_valid_string():
-            return None
-        is_valid_string, validate_util.is_valid_string = \
-            validate_util.is_valid_string, mock_is_valid_string
-        self.set_up()
-        self.assertIs(None, self.vwo.get_feature_variable_value('SOME_CAMPAIGN',
-                                                                'VARIABLE_KEY',
-                                                                'USER_ID'))
-        validate_util.is_valid_string = is_valid_string
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(None, self.vwo.get_feature_variable_value('SOME_CAMPAIGN',
+                                                                    'VARIABLE_KEY',
+                                                                    'USER_ID'))
+
+    def test_push_raises_exception(self):
+        with mock.patch('vwo.helpers.validate_util.is_valid_string', side_effect=Exception('Test')):
+            self.set_up()
+            self.assertIs(False, self.vwo.push('SOME_CAMPAIGN',
+                                               'VARIABLE_KEY',
+                                               'USER_ID'))
 
     def test_vwo_initialized_with_provided_log_level_DEBUG(self):
         vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), log_level=vwo.LogLevels.DEBUG)
@@ -604,6 +592,429 @@ class VWOTest(unittest.TestCase):
     def test_vwo_initialized_with_provided_log_level_50(self):
         vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'), log_level=50)
         self.assertEquals(vwo_instance.logger.logger.level, 50)
+
+    # test activate with presegmentation
+    def test_activate_with_no_custom_variables_fails(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=40,
+                               is_development_mode=True)
+        for test in USER_EXPECTATIONS.get('AB_T_50_W_50_50'):
+            self.assertEquals(
+                vwo_instance.activate('T_50_W_50_50_WS', test['user']),
+                None
+            )
+
+    def test_activate_with_no_dsl_remains_unaffected(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('AB_T_50_W_50_50')), log_level=10,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_50_W_50_50'):
+            self.assertEquals(
+                vwo_instance.activate('AB_T_50_W_50_50', test['user'],
+                                      custom_variables=true_custom_variables),
+                test['variation']
+            )
+
+    def test_activate_with_presegmentation_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_100_W_50_50_WS')), log_level=40,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_100_W_50_50'):
+            self.assertEquals(
+                vwo_instance.activate('T_100_W_50_50_WS', test['user'],
+                                      custom_variables=true_custom_variables),
+                test['variation']
+            )
+
+    def test_activate_with_presegmentation_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_100_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        false_custom_variables = {
+            'a': 987123,
+            'world': 'hello'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_100_W_50_50'):
+            self.assertEquals(
+                vwo_instance.activate('T_100_W_50_50_WS', test['user'],
+                                      custom_variables=false_custom_variables),
+                None
+            )
+
+    def test_get_variation_name_with_no_custom_variables_fails(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=40,
+                               is_development_mode=True)
+        for test in USER_EXPECTATIONS.get('AB_T_50_W_50_50'):
+            self.assertEquals(
+                vwo_instance.get_variation_name('T_50_W_50_50_WS', test['user']),
+                None
+            )
+
+    def test_get_variation_name_with_no_dsl_remains_unaffected(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=40,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_50_W_50_50'):
+            self.assertEquals(
+                vwo_instance.get_variation_name('T_50_W_50_50_WS', test['user'],
+                                                custom_variables=true_custom_variables),
+                test['variation']
+            )
+
+    def test_get_variation_name_with_presegmentation_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_100_W_50_50_WS')), log_level=40,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_100_W_50_50'):
+            self.assertEquals(
+                vwo_instance.get_variation_name('T_100_W_50_50_WS', test['user'],
+                                                custom_variables=true_custom_variables),
+                test['variation']
+            )
+
+    def test_get_variation_name_with_presegmentation_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_100_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        false_custom_variables = {
+            'a': 987123,
+            'world': 'hello'
+        }
+        for test in USER_EXPECTATIONS.get('AB_T_100_W_50_50'):
+            self.assertEquals(
+                vwo_instance.get_variation_name('T_100_W_50_50_WS', test['user'],
+                                                custom_variables=false_custom_variables),
+                None
+            )
+
+    def test_track_with_with_no_custom_variables_fails(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_100_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        for test in USER_EXPECTATIONS['AB_T_100_W_50_50']:
+            self.assertIs(vwo_instance.track('T_100_W_50_50_WS', test['user'],
+                          'ddd'), False)
+
+    def test_track_revenue_value_and_custom_variables_passed_in_args(self):
+        def mock_track(campaign_key, user_id, goal_identifier, *args, **kwargs):
+            revenue_value = None
+            custom_variables = None
+            if args:
+                revenue_value = args[0]
+                if len(args) >= 2:
+                    custom_variables = args[1]
+            if kwargs:
+                if revenue_value is None:
+                    revenue_value = kwargs.get('revenue_value', None)
+                if custom_variables is None:
+                    custom_variables = kwargs.get('custom_variables', None)
+            return{
+                'campaign_key': campaign_key,
+                'user_id': user_id,
+                'goal_identifier': goal_identifier,
+                'revenue_value': revenue_value,
+                'custom_variables': custom_variables
+            }
+        arguments_to_track = {
+            'campaign_key': 'TEST_TRACK',
+            'user_id': 'user_id',
+            'goal_identifier': 'GOAL_ID',
+            'revenue_value': 100,
+            'custom_variables': {
+                'a': 'b'
+            }
+        }
+        self.assertDictEqual(
+            mock_track(
+                arguments_to_track.get('campaign_key'),
+                arguments_to_track.get('user_id'),
+                arguments_to_track.get('goal_identifier'),
+                arguments_to_track.get('revenue_value'),
+                arguments_to_track.get('custom_variables')),
+            arguments_to_track
+        )
+
+    def test_track_revenue_value_args_and_custom_variables_passed_in_kwargs(self):
+        def mock_track(campaign_key, user_id, goal_identifier, *args, **kwargs):
+            revenue_value = None
+            custom_variables = None
+            if args:
+                revenue_value = args[0]
+                if len(args) >= 2:
+                    custom_variables = args[1]
+            if kwargs:
+                if revenue_value is None:
+                    revenue_value = kwargs.get('revenue_value', None)
+                if custom_variables is None:
+                    custom_variables = kwargs.get('custom_variables', None)
+            return{
+                'campaign_key': campaign_key,
+                'user_id': user_id,
+                'goal_identifier': goal_identifier,
+                'revenue_value': revenue_value,
+                'custom_variables': custom_variables
+            }
+        arguments_to_track = {
+            'campaign_key': 'TEST_TRACK',
+            'user_id': 'user_id',
+            'goal_identifier': 'GOAL_ID',
+            'revenue_value': 100,
+            'custom_variables': {
+                'a': 'b'
+            }
+        }
+        self.assertDictEqual(
+            mock_track(
+                arguments_to_track.get('campaign_key'),
+                arguments_to_track.get('user_id'),
+                arguments_to_track.get('goal_identifier'),
+                arguments_to_track.get('revenue_value'),
+                custom_variables=arguments_to_track.get('custom_variables')),
+            arguments_to_track
+        )
+
+    def test_track_revenue_value_and_custom_variables_passed_in_kwargs(self):
+        def mock_track(campaign_key, user_id, goal_identifier, *args, **kwargs):
+            revenue_value = None
+            custom_variables = None
+            if args:
+                revenue_value = args[0]
+                if len(args) >= 2:
+                    custom_variables = args[1]
+            if kwargs:
+                if revenue_value is None:
+                    revenue_value = kwargs.get('revenue_value', None)
+                if custom_variables is None:
+                    custom_variables = kwargs.get('custom_variables', None)
+            return{
+                'campaign_key': campaign_key,
+                'user_id': user_id,
+                'goal_identifier': goal_identifier,
+                'revenue_value': revenue_value,
+                'custom_variables': custom_variables
+            }
+        arguments_to_track = {
+            'campaign_key': 'TEST_TRACK',
+            'user_id': 'user_id',
+            'goal_identifier': 'GOAL_ID',
+            'revenue_value': 100,
+            'custom_variables': {
+                'a': 'b'
+            }
+        }
+        self.assertDictEqual(
+            mock_track(
+                arguments_to_track.get('campaign_key'),
+                arguments_to_track.get('user_id'),
+                arguments_to_track.get('goal_identifier'),
+                revenue_value=arguments_to_track.get('revenue_value'),
+                custom_variables=arguments_to_track.get('custom_variables')),
+            arguments_to_track
+        )
+
+    def test_track_no_revenue_value_and_custom_variables_passed_in_kwargs(self):
+        def mock_track(campaign_key, user_id, goal_identifier, *args, **kwargs):
+            revenue_value = None
+            custom_variables = None
+            if args:
+                revenue_value = args[0]
+                if len(args) >= 2:
+                    custom_variables = args[1]
+            if kwargs:
+                if revenue_value is None:
+                    revenue_value = kwargs.get('revenue_value', None)
+                if custom_variables is None:
+                    custom_variables = kwargs.get('custom_variables', None)
+            return{
+                'campaign_key': campaign_key,
+                'user_id': user_id,
+                'goal_identifier': goal_identifier,
+                'custom_variables': custom_variables
+            }
+        arguments_to_track = {
+            'campaign_key': 'TEST_TRACK',
+            'user_id': 'user_id',
+            'goal_identifier': 'GOAL_ID',
+            'custom_variables': {
+                'a': 'b'
+            }
+        }
+        self.assertDictEqual(
+            mock_track(
+                arguments_to_track.get('campaign_key'),
+                arguments_to_track.get('user_id'),
+                arguments_to_track.get('goal_identifier'),
+                custom_variables=arguments_to_track.get('custom_variables')),
+            arguments_to_track
+        )
+
+    def test_track_with_presegmentation_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS['AB_T_50_W_50_50']:
+            self.assertIs(vwo_instance.track('T_50_W_50_50_WS', test['user'],
+                          'ddd', custom_variables=true_custom_variables), test['variation']
+                          is not None)
+
+    def test_track_with_presegmentation_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        false_custom_variables = {
+            'a': 987.12,
+            'hello': 'world_world'
+        }
+        for test in USER_EXPECTATIONS['AB_T_50_W_50_50']:
+            self.assertIs(vwo_instance.track('T_50_W_50_50_WS', test['user'],
+                          'ddd', custom_variables=false_custom_variables), False)
+
+    def test_track_with_no_dsl_remains_unaffected(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('AB_T_50_W_50_50')), log_level=10,
+                               is_development_mode=True)
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS['AB_T_50_W_50_50']:
+            self.assertIs(vwo_instance.track('AB_T_50_W_50_50', test['user'],
+                          'CUSTOM', custom_variables=true_custom_variables),
+                          test['variation'] is not None)
+
+    def test_track_with_no_custom_variables_fails(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('T_50_W_50_50_WS')), log_level=10,
+                               is_development_mode=True)
+        for test in USER_EXPECTATIONS['AB_T_50_W_50_50']:
+            self.assertIs(vwo_instance.track('T_50_W_50_50_WS', test['user'],
+                          'ddd'), False)
+
+    def test_is_feature_enabled_FT_T_75_W_10_20_30_40_WS_true(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        is_feature_not_enabled_variations = ['Control']
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS['T_75_W_10_20_30_40']:
+            self.assertIs(
+                self.vwo.is_feature_enabled('FT_T_75_W_10_20_30_40_WS', test['user'],
+                                            custom_variables=true_custom_variables),
+                test['variation'] is not None and test['variation'] not in is_feature_not_enabled_variations)
+
+    def test_is_feature_enabled_FT_T_75_W_10_20_30_40_WS_false(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        false_custom_variables = {
+            'a': 987.12,
+            'hello': 'world_world'
+        }
+        for test in USER_EXPECTATIONS['T_75_W_10_20_30_40']:
+            self.assertIs(
+                self.vwo.is_feature_enabled('FT_T_75_W_10_20_30_40_WS', test['user'],
+                                            custom_variables=false_custom_variables), False)
+
+    def test_is_feature_enabled_FT_T_75_W_10_20_30_40_WS_false_custom_variables_in_kwargs(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        false_custom_variables = {
+            'a': 987.12,
+            'hello': 'world_world'
+        }
+        for test in USER_EXPECTATIONS['T_75_W_10_20_30_40']:
+            self.assertIs(
+                self.vwo.is_feature_enabled('FT_T_75_W_10_20_30_40_WS', test['user'],
+                                            custom_variables=false_custom_variables), False)
+
+    def test_get_feature_variable_value_type_string_from_feature_test_t_75_WS_true_kwargs(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        STRING_VARIABLE = USER_EXPECTATIONS['STRING_VARIABLE']
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('T_75_W_10_20_30_40'):
+            result = self.vwo.get_feature_variable_value(
+                'FT_T_75_W_10_20_30_40_WS',
+                'STRING_VARIABLE',
+                test['user'],
+                custom_variables=true_custom_variables
+            )
+            if result:
+                self.assertEquals(result, STRING_VARIABLE[test['variation']])
+
+    def test_get_feature_variable_value_type_string_from_feature_test_t_75_WS_true(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        STRING_VARIABLE = USER_EXPECTATIONS['STRING_VARIABLE']
+        true_custom_variables = {
+            'a': 987.1234,
+            'hello': 'world'
+        }
+        for test in USER_EXPECTATIONS.get('T_75_W_10_20_30_40'):
+            result = self.vwo.get_feature_variable_value(
+                'FT_T_75_W_10_20_30_40_WS',
+                'STRING_VARIABLE',
+                test['user'],
+                custom_variables=true_custom_variables
+            )
+            if result:
+                self.assertEquals(result, STRING_VARIABLE[test['variation']])
+
+    def test_get_feature_variable_value_type_string_from_feature_test_t_75_WS_false(self):
+        self.set_up('FT_T_75_W_10_20_30_40_WS')
+        false_custom_variables = {
+            'a': 987.12,
+            'hello': 'world_world'
+        }
+        for test in USER_EXPECTATIONS.get('T_75_W_10_20_30_40'):
+            result = self.vwo.get_feature_variable_value(
+                'FT_T_75_W_10_20_30_40_WS',
+                'STRING_VARIABLE',
+                test['user'],
+                custom_variables=false_custom_variables
+            )
+            self.assertEquals(result, None)
+
+    def test_push_corrupted_settings_file(self):
+        vwo_instace = vwo.VWO({}, log_level=10)
+        self.assertIs(False, vwo_instace.push("1234", '12435t4', '12343'))
+
+    def test_push_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(True, vwo_instance.push('browser', 'chrome', '12345'))
+
+    def test_push_int_value_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(False, vwo_instance.push('browser', 1, '12345'))
+
+    def test_push_longer_than_255_value_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(False, vwo_instance.push('browser', 'a' * 256, '12345'))
+
+    def test_push_exact_255_value_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(True, vwo_instance.push('browser', 'a' * 255, '12345'))
+
+    def test_push_longer_than_255_key_false(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(False, vwo_instance.push('a' * 256, 'browser', '12345'))
+
+    def test_push_exact_255_key_true(self):
+        vwo_instance = vwo.VWO(json.dumps(SETTINGS_FILES.get('DUMMY_SETTINGS_FILE')), log_level=50,
+                               is_development_mode=True)
+        self.assertIs(True, vwo_instance.push('a' * 255, 'browser', '12345'))
 
     def test_vwo_initialized_with_no_logger_no_log_level(self):
         vwo_instance = vwo.VWO(SETTINGS_FILES.get('AB_T_50_W_50_50'))

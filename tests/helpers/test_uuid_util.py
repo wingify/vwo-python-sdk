@@ -19,6 +19,8 @@ import uuid
 from vwo.services import singleton
 from vwo.helpers import uuid_util
 from ..data.settings_files import SETTINGS_FILES
+from ..data.constants import TEST_USER_ID
+
 
 VWO_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, 'https://vwo.com')
 
@@ -32,7 +34,7 @@ class UuidUtilTest(unittest.TestCase):
         singleton.forgetAllSingletons()
 
     def test_generate_empty_namespace(self):
-        result = uuid_util.generate('', 'demo_user')
+        result = uuid_util.generate('', TEST_USER_ID)
         self.assertIsNone(result)
 
     def test_generate_empty_name(self):
@@ -40,5 +42,5 @@ class UuidUtilTest(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_generate_valid_params(self):
-        result = uuid_util.generate(VWO_NAMESPACE, 'demo_user')
+        result = uuid_util.generate(VWO_NAMESPACE, TEST_USER_ID)
         self.assertIsNotNone(result)

@@ -30,7 +30,7 @@ class ValidateUtilTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES['AB_T_100_W_50_50']))
         self.assertIs(result, True)
 
-    def test_utility_validator(self):
+    def test_utility_validate_util(self):
         class InvalidUtility:
             pass
         result = validate_util.is_valid_service(InvalidUtility,

@@ -15,9 +15,8 @@
 """ Helper utility that creates an impression to send to server """
 
 import json
-import pkg_resources
 from ..constants import constants
-from ..helpers import function_util, uuid_util, validate_util
+from ..helpers import generic_util, uuid_util, validate_util
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
@@ -60,27 +59,19 @@ def create_impression(
     is_track_user_api = True
     if goal_id is not None:
         is_track_user_api = False
-    account_id = settings_file.get('accountId')
 
-    impression = dict(
-        account_id=account_id,
+    impression = get_common_properties(user_id, settings_file)
+
+    impression.update(
         experiment_id=campaign_id,
-        ap=constants.PLATFORM,
-        uId=quote(user_id.encode("utf-8")),
         combination=variation_id,
-        random=function_util.get_random_number(),
-        sId=function_util.get_current_unix_timestamp(),
-        u=uuid_util.generator_for(user_id, account_id)
     )
-    # Version and SDK constants
-    impression['sdk'] = 'python'
-    impression['sdk-v'] = pkg_resources.require(constants.SDK_NAME)[0].version
 
     url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL
     logger = VWOLogger.getInstance()
 
     if is_track_user_api:
-        impression.update(ed=json.dumps({'p': 'server'}))
+        impression.update(ed=json.dumps({'p': constants.PLATFORM}))
         impression.update(url=url + constants.ENDPOINTS.TRACK_USER)
         logger.log(
             LogLevelEnum.DEBUG,
@@ -102,3 +93,28 @@ def create_impression(
             )
         )
     return impression
+
+
+def get_common_properties(user_id, settings_file):
+    """ Returns commonly used params for making requests to our servers.
+
+    Args:
+        user_id (string): Unique identification of user
+        settings_file: settings file containg campaign data for extracting account_id
+
+    Returns:
+        properties(object): commonly used params for making call to our servers
+    """
+
+    account_id = settings_file.get('accountId')
+    properties = {
+        'random': generic_util.get_random_number(),
+        'sdk': constants.SDK_NAME,
+        'sdk-v': constants.SDK_VERSION,
+        'ap': constants.PLATFORM,
+        'sId': generic_util.get_current_unix_timestamp(),
+        'u': uuid_util.generator_for(user_id, account_id),
+        'account_id': account_id,
+        'uId': quote(user_id.encode("utf-8")),
+    }
+    return properties

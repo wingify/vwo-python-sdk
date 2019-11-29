@@ -157,3 +157,14 @@ def get_control_variation(campaign):
         if int(variation.get('id')) == 1:
             return variation
     return None
+
+
+def get_segments(campaign):
+    """ Returns segments from the campaign
+
+    Args:
+        campaign(dict): Running campaign
+    Returns:
+        segments(dict): a dsl of segments
+    """
+    return campaign.get('segments')

@@ -37,15 +37,15 @@ class VariationDeciderTest(unittest.TestCase):
 
     def test_init_with_valid_user_storage(self):
 
-        class UPS:
+        class US:
             def set(self, user_data):
                 pass
 
             def get(self, user_id, campaign_key):
                 pass
 
-        decisor = variation_decider.VariationDecider(self.settings_file, UPS())
-        self.assertIsInstance(decisor.user_storage, UPS)
+        decisor = variation_decider.VariationDecider(self.settings_file, US())
+        self.assertIsInstance(decisor.user_storage, US)
 
     def test_init_with_our_user_storage(self):
         decisor = variation_decider.VariationDecider(self.settings_file,
@@ -139,14 +139,14 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_with_user_storage_(self):
         client_db = {}
 
-        class UPS(UserStorage):
+        class US(UserStorage):
             def get(self, user_id, campaing_test_key):
                 return client_db.get(user_id)
 
             def set(self, user_data):
                 client_db[user_data['userId']] = user_data
 
-        decisor = variation_decider.VariationDecider(self.settings_file, UPS())
+        decisor = variation_decider.VariationDecider(self.settings_file, US())
 
         # First let decisor compute variation, and store
         user_id = 'Sarah'
@@ -172,14 +172,14 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_with_broken_set_in_user_storage(self):
         client_db = {}
 
-        class UPS(UserStorage):
+        class US(UserStorage):
             def get(self, user_id, campaign_key):
                 return client_db.get(user_id)
 
             def set(self):
                 pass
 
-        decisor = variation_decider.VariationDecider(self.settings_file, UPS())
+        decisor = variation_decider.VariationDecider(self.settings_file, US())
 
         user_id = 'Sarah'
         variation = decisor.get_variation(
@@ -193,7 +193,7 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_with_broken_get_in_user_storage(self):
         client_db = {}
 
-        class UPS(UserStorage):
+        class US(UserStorage):
             def get(self):
                 # def get(self, user_id): pass works, check later to rectify
                 pass
@@ -201,7 +201,7 @@ class VariationDeciderTest(unittest.TestCase):
             def set(self, user_data):
                 client_db[user_data['userId']] = user_data
 
-        decisor = variation_decider.VariationDecider(self.settings_file, UPS())
+        decisor = variation_decider.VariationDecider(self.settings_file, US())
 
         user_id = 'Sarah'
         variation = decisor.get_variation(
@@ -223,14 +223,14 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_with_user_storage_but_no_stored_variation(self):
         client_db = {}
 
-        class UPS(UserStorage):
+        class US(UserStorage):
             def get(self, user_id, campaign_key):
                 return client_db.get(user_id)
 
             def set(self, user_data):
                 client_db[user_data['userId']] = user_data
 
-        decisor = variation_decider.VariationDecider(self.settings_file, UPS())
+        decisor = variation_decider.VariationDecider(self.settings_file, US())
 
         # First let decisor compute variation, and store
         user_id = 'Sarah'

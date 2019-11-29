@@ -13,8 +13,11 @@
 # limitations under the License.
 
 import os
+import pkg_resources
 
 SDK_NAME = 'vwo-python-sdk'
+SDK_VERSION = pkg_resources.require(SDK_NAME)[0].version
+API_VERSION = 1
 PLATFORM = 'server'
 SEED_VALUE = 1
 MAX_TRAFFIC_PERCENT = 100
@@ -30,6 +33,7 @@ class ENDPOINTS:
     ACCOUNT_SETTINGS = '/server-side/settings'
     TRACK_USER = '/server-side/track-user'
     TRACK_GOAL = '/server-side/track-goal'
+    PUSH = '/server-side/push'
 
 
 class EVENTS:
@@ -45,10 +49,12 @@ class DATA_TYPE:
 
 
 class API_METHODS:
-    CREATE_INSTANCE = 'CREATE_INSTANCE'
-    ACTIVATE = 'ACTIVATE'
-    GET_VARIATION_NAME = 'GET_VARIATION_NAME'
-    TRACK = 'TRACK'
+    ACTIVATE = 'activate'
+    GET_VARIATION_NAME = 'get_variation_name'
+    TRACK = 'track'
+    IS_FEATURE_ENABLED = 'is_feature_enabled'
+    GET_FEATURE_VARIABLE_VALUE = 'get_feature_variable_value'
+    PUSH = 'push'
 
 
 class GOAL_TYPES:
@@ -67,6 +73,11 @@ class VARIABLE_TYPES:
     INTEGER = 'integer'
     DOUBLE = 'double'
     BOOLEAN = 'boolean'
+
+
+class PUSH_API:
+    TAG_VALUE_LENGTH = 255
+    TAG_KEY_LENGTH = 255
 
 
 PY_VARIABLE_TYPES = {

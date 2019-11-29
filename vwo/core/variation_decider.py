@@ -31,7 +31,8 @@ class VariationDecider(object):
             UserStorage and logger.
 
         Args:
-            settings_file (dict): Settings file of the project.
+            settings_file (dict): settings_file consisting all the campaign
+            related data
             user_storage: Class instance having the capabilty of
                 get and set.
         """
@@ -47,8 +48,8 @@ class VariationDecider(object):
 
     def get_variation(self, user_id, campaign, campaign_key):
         """ Returns variation for the user for required campaign
-            First looksup in the UPS, if user_storage_data is found,
-                return from there
+            First looksup in the UserStorage, if user_storage_data is found,
+                returns from there
             Else, calculates the variation with helper method
 
         Args:
@@ -114,7 +115,7 @@ class VariationDecider(object):
 
         Args:
             user_id (string): the unique ID assigned to User
-            campaign (dict): campaign bro
+            campaign (dict): campaign in which user is participating
 
         Returns:
             dict: Variation object allotted to User
@@ -166,7 +167,7 @@ class VariationDecider(object):
 
         Args:
             user_id (string): the unique ID assigned to a user
-            campaign (dict): the Campaign of which user is to be made a part of
+            campaign (dict): campaign in which user is participating
 
         Returns:
             (dict|None): Variation allotted to User
@@ -218,13 +219,13 @@ class VariationDecider(object):
         get the stored variation
 
         Args:
-            user_id (string): user_id
-            campaign_key (string): campaign identified
+            user_id (string): Unique user identifier
+            campaign_key (string): Unique campaign identifier
             user_campaign_map (dict):
-                BucketMap consisting of stored user variation
+                CampaignMap consisting the stored user variation
 
         Returns:
-            (Object|None): if found then variation settings object
+            (Object|None): if found then variation object
                 otherwise None
         """
 
@@ -262,7 +263,7 @@ class VariationDecider(object):
 
         Args:
             user_id (string): Unique user identifier
-
+            campaign_key (string): Unique campaign identifier
         Returns:
             dict: user_storage_data data
         """
@@ -270,7 +271,7 @@ class VariationDecider(object):
         if not self.user_storage:
             self.logger.log(
                 LogLevelEnum.DEBUG,
-                LogMessageEnum.DEBUG_MESSAGES.NO_user_storage_get.format(
+                LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(
                     file=FILE
                 )
             )
@@ -279,7 +280,7 @@ class VariationDecider(object):
             user_campaign_map = self.user_storage.get(user_id, campaign_key)
             self.logger.log(
                 LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.LOOKING_UP_user_storage.format(
+                LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_STORAGE.format(
                     file=FILE,
                     user_id=user_id
                 )
@@ -288,7 +289,7 @@ class VariationDecider(object):
         except Exception:
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.LOOK_UP_user_storage_FAILED.format(
+                LogMessageEnum.ERROR_MESSAGES.LOOK_UP_USER_STORAGE_FAILED.format(
                     file=FILE,
                     user_id=user_id
                 )
@@ -296,8 +297,8 @@ class VariationDecider(object):
             return False
 
     def _set_user_storage_data(self, user_id, campaign_key, variation_name):
-        """ If UserStorage is provided and variation was stored,
-        set the assigned variation
+        """ If UserStorage is provided and variation was found,
+        set the assigned variation in UserStorage.
             It creates bucket and then stores.
 
         Args:
@@ -312,7 +313,7 @@ class VariationDecider(object):
         if not self.user_storage:
             self.logger.log(
                 LogLevelEnum.DEBUG,
-                LogMessageEnum.DEBUG_MESSAGES.NO_user_storage_set.format(
+                LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_SET.format(
                     file=FILE
                 )
             )
@@ -327,7 +328,7 @@ class VariationDecider(object):
             self.user_storage.set(new_user_campaign_map)
             self.logger.log(
                 LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.SAVING_DATA_user_storage.format(
+                LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_STORAGE.format(
                     file=FILE,
                     user_id=user_id
                 )
@@ -336,7 +337,7 @@ class VariationDecider(object):
         except Exception:
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.set_user_storage_FAILED.format(
+                LogMessageEnum.ERROR_MESSAGES.SET_USER_STORAGE_FAILED.format(
                     file=FILE,
                     user_id=user_id
                 )

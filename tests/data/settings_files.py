@@ -21,6 +21,7 @@
                    FT = FEATURE_TEST
                    FR = FEATURE_ROLLOUT
                    IFEF = isFeatureEnabled is False
+                   WS = With Segments
 
     Campaigns key of each campaign is same as setttings_file name.
 """
@@ -1444,5 +1445,252 @@ SETTINGS_FILES = {
         ],
         "accountId": 123456,
         "version": 2
-    }
+    },
+    'T_100_W_50_50_WS': {
+        "sdkKey": "some_unique_key",
+        "campaigns": [
+            {
+                "percentTraffic": 100,
+                "goals": [
+                    {
+                        "identifier": "ddd",
+                        "id": 453,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {
+
+                        },
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {
+
+                        },
+                        "weight": 50
+                    }
+                ],
+                "id": 174,
+                "segments": {
+                    "and": [
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "a": "wildcard(*123*)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "hello": "regex(world)"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "key": "T_100_W_50_50_WS",
+                "status": "RUNNING",
+                "type": "VISUAL_AB"
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1
+    },
+    'T_50_W_50_50_WS': {
+        "sdkKey": "some_unique_key",
+        "campaigns": [
+            {
+                "percentTraffic": 50,
+                "goals": [
+                    {
+                        "identifier": "ddd",
+                        "id": 453,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {
+
+                        },
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {
+
+                        },
+                        "weight": 50
+                    }
+                ],
+                "id": 174,
+                "segments": {
+                    "and": [
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "a": "wildcard(*123*)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "hello": "regex(world)"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "key": "T_50_W_50_50_WS",
+                "status": "RUNNING",
+                "type": "VISUAL_AB"
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1
+    },
+    'FT_T_75_W_10_20_30_40_WS': {
+        'sdkKey': 'someuniquestuff1234567',
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "FEATURE_TEST_GOAL",
+                        "id": 203,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": "1",
+                        "name": "Control",
+                        "weight": 10,
+                        "variables": [
+                            {
+                                "id": 1,
+                                "key": "STRING_VARIABLE",
+                                "type": "string",
+                                "value": "Control string"
+                            },
+                            {
+                                "id": 2,
+                                "key": "INTEGER_VARIABLE",
+                                "type": "integer",
+                                "value": 123
+                            }
+                        ],
+                        "isFeatureEnabled": False
+                    },
+                    {
+                        "id": "2",
+                        "name": "Variation-1",
+                        "weight": 20,
+                        "variables": [
+                            {
+                                "id": 1,
+                                "key": "STRING_VARIABLE",
+                                "type": "string",
+                                "value": "Variation-1 string"
+                            },
+                            {
+                                "id": 2,
+                                "key": "INTEGER_VARIABLE",
+                                "type": "integer",
+                                "value": 456
+                            }
+                        ],
+                        "isFeatureEnabled": True
+                    },
+                    {
+                        "id": "3",
+                        "name": "Variation-2",
+                        "weight": 30,
+                        "variables": [
+                            {
+                                "id": 1,
+                                "key": "STRING_VARIABLE",
+                                "type": "string",
+                                "value": "Variation-2 string"
+                            },
+                            {
+                                "id": 2,
+                                "key": "INTEGER_VARIABLE",
+                                "type": "integer",
+                                "value": 789
+                            }
+                        ],
+                        "isFeatureEnabled": True
+                    },
+                    {
+                        "id": "4",
+                        "name": "Variation-3",
+                        "weight": 40,
+                        "variables": [
+                            {
+                                "id": 1,
+                                "key": "STRING_VARIABLE",
+                                "type": "string",
+                                "value": "Variation-3 string"
+                            },
+                            {
+                                "id": 2,
+                                "key": "INTEGER_VARIABLE",
+                                "type": "integer",
+                                "value": 100
+                            }
+                        ],
+                        "isFeatureEnabled": True
+                    }
+                ],
+                "id": 22,
+                "percentTraffic": 75,
+                "key": "FT_T_75_W_10_20_30_40_WS",
+                "status": "RUNNING",
+                "type": "FEATURE_TEST",
+                "segments": {
+                    "and": [
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "a": "wildcard(*123*)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "hello": "regex(world)"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+            },
+        ],
+        "accountId": 123456,
+        "version": 2
+    },
 }

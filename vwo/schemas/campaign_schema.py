@@ -62,6 +62,9 @@ CAMPAIGN = {
                 'items': VARIABLE
             },
             'else': EMPTY_OBJECT
+        },
+        'segments': {
+            'type': 'object'
         }
     },
     'required': [
@@ -70,6 +73,6 @@ CAMPAIGN = {
         'status',
         'percentTraffic',
         'variations',
-        'goals'
+        'goals',
     ]
 }

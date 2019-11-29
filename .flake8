@@ -3,4 +3,5 @@ ignore = E111
 max-line-length = 120
 max-complexity = 18
 per-file-ignores =
-  vwo/helpers/enums.py:E501
+  vwo/enums/log_message_enum.py:E501
+  tests/services/pre_segmentation/*:E501

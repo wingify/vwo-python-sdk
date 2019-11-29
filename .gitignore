@@ -8,6 +8,8 @@ server_app.py
 seecov.sh
 venv*
 .coverage
+license_appender.py
+append_license.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

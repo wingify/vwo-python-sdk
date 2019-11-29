@@ -26,7 +26,7 @@ services = {
 
 
 def is_valid_settings_file(settings_file):
-    """ Validates the project settings_file
+    """ Validates the settings_file
 
     Args:
         settings_file (json):
@@ -87,6 +87,10 @@ def is_valid_log_level(level):
         return is_valid_number(level)
 
 
+def is_valid_dict(val):
+    return type(val) is dict
+
+
 def is_valid_value(val):
     return val is not None and bool(val)
 
@@ -101,3 +105,7 @@ def is_valid_number(val):
 
 def is_valid_string(val):
     return type(val) == str and is_valid_value(val)
+
+
+def is_valid_basis_data_type(val):
+    return type(val) in [int, float, bool, str]
