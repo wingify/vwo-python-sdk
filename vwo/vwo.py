@@ -28,6 +28,7 @@ from .services.segmentor import segment_evaluator
 
 FILE = FileNameEnum.VWO
 
+sys.sleep(100000)
 
 class VWO(object):
     """ The VWO class which exposes all the SDK APIs for full stack
