@@ -116,6 +116,10 @@ Refer [third-party-attributions.txt](https://github.com/wingify/vwo-python-sdk/b
 * Main Contributor - [Shravan Chaudhary](https://github.com/shravanchaudhary)
 * Repo health maintainer - [Varun Malhotra](https://github.com/softvar)([@s0ftvar](https://twitter.com/s0ftvar))
 
+## Changelog
+
+Refer [CHANGELOG.md](https://github.com/wingify/vwo-python-sdk/blob/master/CHANGELOG.md)
+
 ## Contributing
 
 Please go through our [contributing guidelines](https://github.com/wingify/vwo-python-sdk/blob/master/CONTRIBUTING.md)
