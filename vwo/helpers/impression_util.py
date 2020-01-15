@@ -26,6 +26,8 @@ try:
 except ImportError:
     from urllib.parse import quote  # Python 3+
 
+FILE = FileNameEnum.Helpers.ImpressionUtil
+
 
 def create_impression(
     settings_file,
@@ -76,7 +78,7 @@ def create_impression(
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_USER.format(
-                file=FileNameEnum.ImpressionUtil,
+                file=FILE,
                 properties=json.dumps(impression)
             )
         )
@@ -88,7 +90,7 @@ def create_impression(
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_GOAL.format(
-                file=FileNameEnum.ImpressionUtil,
+                file=FILE,
                 properties=json.dumps(impression)
             )
         )
@@ -100,7 +102,7 @@ def get_common_properties(user_id, settings_file):
 
     Args:
         user_id (string): Unique identification of user
-        settings_file: settings file containg campaign data for extracting account_id
+        settings_file: settings file containing campaign data for extracting account_id
 
     Returns:
         properties(object): commonly used params for making call to our servers

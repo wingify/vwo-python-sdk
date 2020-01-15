@@ -21,6 +21,7 @@ from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
 
 VWO_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, 'https://vwo.com')
+FILE = FileNameEnum.Helpers.UuidUtil
 
 
 def generator_for(user_id, account_id):
@@ -44,7 +45,7 @@ def generator_for(user_id, account_id):
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.UUID_FOR_USER.format(
-            file=FileNameEnum.UuidUtil,
+            file=FILE,
             user_id=user_id,
             account_id=account_id,
             desired_uuid=desired_uuid
@@ -54,7 +55,7 @@ def generator_for(user_id, account_id):
 
 
 def generate(namespace, name):
-    """ Generated uuid from namespace and name, uses uuid5 from python uuid moduele
+    """ Generated uuid from namespace and name, uses uuid5 from python uuid module
 
     Args:
         namespace (string): Namespace

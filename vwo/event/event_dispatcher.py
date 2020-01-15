@@ -18,6 +18,8 @@ from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
 
+FILE = FileNameEnum.Event.EventDispatcher
+
 
 class EventDispatcher(object):
     """ Class having request making/event dispatching capabilities to our servers"""
@@ -57,7 +59,7 @@ class EventDispatcher(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(
-                    file=FileNameEnum.EventDispatcher,
+                    file=FILE,
                     end_point=url,
                 )
             )
@@ -66,7 +68,7 @@ class EventDispatcher(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(
-                    file=FileNameEnum.EventDispatcher,
+                    file=FILE,
                     end_point=url,
                 )
             )

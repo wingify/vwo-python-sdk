@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-""" Utitlity module for manipulating VWO campaigns """
+""" Utility module for manipulating VWO campaigns """
 
+from __future__ import division
 import math
 from ..constants import constants
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
+
+FILE = FileNameEnum.Helpers.CampaignUtil
 
 
 def get_campaign(settings_file, campaign_key):
@@ -45,25 +48,13 @@ def set_variation_allocation(campaign):
     Args:
         campaign (dict): Campaign object
     """
-
-    current_allocation = 0
+    variation_allocations_ranges = get_variation_allocation_ranges(campaign.get('variations'))
+    set_variation_allocation_from_ranges(campaign.get('variations'), variation_allocations_ranges)
     for variation in campaign.get('variations'):
-        step_factor = _get_variation_bucketing_range(variation.get('weight'))
-        if step_factor:
-            start_range = current_allocation + 1
-            end_range = current_allocation + step_factor
-            variation.update(start_variation_allocation=start_range,
-                             end_variation_allocation=end_range
-                             )
-            current_allocation += step_factor
-        else:
-            variation.update(start_variation_allocation=-1,
-                             end_variation_allocation=-1
-                             )
         VWOLogger.getInstance().log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.VARIATION_RANGE_ALLOCATION.format(
-                file=FileNameEnum.CampaignUtil,
+                file=FILE,
                 campaign_key=campaign.get('key'),
                 variation_name=variation.get('name'),
                 variation_weight=variation.get('weight'),
@@ -71,6 +62,44 @@ def set_variation_allocation(campaign):
                 end=variation.get('end_variation_allocation')
             )
         )
+
+
+def set_variation_allocation_from_ranges(variations, variation_allocations_ranges):
+    """Sets variations allocation ranges on each variation as start_variation_allocation and
+    end_variation_allocation.
+
+    Args:
+        variations(list): List of variation objects
+        variation_allocation_ranges(list): List of tuples having starting and ending variation
+        allocation range for each variation
+    """
+    for i, variation in enumerate(variations):
+        variation.update(start_variation_allocation=variation_allocations_ranges[i][0],
+                         end_variation_allocation=variation_allocations_ranges[i][1])
+
+
+def get_variation_allocation_ranges(variations):
+    """ Returns a list of variation allocation ranges.
+
+    Args:
+        variations (list): List of variation(dict object)
+
+    Returns:
+        list(tuple): list of tuple(start_range, end_range) for each
+        variation
+    """
+    current_allocation = 0
+    variation_allocation_ranges = []
+    for variation in variations:
+        step_factor = _get_variation_bucketing_range(variation.get('weight'))
+        if step_factor:
+            start_range = current_allocation + 1
+            end_range = current_allocation + step_factor
+            variation_allocation_ranges.append((start_range, end_range))
+            current_allocation += step_factor
+        else:
+            variation_allocation_ranges.append((-1, -1))
+    return variation_allocation_ranges
 
 
 def _get_variation_bucketing_range(weight):
@@ -145,10 +174,10 @@ def get_variable(variables, variable_key):
 
 
 def get_control_variation(campaign):
-    """ Returns control variation from a given campaing
+    """ Returns control variation from a given campaign
 
     Args:
-        campaing (dict): Running campaign
+        campaign (dict): Running campaign
     Returns:
         variation (dict): Control variation from the campaign, ie having id = 1
     """
@@ -168,3 +197,20 @@ def get_segments(campaign):
         segments(dict): a dsl of segments
     """
     return campaign.get('segments')
+
+
+def scale_variations(variations):
+    """ It extracts the weights from all the variations inside the campaign
+    and scales them so that the total sum of eligible variations' weights become 100%
+
+    Args:
+        variations(list): list of variations(dict object) having weight as a property
+    """
+    weight_sum = sum(variation.get('weight') for variation in variations)
+    if weight_sum == 0:
+        normalized_weight = 100 / len(variations)
+        for variation in variations:
+            variation['weight'] = normalized_weight
+    else:
+        for variation in variations:
+            variation['weight'] = (variation['weight'] / weight_sum) * 100

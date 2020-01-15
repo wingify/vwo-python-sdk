@@ -16,29 +16,43 @@
 class FileNameEnum:
     """ Classobj encapsulating locations various files of the SDK """
 
-    VWO_PATH = 'vwo/'
-    HELPERS_PATH = 'vwo/helpers/'
-    SERVICES_PATH = 'vwo/services/'
-    CORE_PATH = 'vwo/core/'
-    EVENT_PATH = 'vwo/event/'
-    LOGGER_PATH = 'logger/'
+    class Vwo:
+        VWO_PATH = 'vwo/'
+        VWO = VWO_PATH + 'vwo'
 
-    VWO = VWO_PATH + 'vwo'
+    class Api:
+        API_PATH = 'vwo/api/'
+        Activate = API_PATH + 'activate'
+        GetVariationName = API_PATH + 'get_variation_name'
+        Track = API_PATH + 'track'
+        IsFeatureEnabled = API_PATH + 'is_feature_enabled'
+        GetFeatureVariableValue = API_PATH + 'get_feature_variable_value'
+        Push = API_PATH + 'push'
 
-    CampaignUtil = HELPERS_PATH + 'campaign_util'
-    Functionutil = HELPERS_PATH + 'generic_util'
-    UuidUtil = HELPERS_PATH + 'uuid_util'
-    ValidateUtil = HELPERS_PATH + 'validate_util'
-    FeatureUtil = HELPERS_PATH + 'feature_util'
-    CustomDimensionsUtil = HELPERS_PATH + 'custom_dimensions_util'
+    class Core:
+        CORE_PATH = 'vwo/core/'
+        Bucketer = CORE_PATH + 'bucketer'
+        VariationDecider = CORE_PATH + 'variation_decider'
 
-    SettingsFileManager = SERVICES_PATH + 'settings_file_manager'
-    SegmentEvaluator = SERVICES_PATH + 'segment_evaluator'
+    class Event:
+        EVENT_PATH = 'vwo/event/'
+        EventDispatcher = EVENT_PATH + 'event_dispatcher'
 
-    Bucketer = CORE_PATH + 'bucketer'
-    VariationDecider = CORE_PATH + 'variation_decider'
+    class Helpers:
+        HELPERS_PATH = 'vwo/helpers/'
+        CampaignUtil = HELPERS_PATH + 'campaign_util'
+        CustomDimensionsUtil = HELPERS_PATH + 'custom_dimensions_util'
+        FeatureUtil = HELPERS_PATH + 'feature_util'
+        GenericUtil = HELPERS_PATH + 'generic_util'
+        ImpressionUtil = HELPERS_PATH + 'impression_util'
+        UuidUtil = HELPERS_PATH + 'uuid_util'
+        ValidateUtil = HELPERS_PATH + 'validate_util'
 
-    ImpressionUtil = EVENT_PATH + 'impression_util'
-    EventDispatcher = EVENT_PATH + 'event_dispatcher'
+    class Logger:
+        LOGGER_PATH = 'vwo/logger/'
+        LoggerManager = LOGGER_PATH + 'logger_manager'
 
-    LoggerManager = LOGGER_PATH + 'logger_manager'
+    class Services:
+        SERVICES_PATH = 'vwo/services/'
+        SettingsFileManager = SERVICES_PATH + 'settings_file_manager'
+        SegmentEvaluator = SERVICES_PATH + 'segment_evaluator'

@@ -21,6 +21,8 @@ from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 import json
 
+FILE = FileNameEnum.Helpers.CustomDimensionsUtil
+
 
 def get_url_params(settings_file, tag_key, tag_value, user_id):
 
@@ -40,7 +42,7 @@ def get_url_params(settings_file, tag_key, tag_value, user_id):
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.PARAMS_FOR_PUSH_CALL.format(
-            file=FileNameEnum.CustomDimensionsUtil,
+            file=FILE,
             properties=json.dumps(params)
         )
     )

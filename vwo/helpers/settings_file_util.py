@@ -23,16 +23,16 @@ from ..helpers import generic_util, validate_util
 
 
 def get(account_id, sdk_key):
-    """ Get method to retrieve settings_file for customer from dacdn server
+    """ Get method to retrieve settings_file for customer from our server
 
     Args:
-        account_id (string): Acount ID of user
+        account_id (string): Account ID of user
         sdk_key (string): Unique sdk key for user,
             can be retrieved from our webside
 
     Returns:
         json_string|None: Json representation of settings_file,
-            as recieved from the website,
+            as received from the website,
             None if no settings_file is found or sdk_key is incorrect
     """
 
@@ -56,10 +56,10 @@ def get(account_id, sdk_key):
         'platform': constants.PLATFORM,
         'api-version': constants.API_VERSION
     }
-    dacdn_url = protocol + hostname + path
+    server_url = protocol + hostname + path
     try:
         settings_file_response = requests.get(
-            dacdn_url,
+            server_url,
             params=parameters
         )
         if settings_file_response.status_code != 200:

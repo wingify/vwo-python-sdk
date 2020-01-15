@@ -20,6 +20,7 @@ from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from logging import DEBUG, INFO, WARNING, ERROR
 
+FILE = FileNameEnum.Logger.LoggerManager
 _VWO_LOG_FORMAT = 'VWO-SDK - [%(levelname)s]: %(asctime)s %(message)s'
 _DEFAULT_LOGGING_LEVEL = logging.ERROR
 
@@ -38,7 +39,7 @@ def set_log_handler(logger, handler):
 def configure_logger(name=__name__, level=None, handler=logging.StreamHandler()):
     """ Creates a new logger instance with given name if it does not
     exists, else retrives existing logger. Then it configures logging.Logger
-    instance recieved with given level and handler.
+    instance received with given level and handler.
 
     Args:
         name (string): constant name for logger
@@ -70,9 +71,9 @@ def configure_logger(name=__name__, level=None, handler=logging.StreamHandler())
     logger.log(
         DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.LOG_LEVEL_SET.format(
-            file=FileNameEnum.LoggerManager,
+            file=FILE,
             level=level
-        )
+        ).replace('API_NAME', 'SDK', 1)
     )
     return logger
 
@@ -98,6 +99,8 @@ class VWOLogger(singleton.Singleton):
                     CustomLogger|
                     None): A logger instance
         """
+        # Set default api name as SDK
+        self.api_name = 'SDK'
 
         if not logger:
             self.logger = configure_logger(__name__)
@@ -105,8 +108,8 @@ class VWOLogger(singleton.Singleton):
             logger.log(
                 DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.LOGGING_LOGGER_INSTANCE_USED.format(
-                    file=FileNameEnum.LoggerManager
-                )
+                    file=FILE
+                ).replace('API_NAME', self.api_name, 1)
             )
             self.logger = logger
         elif validate_util.is_valid_service(logger, 'logger'):
@@ -114,8 +117,8 @@ class VWOLogger(singleton.Singleton):
                 logger.log(
                     DEBUG,
                     LogMessageEnum.DEBUG_MESSAGES.CUSTOM_LOGGER_USED.format(
-                        file=FileNameEnum.LoggerManager
-                    )
+                        file=FILE
+                    ).replace('API_NAME', self.api_name, 1)
                 )
                 self.logger = logger
             except Exception:
@@ -124,9 +127,9 @@ class VWOLogger(singleton.Singleton):
                     ERROR,
                     LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.
                     format(
-                        file=FileNameEnum.LoggerManager,
+                        file=FILE,
                         extra_info='log method is invalid.'
-                    )
+                    ).replace('API_NAME', self.api_name, 1)
                 )
         else:
             self.logger = configure_logger(__name__)
@@ -134,10 +137,13 @@ class VWOLogger(singleton.Singleton):
                 ERROR,
                 LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.
                 format(
-                    file=FileNameEnum.LoggerManager,
+                    file=FILE,
                     extra_info='log method is not provided.'
-                )
+                ).replace('API_NAME', self.api_name, 1)
             )
+
+    def set_api(self, api_name):
+        self.api_name = api_name
 
     def log(self, level, message):
         """ Log method which takes two parameters and logs the message according to
@@ -149,7 +155,7 @@ class VWOLogger(singleton.Singleton):
         """
 
         try:
-            self.logger.log(level, message)
+            self.logger.log(level, message.replace('API_NAME', self.api_name, 1))
         except Exception:
             # Even logging.Logger is broken somehow, simply print to console
             print(level, message)

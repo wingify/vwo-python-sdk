@@ -30,7 +30,7 @@ def is_valid_settings_file(settings_file):
 
     Args:
         settings_file (json):
-            JSON object recieved from dacdn server or somewhere else,
+            JSON object received from our server or somewhere else,
             must be json string representation.
 
     Returns:

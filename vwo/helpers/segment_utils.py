@@ -20,11 +20,11 @@ import sys
 from ..enums.segments import OperandValueTypesName, OperandValuesBooleanTypes, OperandValueTypes
 
 # This regex returns array of tuples of (operand_type, operand_value)
-# from the string of type "operand_type(opernad_value)"
+# from the string of type "operand_type(operand_value)"
 GROUPING_PATTERN = re.compile('^(.+?)\((.*)\)')  # noqa: W605
 
 # This regex returns array of tuples of (starting_star, operand_value, ending_star)
-# from the string of type "*opernad_value*"
+# from the string of type "*operand_value*"
 WILDCARD_PATTERN = re.compile('(^\*|^)(.+?)(\*$|$)')  # noqa: W605
 
 
@@ -67,7 +67,7 @@ def convert_to_true_types(operator_value, custom_variables_value):
     return str(true_type_operator_value), str(true_type_custom_variables_value)
 
 
-def seperate_operand(operand):
+def separate_operand(operand):
     """ Extract the operand_type, ie. lower, wildcard, regex or equals
 
     Args:
@@ -114,8 +114,8 @@ def process_operand_value(operand):
         (operand_type, operand_value): tuple of defined operand_types and
         operand_value
     """
-    # Seperate the operand type and value inside the bracket
-    operand_type_name, operand_value = seperate_operand(operand)
+    # separate the operand type and value inside the bracket
+    operand_type_name, operand_value = separate_operand(operand)
 
     # Enum the operand type, here lower, regex, and equals will be identified
     operand_type = getattr(OperandValueTypes, operand_type_name, None)

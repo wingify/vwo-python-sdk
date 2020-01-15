@@ -15,3 +15,4 @@
 
 class OperandTypes:
     CUSTOM_VARIABLE = 'custom_variable'
+    USER = 'user'

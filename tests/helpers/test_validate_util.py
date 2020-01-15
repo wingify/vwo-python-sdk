@@ -30,6 +30,14 @@ class ValidateUtilTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES['AB_T_100_W_50_50']))
         self.assertIs(result, True)
 
+    def test_is_valid_settings_file_int_passed(self):
+        result = validate_util.is_valid_settings_file(1)
+        self.assertIs(result, False)
+
+    def test_is_valid_settings_file_invalid_dict_passed(self):
+        result = validate_util.is_valid_settings_file(json.dumps('{"a":1}'))
+        self.assertIs(result, False)
+
     def test_utility_validate_util(self):
         class InvalidUtility:
             pass

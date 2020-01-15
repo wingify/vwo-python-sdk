@@ -80,3 +80,20 @@ class LoggerTest(unittest.TestCase):
                              str(logging.ERROR) + ' ' + 'This logger instance used print for log')  # noqa: 501
 
         logger_instance.logger.log = default_logging_logger
+
+    def test_configure_logger_None_level_passed(self):
+        logger = configure_logger(level=None)
+        self.assertEquals(logger.level, logging.ERROR)
+
+    def test_configure_logger_100_level_passed(self):
+        logger = configure_logger(level=100)
+        self.assertEquals(logger.level, 100)
+
+    def test_configure_logger_invalid_level_passed(self):
+        logger = configure_logger(level='DISASTROUS')
+        self.assertEquals(logger.level, 40)
+
+    def test_set_api(self):
+        logger_instance = VWOLogger.getInstance()
+        logger_instance.set_api('ACTIVATE')
+        self.assertEquals(logger_instance.api_name, 'ACTIVATE')

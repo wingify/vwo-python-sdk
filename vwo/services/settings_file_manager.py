@@ -19,6 +19,8 @@ from ..enums.log_level_enum import LogLevelEnum
 from ..helpers import campaign_util
 from ..logger.logger_manager import VWOLogger
 
+FILE = FileNameEnum.Services.SettingsFileManager
+
 
 class SettingsFileManager(object):
     """ VWO settings_file manager """
@@ -44,7 +46,7 @@ class SettingsFileManager(object):
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.SETTINGS_FILE_PROCESSED.format(
-                file=FileNameEnum.SettingsFileManager
+                file=FILE
             )
         )
 

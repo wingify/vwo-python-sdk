@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # flake8: noqa
+
 """ Schema for verifying the settings_file provided by the customer """
 
 from .campaign_schema import CAMPAIGN

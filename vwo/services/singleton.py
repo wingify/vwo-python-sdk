@@ -84,7 +84,7 @@ first call to S.getInstance(). If subsequent calls have arguments,
 a SingletonException is raised by default.
 
 If you find it more convenient for subsequent calls to be allowed to
-have arguments, but for those argumentsto be ignored, just include
+have arguments, but for those arguments to be ignored, just include
 'ignoreSubsequent = True' in your class definition, i.e.:
 
   class S(Singleton):
@@ -105,7 +105,7 @@ and it is as if no earlier instantiations have occurred.
 6) As an implementation detail, classes that inherit
 from Singleton may not have their own __new__
 methods. To make sure this requirement is followed,
-an exception is raised if a Singleton subclass includ
+an exception is raised if a Singleton subclass include
 es __new__. This happens at subclass instantiation
 time (by means of the MetaSingleton metaclass.
 

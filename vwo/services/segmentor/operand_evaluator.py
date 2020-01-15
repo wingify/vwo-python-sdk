@@ -99,7 +99,7 @@ class OperandEvaluator:
         """
         return custom_variables_value == operand_value
 
-    def evaluate_operand(self, operand, custom_variables):
+    def evaluate_custom_variable(self, operand, custom_variables):
         """ Identifies the condition stated in the leaf node and evaluates the result
 
         Args:
@@ -129,3 +129,27 @@ class OperandEvaluator:
 
         # Call the self method corresponding to operand_type to evaluate the result
         return getattr(self, operand_type)(operand_value, custom_variables_value)
+
+    def evaluate_user(self, operand, variation_targeting_variables):
+        """ Identifies the condition stated in the leaf node and evaluates the result
+
+        Args:
+            operand(str): String representation of comma separated user_ids
+            variation_targeting_variables(dict): Variation targeting variables provided to the sdk through the api
+
+        Returns:
+            boolean (result): True if _vwo_user_id is in comma separated user_ids represented in operand
+            else False
+        """
+
+        # Retrieve corresponding _vwo_user_id value from variation_targeting_variables
+        _vwo_user_id = variation_targeting_variables.get('_vwo_user_id')
+
+        # Extract user_id list from operand
+        operand_user_id_list = operand.split(',')
+
+        # check if _vwo_user_id exists in operand_user_id_list or not
+        for user_id in operand_user_id_list:
+            if user_id.strip() == _vwo_user_id:
+                return True
+        return False
