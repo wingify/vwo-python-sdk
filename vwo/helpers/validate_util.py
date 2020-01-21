@@ -14,6 +14,7 @@
 
 """ Validate methods and parameters passed to the SDK """
 
+import sys
 import json
 import jsonschema
 from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
@@ -103,8 +104,14 @@ def is_valid_number(val):
     return type(val) == int
 
 
+def is_valid_unicode(val):
+    if sys.version_info[0] < 3:
+        return type(val) is unicode
+    return False
+
+
 def is_valid_string(val):
-    return type(val) == str and is_valid_value(val)
+    return (type(val) == str or is_valid_unicode(val)) and is_valid_value(val)
 
 
 def is_valid_basis_data_type(val):

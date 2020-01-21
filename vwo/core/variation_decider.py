@@ -138,20 +138,29 @@ class VariationDecider(object):
 
         user_storage_data = self._get_user_storage_data(user_id, campaign.get('key'))
         if validate_util.is_valid_dict(user_storage_data):
-            variation = self._get_stored_variation(user_id,
-                                                   campaign,
-                                                   user_storage_data)
-            if variation:
-                self.logger.log(
-                    LogLevelEnum.INFO,
-                    LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
-                        file=FILE,
-                        campaign_key=campaign.get('key'),
-                        user_id=user_id,
-                        variation_name=variation.get('name')
-                    )
-                )
-                return variation
+            if user_storage_data.get('campaignKey') == campaign.get('key'):
+                variation_name = user_storage_data.get('variationName')
+                if validate_util.is_valid_string(variation_name):
+                    variation = campaign_util.get_campaign_variation(campaign, variation_name)
+                    if variation:
+                        self.logger.log(
+                            LogLevelEnum.INFO,
+                            LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
+                                file=FILE,
+                                campaign_key=campaign.get('key'),
+                                user_id=user_id,
+                                variation_name=variation.get('name')
+                            )
+                        )
+                        return variation
+        self.logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.NO_STORED_VARIATION.format(
+                file=FILE,
+                campaign_key=campaign.get('key'),
+                user_id=user_id
+            )
+        )
         return None
 
     def find_targeted_variation(self, user_id, campaign, variation_targeting_variables):
@@ -378,45 +387,6 @@ class VariationDecider(object):
                 white_listed_variations_list.append(variation)
         return white_listed_variations_list
 
-    def _get_stored_variation(self, user_id, campaign, user_storage_data):
-        """ If UserStorage is provided and variation was stored,
-        get the stored variation
-
-        Args:
-            user_id (string): Unique user identifier
-            campaign_key (string): Unique campaign identifier
-            user_storage_data (dict):
-                CampaignMap consisting the stored user variation
-
-        Returns:
-            (Object|None): if found then variation object
-                otherwise None
-        """
-
-        if user_storage_data.get('campaignKey') == campaign.get('key'):
-            variation_name = user_storage_data.get('variationName')
-            if validate_util.is_valid_string(variation_name):
-                self.logger.log(
-                    LogLevelEnum.DEBUG,
-                    LogMessageEnum.DEBUG_MESSAGES.GETTING_STORED_VARIATION.format(
-                        file=FILE,
-                        campaign_key=campaign.get('key'),
-                        user_id=user_id,
-                        variation_name=variation_name
-                    )
-                )
-                return campaign_util.get_campaign_variation(campaign, variation_name)
-
-        self.logger.log(
-            LogLevelEnum.DEBUG,
-            LogMessageEnum.DEBUG_MESSAGES.NO_STORED_VARIATION.format(
-                file=FILE,
-                campaign_key=campaign.get('key'),
-                user_id=user_id
-            )
-        )
-        return None
-
     def _get_user_storage_data(self, user_id, campaign_key):
         """ Get the UserStorageData after looking up into get method
         being provided via UserStorage service
@@ -485,16 +455,16 @@ class VariationDecider(object):
             "variationName": variation_name
         }
         try:
-            status = self.user_storage.set(new_user_storage_data)
+            self.user_storage.set(new_user_storage_data)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_STORAGE_STATUS.format(
                     file=FILE,
                     user_id=user_id,
-                    status='successful' if status else 'failed'
+                    status='successful'
                 )
             )
-            return status
+            return True
         except Exception as e:
             self.logger.log(
                 LogLevelEnum.ERROR,

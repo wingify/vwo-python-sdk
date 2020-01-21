@@ -42,7 +42,7 @@ class LogMessageEnum:
 
         NO_VARIABLES = '({file}): [API_NAME] For user_id:{user_id} of campaign: {campaign_key} variables are not passed for {segmentation_type}'
         SEGMENTATION_SKIPPED = '({file}): [API_NAME] For user_id:{user_id} of campaign_key: {campaign_key} segments are missing, hence skipping segmentation {variation_status}'
-        SEGMENTATION_STATUS = '({file}): For user_id: {user_id} of campaign_key:{campaign_key} with variables:{variables} {status} {segmentation_type} {variation_status}'
+        SEGMENTATION_STATUS = '({file}): [API_NAME] For user_id: {user_id} of campaign_key:{campaign_key} with variables:{variables} {status} {segmentation_type} {variation_status}'
 
         WHITELISTING_SKIPPED = '({file}): [API_NAME] For user_id:{user_id} of campaign:{campaign_key}, whitelisting is skipped'
 

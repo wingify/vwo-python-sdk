@@ -27,13 +27,10 @@ class ClientUserStorage:
         self.storage = {}
 
     def get(self, user_id, campaign_key):
-        return {'userId': user_id,
-                'campaignKey': campaign_key,
-                'variationName': self.storage.get((user_id, campaign_key))}
+        return self.storage.get((user_id, campaign_key))
 
     def set(self, user_data):
-        self.storage[(user_data.get('userId'), user_data.get('campaignKey'))] = user_data.get('variationName')
-        return True
+        self.storage[(user_data.get('userId'), user_data.get('campaignKey'))] = user_data
 
 
 class VariationDeciderTest(unittest.TestCase):
@@ -138,38 +135,6 @@ class VariationDeciderTest(unittest.TestCase):
         self.assertEqual(variation.get('id'), '1')
         self.assertEqual(variation.get('name'), 'Control')
 
-        variation = variation_decider.get_variation(
-            user_id,
-            self.dummy_campaign,
-        )
-        self.assertEqual(variation.get('id'), '1')
-        self.assertEqual(variation.get('name'), 'Control')
-
-    def test_get_with_user_storage_but_no_stored_variation(self):
-        client_db = {}
-
-        class US(UserStorage):
-            def get(self, user_id, campaign_key):
-                return client_db.get(user_id)
-
-            def set(self, user_data):
-                client_db[user_data['userId']] = user_data
-
-        variation_decider = VariationDecider(US())
-
-        # First let variation_decider compute variation, and store
-        user_id = 'Sarah'
-        variation = variation_decider.get_variation(
-            user_id,
-            self.dummy_campaign,
-        )
-        self.assertEqual(variation.get('id'), '1')
-        self.assertEqual(variation.get('name'), 'Control')
-
-        # Now delete the stored variaion from campaign_bucket_map
-        del client_db[user_id]['variationName']
-        # Now the variation_decider is not able to retrieve
-        # variation from user_storage.
         variation = variation_decider.get_variation(
             user_id,
             self.dummy_campaign,
@@ -355,30 +320,6 @@ class VariationDeciderTest(unittest.TestCase):
         set_status = variation_decider._set_user_storage_data('Sarah', campaign.get('key'), variation.get('name'))
         self.assertIs(set_status, True)
 
-    def test_set_user_storage_data_return_false_faulty_set(self):
-        client_storage = ClientUserStorage()
-
-        def faulty_set():
-            pass
-        client_storage.set = faulty_set
-        variation_decider = VariationDecider(user_storage=client_storage)
-        campaign = self.settings_file['campaigns'][0]
-        variation = campaign['variations'][0]
-        set_status = variation_decider._set_user_storage_data('Sarah', campaign.get('key'), variation.get('name'))
-        self.assertIs(set_status, False)
-
-    def test_set_user_storage_data_return_false_due_to_failure(self):
-        client_storage = ClientUserStorage()
-
-        def failure_set(arg1):
-            return False
-        client_storage.set = failure_set
-        variation_decider = VariationDecider(user_storage=client_storage)
-        campaign = self.settings_file['campaigns'][0]
-        variation = campaign['variations'][0]
-        set_status = variation_decider._set_user_storage_data('Sarah', campaign.get('key'), variation.get('name'))
-        self.assertIs(set_status, False)
-
     def test_get_user_storage_data_true(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
@@ -393,19 +334,19 @@ class VariationDeciderTest(unittest.TestCase):
         user_storage_data = {'userId': 'Sarah', 'campaignKey': 'FEATURE_TEST_2', 'variationName': 'DESIGN_4'}
         client_storage.set(user_storage_data)
         result_user_storage_data = variation_decider._get_user_storage_data('Sarah', 'FEATURE_TEST_1')
-        self.assertIsNone(result_user_storage_data.get('variationName'))
+        self.assertIsNone(result_user_storage_data)
 
-    def test_get_stored_variation_returns_none_as_garbage_variation_name(self):
+    def test_get_variation_from_user_storage_returns_none_as_garbage_variation_name(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
         settings_file = SETTINGS_FILES.get('FT_100_W_33_33_33_WS_WW')
         campaign = settings_file['campaigns'][0]
         user_storage_data = {'userId': 'Sarah', 'campaignKey': 'FEATURE_TEST_2', 'variationName': 'None'}
         client_storage.set(user_storage_data)
-        result_variation = variation_decider._get_stored_variation('Sarah', campaign, user_storage_data)
+        result_variation = variation_decider.get_variation_from_user_storage('Sarah', campaign)
         self.assertIsNone(result_variation)
 
-    def test_get_stored_variation_returns_control(self):
+    def test_get_variation_from_user_storage_returns_control(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
         settings_file = SETTINGS_FILES.get('FT_100_W_33_33_33_WS_WW')
@@ -416,5 +357,22 @@ class VariationDeciderTest(unittest.TestCase):
             'variationName': campaign['variations'][0]['name']
         }
         client_storage.set(user_storage_data)
-        result_variation = variation_decider._get_stored_variation('Sarah', campaign, user_storage_data)
+        result_variation = variation_decider.get_variation_from_user_storage('Sarah', campaign)
         self.assertEquals(result_variation['name'], campaign['variations'][0]['name'])
+
+    def test_set_get_user_storage_data(self):
+        user_storage = ClientUserStorage()
+        variation_decider = VariationDecider(user_storage)
+        variation_decider._set_user_storage_data('user_id', 'campaign_key', 'variation_name')
+        self.assertEquals(user_storage.storage.get(('user_id', 'campaign_key')),
+                          variation_decider._get_user_storage_data('user_id', 'campaign_key'))
+
+    def test_set_user_storage_data(self):
+        user_storage = ClientUserStorage()
+        variation_decider = VariationDecider(user_storage)
+        variation_decider._set_user_storage_data('user_id', 'campaign_key_1', 'variation_name_1')
+        variation_decider._set_user_storage_data('user_id', 'campaign_key_2', 'variation_name_2')
+        self.assertEquals(user_storage.storage.get(('user_id', 'campaign_key_1')),
+                          variation_decider._get_user_storage_data('user_id', 'campaign_key_1'))
+        self.assertEquals(user_storage.storage.get(('user_id', 'campaign_key_2')),
+                          variation_decider._get_user_storage_data('user_id', 'campaign_key_2'))

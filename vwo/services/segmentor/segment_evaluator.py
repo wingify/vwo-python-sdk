@@ -14,7 +14,6 @@
 
 
 from ...enums.file_name_enum import FileNameEnum
-from ...logger.logger_manager import VWOLogger
 from .operand_evaluator import OperandEvaluator
 from ...enums.segments import OperandTypes, OperatorTypes
 from ...helpers.generic_util import get_key_value
@@ -26,9 +25,7 @@ class SegmentEvaluator:
 
     def __init__(self):
         """ Initializes this class with VWOLogger and OperandEvaluator """
-        self.logger = VWOLogger.getInstance()
         self.operand_evaluator = OperandEvaluator()
-        self.logger = VWOLogger.getInstance()
 
     def evaluate(self, segments, custom_variables):
         """A parser which recursively evaluates the custom_variables passed against
