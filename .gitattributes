@@ -1,0 +1,6 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+README.md export-ignore
+git-hooks export-ignore
+tests export-ignore
+scripts export-ignore
