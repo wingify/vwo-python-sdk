@@ -7828,18 +7828,22 @@
         },
         "black_listing_scrambled_user_using_safari_return_false": {
             "dsl": {
-                "and": [{
-                    "not": {
-                        "or": [{
-                            "user": "   user    _1 ,    space     user ,     us     er_3     "
-                        }]
-                    },
-                    "and": [{
-                        "custom_variable": {
-                            "browser": "safari"
+                "and": [
+                    {
+                        "not": {
+                            "or": [{
+                                "user": "   user    _1 ,    space     user ,     us     er_3     "
+                            }]
                         }
-                    }]
-                }]
+                    },
+                    {
+                        "and": [{
+                            "custom_variable": {
+                                "browser": "safari"
+                            }
+                        }]
+                    }
+                ]
             },
             "variation_targeting_variables": {
                 "_vwo_user_id": "space     user",
@@ -7849,18 +7853,22 @@
         },
         "black_listing_scrambled_user_using_safari_return_true_for_space_difference": {
             "dsl": {
-                "and": [{
-                    "not": {
-                        "or": [{
-                            "user": "   user    _1 ,    space     user ,     us     er_3     "
-                        }]
-                    },
-                    "and": [{
-                        "custom_variable": {
-                            "browser": "safari"
+                "and": [
+                    {
+                        "not": {
+                            "or": [{
+                                "user": "   user    _1 ,    space     user ,     us     er_3     "
+                            }]
                         }
-                    }]
-                }]
+                    },
+                    {
+                        "and": [{
+                            "custom_variable": {
+                                "browser": "safari"
+                            }
+                        }]
+                    }
+                ]
             },
             "variation_targeting_variables": {
                 "_vwo_user_id": "user_1",
