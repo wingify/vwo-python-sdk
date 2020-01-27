@@ -384,7 +384,7 @@ class VariationDecider(object):
                         )
                     )
             if result:
-                white_listed_variations_list.append(variation)
+                white_listed_variations_list.append(copy.deepcopy(variation))
         return white_listed_variations_list
 
     def _get_user_storage_data(self, user_id, campaign_key):
