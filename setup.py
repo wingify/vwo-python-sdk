@@ -1,4 +1,4 @@
-# Copyright 2019 Wingify Software Pvt. Ltd.
+# Copyright 2019-2020 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class LicenseCheckCommand(Command):
         pass
 
     def run(self):
-        subprocess.call('python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "Wingify Software Pvt. Ltd."', shell=True)
+        subprocess.call('python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "2019-2020 Wingify Software Pvt. Ltd."', shell=True)
 
 
 class ReleasePatchCommand(Command):
