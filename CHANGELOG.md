@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.6.3] - 2020-02-03
+### Changed
+- Updated year in Apache-2.0 Copyright header in all source, tests and scripts files.
+
+## [1.6.2] - 2020-01-27
+### Changed
+- Fixed test case data files to remove ambiguity while running test cases in python 3.5
+
 ## [1.6.0] - 2020-01-15
 ### Breaking Changes
 To prevent ordered arguments and increasing use-cases, we are moving all optional arguments to be passed via `kwargs`.
