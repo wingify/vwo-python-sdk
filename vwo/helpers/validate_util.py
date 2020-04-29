@@ -18,11 +18,13 @@ import sys
 import json
 import jsonschema
 from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
+from ..constants.constants import LOG_LEVELS, GOAL_TYPES
+from . import generic_util
 
 services = {
-    'logger': ['log'],
-    'event_dispatcher': ['dispatch'],
-    'user_storage': ['get', 'set']
+    "logger": ["log"],
+    "event_dispatcher": ["dispatch"],
+    "user_storage": ["get", "set"],
 }
 
 
@@ -43,8 +45,7 @@ def is_valid_settings_file(settings_file):
         return False
     try:
         jsonschema.validate(
-            instance=settings_file,
-            schema=SETTINGS_FILE_SCHEMA
+            instance=settings_file, schema=SETTINGS_FILE_SCHEMA
         )
     except Exception:
         return False
@@ -72,20 +73,11 @@ def is_valid_service(service, service_name):
 
 
 def is_valid_log_level(level):
-    string_levels = [
-        'CRITICAL',
-        'FATAL',
-        'ERROR',
-        'WARN',
-        'WARNING',
-        'INFO',
-        'DEBUG',
-        'NOTSET',
-    ]
-    if isinstance(level, str) and level not in string_levels:
-        return False
-    else:
-        return is_valid_number(level)
+    return level in generic_util.get_attribute_values(LOG_LEVELS)
+
+
+def is_valid_goal_type(goal_type):
+    return goal_type in generic_util.get_attribute_values(GOAL_TYPES)
 
 
 def is_valid_dict(val):
@@ -114,5 +106,5 @@ def is_valid_string(val):
     return (type(val) == str or is_valid_unicode(val)) and is_valid_value(val)
 
 
-def is_valid_basis_data_type(val):
+def is_valid_basic_data_type(val):
     return type(val) in [int, float, bool, str]

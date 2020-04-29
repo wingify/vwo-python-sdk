@@ -36,10 +36,50 @@ def get_campaign(settings_file, campaign_key):
         dict: Campaign object
     """
 
-    for campaign in settings_file.get('campaigns'):
-        if campaign.get('key') == campaign_key:
+    for campaign in settings_file.get("campaigns"):
+        if (
+            campaign.get("key") == campaign_key
+            and campaign.get("status") == constants.STATUS_RUNNING
+        ):
             return campaign
+    VWOLogger.getInstance().log(
+        LogLevelEnum.ERROR,
+        LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
+            file=FILE, campaign_key=campaign_key,
+        ),
+    )
     return None
+
+
+def get_campaigns(settings_file, campaign_keys):
+    """ Finds and Returns campaign from given campaign_keys.
+
+    Args:
+        settings_file (dict): Settings file for the project
+        campaign_keys (list): List of Campaign identifier keys
+
+    Returns:
+        dict: Dictionary of campaign object mapped to the campaign key
+    """
+    campaign_key_map = {}
+    for campaign in settings_file.get("campaigns"):
+        campaign_key_map[campaign.get("key")] = campaign
+    found_campaigns = {}
+    for campaign_key in campaign_keys:
+        if (
+            campaign_key_map.get(campaign_key)
+            and campaign_key_map.get(campaign_key).get("status")
+            == constants.STATUS_RUNNING
+        ):
+            found_campaigns[campaign_key] = campaign_key_map.get(campaign_key)
+        else:
+            VWOLogger.getInstance().log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
+                    file=FILE, campaign_key=campaign_key,
+                ),
+            )
+    return found_campaigns
 
 
 def set_variation_allocation(campaign):
@@ -48,23 +88,29 @@ def set_variation_allocation(campaign):
     Args:
         campaign (dict): Campaign object
     """
-    variation_allocations_ranges = get_variation_allocation_ranges(campaign.get('variations'))
-    set_variation_allocation_from_ranges(campaign.get('variations'), variation_allocations_ranges)
-    for variation in campaign.get('variations'):
+    variation_allocations_ranges = get_variation_allocation_ranges(
+        campaign.get("variations")
+    )
+    set_variation_allocation_from_ranges(
+        campaign.get("variations"), variation_allocations_ranges
+    )
+    for variation in campaign.get("variations"):
         VWOLogger.getInstance().log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.VARIATION_RANGE_ALLOCATION.format(
                 file=FILE,
-                campaign_key=campaign.get('key'),
-                variation_name=variation.get('name'),
-                variation_weight=variation.get('weight'),
-                start=variation.get('start_variation_allocation'),
-                end=variation.get('end_variation_allocation')
-            )
+                campaign_key=campaign.get("key"),
+                variation_name=variation.get("name"),
+                variation_weight=variation.get("weight"),
+                start=variation.get("start_variation_allocation"),
+                end=variation.get("end_variation_allocation"),
+            ),
         )
 
 
-def set_variation_allocation_from_ranges(variations, variation_allocations_ranges):
+def set_variation_allocation_from_ranges(
+    variations, variation_allocations_ranges
+):
     """Sets variations allocation ranges on each variation as start_variation_allocation and
     end_variation_allocation.
 
@@ -74,8 +120,10 @@ def set_variation_allocation_from_ranges(variations, variation_allocations_range
         allocation range for each variation
     """
     for i, variation in enumerate(variations):
-        variation.update(start_variation_allocation=variation_allocations_ranges[i][0],
-                         end_variation_allocation=variation_allocations_ranges[i][1])
+        variation.update(
+            start_variation_allocation=variation_allocations_ranges[i][0],
+            end_variation_allocation=variation_allocations_ranges[i][1],
+        )
 
 
 def get_variation_allocation_ranges(variations):
@@ -91,7 +139,7 @@ def get_variation_allocation_ranges(variations):
     current_allocation = 0
     variation_allocation_ranges = []
     for variation in variations:
-        step_factor = _get_variation_bucketing_range(variation.get('weight'))
+        step_factor = _get_variation_bucketing_range(variation.get("weight"))
         if step_factor:
             start_range = current_allocation + 1
             end_range = current_allocation + step_factor
@@ -118,6 +166,29 @@ def _get_variation_bucketing_range(weight):
     return min(start_range, constants.MAX_TRAFFIC_VALUE)
 
 
+def get_campaigns_with_goal_id(campaigns, goal_identifer):
+    """ Returns campaigns having the same goal_identifier passed in the args
+    from the campaigns list
+
+    Args:
+        campaigns (list): List of campaign objects
+        gaol_identifier (str): Global goal identifier
+
+    Returns:
+        tuple (campaign_goal_list, campaigns_without_goal): campaign_goal_list is a tuple
+        of (campaign, campaign_goal)
+    """
+    campaign_goal_list = []
+    campaigns_without_goal = []
+    for campaign in campaigns:
+        campaign_goal = get_campaign_goal(campaign, goal_identifer)
+        if campaign_goal:
+            campaign_goal_list.append((campaign, campaign_goal))
+        else:
+            campaigns_without_goal.append(campaign)
+    return campaign_goal_list, campaigns_without_goal
+
+
 def get_campaign_goal(campaign, goal_identifier):
     """ Returns goal from given campaign and Goal_identifier.
 
@@ -131,8 +202,8 @@ def get_campaign_goal(campaign, goal_identifier):
 
     if not campaign or not goal_identifier:
         return None
-    for goal in campaign.get('goals'):
-        if goal.get('identifier') == goal_identifier:
+    for goal in campaign.get("goals"):
+        if goal.get("identifier") == goal_identifier:
             return goal
     return None
 
@@ -150,8 +221,8 @@ def get_campaign_variation(campaign, variation_name):
 
     if not campaign or not variation_name:
         return None
-    for variation in campaign.get('variations'):
-        if variation.get('name') == variation_name:
+    for variation in campaign.get("variations"):
+        if variation.get("name") == variation_name:
             return variation
     return None
 
@@ -168,7 +239,7 @@ def get_variable(variables, variable_key):
         dict: Variable corresponding to variable_key in given variable list
     """
     for variable in variables:
-        if variable.get('key') == variable_key:
+        if variable.get("key") == variable_key:
             return variable
     return None
 
@@ -182,8 +253,8 @@ def get_control_variation(campaign):
         variation (dict): Control variation from the campaign, ie having id = 1
     """
 
-    for variation in campaign.get('variations'):
-        if int(variation.get('id')) == 1:
+    for variation in campaign.get("variations"):
+        if int(variation.get("id")) == 1:
             return variation
     return None
 
@@ -196,7 +267,7 @@ def get_segments(campaign):
     Returns:
         segments(dict): a dsl of segments
     """
-    return campaign.get('segments')
+    return campaign.get("segments")
 
 
 def scale_variations(variations):
@@ -206,11 +277,11 @@ def scale_variations(variations):
     Args:
         variations(list): list of variations(dict object) having weight as a property
     """
-    weight_sum = sum(variation.get('weight') for variation in variations)
+    weight_sum = sum(variation.get("weight") for variation in variations)
     if weight_sum == 0:
         normalized_weight = 100 / len(variations)
         for variation in variations:
-            variation['weight'] = normalized_weight
+            variation["weight"] = normalized_weight
     else:
         for variation in variations:
-            variation['weight'] = (variation['weight'] / weight_sum) * 100
+            variation["weight"] = (variation["weight"] / weight_sum) * 100

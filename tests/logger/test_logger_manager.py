@@ -49,6 +49,7 @@ class LoggerTest(unittest.TestCase):
     def test_custom_logger_with_no_log_passed(self):
         class CustomLogger:
             pass
+
         logger_instance = VWOLogger.getInstance(CustomLogger())
         self.assertIsInstance(logger_instance.logger, logging.Logger)
 
@@ -65,6 +66,7 @@ class LoggerTest(unittest.TestCase):
         # Break the log method
         def dummy_log_method():
             pass
+
         logger_instance.logger.log = dummy_log_method
 
         # Test whether the logger_instance prints to stdout or not
@@ -74,10 +76,14 @@ class LoggerTest(unittest.TestCase):
         else:
             from io import StringIO
 
-        with patch('sys.stdout', new=StringIO()) as fakeOutput:
-            logger_instance.log(logging.ERROR, 'This logger instance used print for log')  # noqa: 501
-            self.assertEqual(fakeOutput.getvalue().strip(),
-                             str(logging.ERROR) + ' ' + 'This logger instance used print for log')  # noqa: 501
+        with patch("sys.stdout", new=StringIO()) as fakeOutput:
+            logger_instance.log(
+                logging.ERROR, "This logger instance used print for log"
+            )  # noqa: 501
+            self.assertEqual(
+                fakeOutput.getvalue().strip(),
+                str(logging.ERROR) + " " + "This logger instance used print for log",
+            )  # noqa: 501
 
         logger_instance.logger.log = default_logging_logger
 
@@ -87,13 +93,13 @@ class LoggerTest(unittest.TestCase):
 
     def test_configure_logger_100_level_passed(self):
         logger = configure_logger(level=100)
-        self.assertEquals(logger.level, 100)
+        self.assertEquals(logger.level, 40)
 
     def test_configure_logger_invalid_level_passed(self):
-        logger = configure_logger(level='DISASTROUS')
+        logger = configure_logger(level="DISASTROUS")
         self.assertEquals(logger.level, 40)
 
     def test_set_api(self):
         logger_instance = VWOLogger.getInstance()
-        logger_instance.set_api('ACTIVATE')
-        self.assertEquals(logger_instance.api_name, 'ACTIVATE')
+        logger_instance.set_api("ACTIVATE")
+        self.assertEquals(logger_instance.api_name, "ACTIVATE")

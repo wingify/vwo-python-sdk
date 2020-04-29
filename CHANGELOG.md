@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.8.0] - 2020-04-29
+### Changed
+- Update track API to handle duplicate and unique conversions and corresponding changes in VWO `init` method
+- Update track API to track a goal globally across campaigns with the same `goal_identifier` and corresponding changes in VWO `init` method
+```python
+# it will track goal having `goal_identifier` of campaign having `campaign_key` for the user having `user_id` as id. 
+vwo_client_instance.track(campaign_key, user_id, goal_identifier)
+# it will track goal having `goal_identifier` of campaigns having `campaign_key1` and `campaign_key2` for the user having `user_id` as id. 
+vwo_client_instance.track([campaign_key1, campaign_key2], user_id, goal_identifier)
+# it will track goal having `goal_identifier` of all the campaigns
+vwo_client_instance.track(None, user_id, goal_identifier)
+```
+
 ## [1.6.3] - 2020-02-03
 ### Changed
 - Updated year in Apache-2.0 Copyright header in all source, tests and scripts files.

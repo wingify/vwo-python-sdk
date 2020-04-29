@@ -42,11 +42,7 @@ class VariationDecider(object):
         self.logger = VWOLogger.getInstance()
         self.bucketer = Bucketer()
         self.segment_evaluator = SegmentEvaluator()
-        # Check if user_storage provided is valid or not
-        if validate_util.is_valid_service(user_storage, 'user_storage'):
-            self.user_storage = user_storage
-        else:
-            self.user_storage = None
+        self.user_storage = user_storage
 
     def get_variation(self, user_id, campaign, **kwargs):
         """ Returns variation for the user for given campaign
@@ -72,43 +68,83 @@ class VariationDecider(object):
             assigned else None
         """
 
-        custom_variables = kwargs.get('custom_variables')
-        variation_targeting_variables = kwargs.get('variation_targeting_variables')
-
+        custom_variables = kwargs.get("custom_variables")
+        variation_targeting_variables = kwargs.get(
+            "variation_targeting_variables"
+        )
+        goal_data = kwargs.get("goal_data")
         # Evaluate whitelisting at first
-        targeted_variation = self.find_targeted_variation(user_id, campaign, variation_targeting_variables)
+        targeted_variation = self.find_targeted_variation(
+            user_id, campaign, variation_targeting_variables
+        )
         if targeted_variation:
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
                     file=FILE,
-                    variation_name=targeted_variation.get('name'),
+                    variation_name=targeted_variation.get("name"),
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
-                    campaign_type=campaign.get('type')
-                )
+                    campaign_key=campaign.get("key"),
+                    campaign_type=campaign.get("type"),
+                ),
             )
             return targeted_variation
 
         # Try retrieving data from user_storage
-        variation = self.get_variation_from_user_storage(user_id, campaign)
-        if variation is not None:
-            return variation
+        user_storage_data = self._get_user_storage_data(
+            user_id, campaign.get("key")
+        )
+        if user_storage_data:
+            # If being called by track, check for goals identified
+            if goal_data:
+                is_goal_tracked = self.identify_tracked_goal_from_user_storage(
+                    goal_data, user_storage_data
+                )
+                if is_goal_tracked:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.GOAL_ALREADY_TRACKED.format(
+                            file=FILE,
+                            goal_identifier=goal_data.get("identifier"),
+                            campaign_key=campaign.get("key"),
+                            user_id=user_id,
+                        ),
+                    )
+                    return None
+
+            # Retreving variation from user_storage_data
+            variation = self.get_variation_from_user_storage(
+                user_id, campaign, user_storage_data
+            )
+
+            # Setting goal information if variation found and api is track
+            if variation is not None:
+                if goal_data:
+                    self.update_goals_tracked_in_user_storage(
+                        goal_data, user_storage_data
+                    )
+                return variation
 
         # Evaluate pre-segmentation and percent-traffic
-        if self.evaluate_pre_segmentation(user_id, campaign, custom_variables) and \
-                self.is_user_part_of_campaign(user_id, campaign):
-            variation = self.bucketer.bucket_user_to_variation(user_id, campaign)
-            self._set_user_storage_data(user_id, campaign.get('key'), variation.get('name'))
+        if self.evaluate_pre_segmentation(
+            user_id, campaign, custom_variables
+        ) and self.is_user_part_of_campaign(user_id, campaign):
+            variation = self.bucketer.bucket_user_to_variation(
+                user_id, campaign
+            )
+            new_user_storage_data = self._create_user_storage_data(
+                user_id, campaign.get("key"), variation.get("name"), kwargs
+            )
+            self._set_user_storage_data(new_user_storage_data)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
                     file=FILE,
-                    variation_name=variation.get('name'),
+                    variation_name=variation.get("name"),
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
-                    campaign_type=campaign.get('type')
-                )
+                    campaign_key=campaign.get("key"),
+                    campaign_type=campaign.get("type"),
+                ),
             )
             return variation
 
@@ -118,13 +154,41 @@ class VariationDecider(object):
             LogMessageEnum.INFO_MESSAGES.USER_GOT_NO_VARIATION.format(
                 file=FILE,
                 user_id=user_id,
-                campaign_key=campaign.get('key'),
-                campaign_type=campaign.get('type')
-            )
+                campaign_key=campaign.get("key"),
+                campaign_type=campaign.get("type"),
+            ),
         )
         return None
 
-    def get_variation_from_user_storage(self, user_id, campaign):
+    def identify_tracked_goal_from_user_storage(
+        self, goal_data, user_storage_data
+    ):
+        goals_tracked = user_storage_data.get("goalIdentifiers")
+        if (
+            goals_tracked
+            and (goal_data.get("identifier") in goals_tracked.split("_vwo_"))
+            and not goal_data.get("should_track_returning_user")
+        ):
+            return True
+        return False
+
+    def update_goals_tracked_in_user_storage(
+        self, goal_data, user_storage_data
+    ):
+        goals_tracked = user_storage_data.get("goalIdentifiers")
+        if goals_tracked:
+            updated_goals_tracked = (
+                goals_tracked + "_vwo_" + goal_data.get("identifier")
+            )
+        else:
+            updated_goals_tracked = goal_data.get("identifier")
+        user_storage_data["goalIdentifiers"] = updated_goals_tracked
+        self._set_user_storage_data(user_storage_data)
+        # log updated goalIdentifiers
+
+    def get_variation_from_user_storage(
+        self, user_id, campaign, user_storage_data
+    ):
         """ Tries retrieving variation from user_storage
 
         Args:
@@ -135,35 +199,35 @@ class VariationDecider(object):
             variation (dict|None): Dict object containing the information regarding variation
             assigned else None
         """
-
-        user_storage_data = self._get_user_storage_data(user_id, campaign.get('key'))
         if validate_util.is_valid_dict(user_storage_data):
-            if user_storage_data.get('campaignKey') == campaign.get('key'):
-                variation_name = user_storage_data.get('variationName')
+            if user_storage_data.get("campaignKey") == campaign.get("key"):
+                variation_name = user_storage_data.get("variationName")
                 if validate_util.is_valid_string(variation_name):
-                    variation = campaign_util.get_campaign_variation(campaign, variation_name)
+                    variation = campaign_util.get_campaign_variation(
+                        campaign, variation_name
+                    )
                     if variation:
                         self.logger.log(
                             LogLevelEnum.INFO,
                             LogMessageEnum.INFO_MESSAGES.GOT_STORED_VARIATION.format(
                                 file=FILE,
-                                campaign_key=campaign.get('key'),
+                                campaign_key=campaign.get("key"),
                                 user_id=user_id,
-                                variation_name=variation.get('name')
-                            )
+                                variation_name=variation.get("name"),
+                            ),
                         )
                         return variation
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.NO_STORED_VARIATION.format(
-                file=FILE,
-                campaign_key=campaign.get('key'),
-                user_id=user_id
-            )
+                file=FILE, campaign_key=campaign.get("key"), user_id=user_id
+            ),
         )
         return None
 
-    def find_targeted_variation(self, user_id, campaign, variation_targeting_variables):
+    def find_targeted_variation(
+        self, user_id, campaign, variation_targeting_variables
+    ):
         """ Identifies and retrives if there exists any targeted variation in the given campaign
         for given user_id
 
@@ -176,20 +240,20 @@ class VariationDecider(object):
             targeted_variation (dict|None): Dict object containing the information regarding forced
             variation assigned else None
         """
-        if campaign.get('isForcedVariationEnabled') is not True:
+        if campaign.get("isForcedVariationEnabled") is not True:
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.WHITELISTING_SKIPPED.format(
                     file=FILE,
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
-                )
+                    campaign_key=campaign.get("key"),
+                ),
             )
             return None
         else:
-            white_listed_variations_list = self._get_white_listed_variations_list(user_id,
-                                                                                  campaign,
-                                                                                  variation_targeting_variables)
+            white_listed_variations_list = self._get_white_listed_variations_list(
+                user_id, campaign, variation_targeting_variables
+            )
             white_listed_variations_len = len(white_listed_variations_list)
             if white_listed_variations_len == 0:
                 targeted_variation = None
@@ -199,24 +263,37 @@ class VariationDecider(object):
                 # Scale the traffic percent of each variation
                 campaign_util.scale_variations(white_listed_variations_list)
                 # Allocate new range
-                variation_allocations = campaign_util.get_variation_allocation_ranges(white_listed_variations_list)
-                campaign_util.set_variation_allocation_from_ranges(white_listed_variations_list, variation_allocations)
+                variation_allocations = campaign_util.get_variation_allocation_ranges(
+                    white_listed_variations_list
+                )
+                campaign_util.set_variation_allocation_from_ranges(
+                    white_listed_variations_list, variation_allocations
+                )
                 # Now retrieve the variation from the modified_campaign_for_whitelisting
-                bucket_value = self.bucketer.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE)
-                targeted_variation = self.bucketer.get_variation(white_listed_variations_list, bucket_value)
-            variation_status = 'and variation {variation_name} is assigned'
+                bucket_value = self.bucketer.get_bucket_value_for_user(
+                    user_id, constants.MAX_TRAFFIC_VALUE
+                )
+                targeted_variation = self.bucketer.get_variation(
+                    white_listed_variations_list, bucket_value
+                )
+            variation_status = "and variation {variation_name} is assigned"
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SEGMENTATION_STATUS.format(
                     file=FILE,
-                    campaign_key=campaign.get('key'),
+                    campaign_key=campaign.get("key"),
                     user_id=user_id,
                     variables=variation_targeting_variables,
-                    variation_status=variation_status.format(variation_name=targeted_variation.get('name')
-                                                             if targeted_variation else None),
-                    segmentation_type='whitelisting',
-                    status=ResultStatus.PASSED if targeted_variation is not None else ResultStatus.FAILED
-                )
+                    variation_status=variation_status.format(
+                        variation_name=targeted_variation.get("name")
+                        if targeted_variation
+                        else None
+                    ),
+                    segmentation_type="whitelisting",
+                    status=ResultStatus.PASSED
+                    if targeted_variation is not None
+                    else ResultStatus.FAILED,
+                ),
             )
             return targeted_variation
 
@@ -232,7 +309,7 @@ class VariationDecider(object):
         Returns:
             bool: True if user passes segmentation, else False
         """
-        segments = campaign.get('segments')
+        segments = campaign.get("segments")
         if not validate_util.is_valid_value(segments):
             result = True
             self.logger.log(
@@ -240,10 +317,10 @@ class VariationDecider(object):
                 LogMessageEnum.DEBUG_MESSAGES.SEGMENTATION_SKIPPED.format(
                     file=FILE,
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
+                    campaign_key=campaign.get("key"),
                     variables=custom_variables,
-                    variation_status=''
-                )
+                    variation_status="",
+                ),
             )
         else:
             if not validate_util.is_valid_value(custom_variables):
@@ -252,24 +329,28 @@ class VariationDecider(object):
                     LogMessageEnum.DEBUG_MESSAGES.NO_VARIABLES.format(
                         file=FILE,
                         user_id=user_id,
-                        campaign_key=campaign.get('key'),
-                        segmentation_type='pre_segmentation'
-                    )
+                        campaign_key=campaign.get("key"),
+                        segmentation_type="pre_segmentation",
+                    ),
                 )
                 custom_variables = {}
             try:
-                result = self.segment_evaluator.evaluate(segments, custom_variables)
+                result = self.segment_evaluator.evaluate(
+                    segments, custom_variables
+                )
                 self.logger.log(
                     LogLevelEnum.INFO,
                     LogMessageEnum.INFO_MESSAGES.SEGMENTATION_STATUS.format(
                         file=FILE,
                         user_id=user_id,
-                        campaign_key=campaign.get('key'),
+                        campaign_key=campaign.get("key"),
                         variables=custom_variables,
-                        variation_status='',
-                        segmentation_type='pre_segmentation',
-                        status=ResultStatus.PASSED if result else ResultStatus.FAILED
-                    )
+                        variation_status="",
+                        segmentation_type="pre_segmentation",
+                        status=ResultStatus.PASSED
+                        if result
+                        else ResultStatus.FAILED,
+                    ),
                 )
             except Exception as e:
                 result = False
@@ -278,11 +359,11 @@ class VariationDecider(object):
                     LogMessageEnum.ERROR_MESSAGES.SEGMENTATION_ERROR.format(
                         file=FILE,
                         user_id=user_id,
-                        campaign_key=campaign.get('key'),
+                        campaign_key=campaign.get("key"),
                         variables=custom_variables,
-                        variation_status='',
+                        variation_status="",
                         error_message=e,
-                    )
+                    ),
                 )
         return result
 
@@ -299,7 +380,7 @@ class VariationDecider(object):
         """
 
         if self.bucketer.is_user_part_of_campaign(user_id, campaign):
-           return True
+            return True
         else:
             # not part of campaign
             self.logger.log(
@@ -307,16 +388,18 @@ class VariationDecider(object):
                 LogMessageEnum.DEBUG_MESSAGES.USER_NOT_PART_OF_CAMPAIGN.format(
                     file=FILE,
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
-                    method='is_user_part_of_campaign',
-                    campaign_type=campaign.get('type')
-                )
+                    campaign_key=campaign.get("key"),
+                    method="is_user_part_of_campaign",
+                    campaign_type=campaign.get("type"),
+                ),
             )
             return False
 
     # Private helper methods
 
-    def _get_white_listed_variations_list(self, user_id, campaign, variation_targeting_variables):
+    def _get_white_listed_variations_list(
+        self, user_id, campaign, variation_targeting_variables
+    ):
         """ Identifies all forced variations which are targeted by variation_targeting_variables
 
         Args:
@@ -333,42 +416,47 @@ class VariationDecider(object):
                 LogMessageEnum.DEBUG_MESSAGES.NO_VARIABLES.format(
                     file=FILE,
                     user_id=user_id,
-                    campaign_key=campaign.get('key'),
-                    segmentation_type='whitelisting'
-                )
+                    campaign_key=campaign.get("key"),
+                    segmentation_type="whitelisting",
+                ),
             )
             variation_targeting_variables = {}
 
         variation_targeting_variables.update(_vwo_user_id=user_id)
         white_listed_variations_list = []
 
-        for variation in campaign.get('variations'):
-            if not validate_util.is_valid_value(variation.get('segments')):
+        for variation in campaign.get("variations"):
+            if not validate_util.is_valid_value(variation.get("segments")):
                 result = False
                 self.logger.log(
                     LogLevelEnum.DEBUG,
                     LogMessageEnum.DEBUG_MESSAGES.SEGMENTATION_SKIPPED.format(
                         file=FILE,
                         user_id=user_id,
-                        variation_name=variation.get('name'),
-                        campaign_key=campaign.get('key'),
-                        variation_status='for variation %s' % variation.get('name')
-                    )
+                        variation_name=variation.get("name"),
+                        campaign_key=campaign.get("key"),
+                        variation_status="for variation %s"
+                        % variation.get("name"),
+                    ),
                 )
             else:
                 try:
-                    result = self.segment_evaluator.evaluate(variation.get('segments'), variation_targeting_variables)
+                    result = self.segment_evaluator.evaluate(
+                        variation.get("segments"),
+                        variation_targeting_variables,
+                    )
                     self.logger.log(
                         LogLevelEnum.DEBUG,
                         LogMessageEnum.DEBUG_MESSAGES.SEGMENTATION_STATUS.format(
                             file=FILE,
                             user_id=user_id,
-                            status='passed' if result else 'failed',
+                            status="passed" if result else "failed",
                             variables=variation_targeting_variables,
-                            variation_status='for variation %s' % variation.get('name'),
-                            campaign_key=campaign.get('key'),
-                            segmentation_type='white_listing'
-                        )
+                            variation_status="for variation %s"
+                            % variation.get("name"),
+                            campaign_key=campaign.get("key"),
+                            segmentation_type="white_listing",
+                        ),
                     )
                 except Exception as e:
                     result = False
@@ -378,14 +466,30 @@ class VariationDecider(object):
                             file=FILE,
                             user_id=user_id,
                             variables=variation_targeting_variables,
-                            campaign_key=campaign.get('key'),
-                            variation_status=' for variation %s' % variation.get('name'),
+                            campaign_key=campaign.get("key"),
+                            variation_status=" for variation %s"
+                            % variation.get("name"),
                             error_message=e,
-                        )
+                        ),
                     )
             if result:
                 white_listed_variations_list.append(copy.deepcopy(variation))
         return white_listed_variations_list
+
+    def _create_user_storage_data(
+        self, user_id, campaign_key, variation_name, kwargs={}
+    ):
+        new_user_storage_data = {
+            "userId": user_id,
+            "campaignKey": campaign_key,
+            "variationName": variation_name,
+        }
+        # For track only, to store the goals tracked
+        if kwargs.get("goal_data"):
+            new_user_storage_data["goalIdentifiers"] = kwargs.get(
+                "goal_data"
+            ).get("identifier")
+        return new_user_storage_data
 
     def _get_user_storage_data(self, user_id, campaign_key):
         """ Get the UserStorageData after looking up into get method
@@ -403,7 +507,7 @@ class VariationDecider(object):
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(
                     file=FILE
-                )
+                ),
             )
             return False
         try:
@@ -411,22 +515,20 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_STORAGE.format(
-                    file=FILE,
-                    user_id=user_id
-                )
+                    file=FILE, user_id=user_id
+                ),
             )
             return copy.deepcopy(user_storage_data)
         except Exception:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.LOOK_UP_USER_STORAGE_FAILED.format(
-                    file=FILE,
-                    user_id=user_id
-                )
+                    file=FILE, user_id=user_id
+                ),
             )
             return False
 
-    def _set_user_storage_data(self, user_id, campaign_key, variation_name):
+    def _set_user_storage_data(self, user_storage_data):
         """ If UserStorage is provided and variation was found,
         set the assigned variation in UserStorage.
             It creates bucket and then stores.
@@ -445,24 +547,19 @@ class VariationDecider(object):
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_SET.format(
                     file=FILE
-                )
+                ),
             )
             return False
 
-        new_user_storage_data = {
-            "userId": user_id,
-            "campaignKey": campaign_key,
-            "variationName": variation_name
-        }
         try:
-            self.user_storage.set(new_user_storage_data)
+            self.user_storage.set(user_storage_data)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_STORAGE_STATUS.format(
                     file=FILE,
-                    user_id=user_id,
-                    status='successful'
-                )
+                    user_id=user_storage_data.get("userId"),
+                    status="successful",
+                ),
             )
             return True
         except Exception as e:
@@ -470,8 +567,8 @@ class VariationDecider(object):
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SET_USER_STORAGE_FAILED.format(
                     file=FILE,
-                    user_id=user_id,
-                    error_message=e
-                )
+                    user_id=user_storage_data.get("userId"),
+                    error_message=e,
+                ),
             )
             return False

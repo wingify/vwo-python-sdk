@@ -18,4 +18,4 @@ from .vwo import VWO
 from .helpers.settings_file_util import get as get_settings_file
 from .storage.user import UserStorage
 
-from .logger.logger_manager import LogLevels
+from .constants.constants import GOAL_TYPES, LOG_LEVELS

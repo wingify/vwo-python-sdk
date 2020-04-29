@@ -47,3 +47,19 @@ def get_key_value(var):
     key = next(iter(var))
     value = var[key]
     return key, value
+
+
+def get_attribute_values(obj):
+    """ Returns list of attribute values
+
+    Args:
+    obj(class): class obj
+
+    Returns:
+    attributes(dict): list of attribute values
+    """
+    return [
+        value
+        for key, value in obj.__dict__.items()
+        if not key.startswith("__")
+    ]

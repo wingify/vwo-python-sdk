@@ -76,15 +76,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, kwargs={}):
     campaign = campaign_util.get_campaign(vwo_instance.settings_file, campaign_key)
 
     # Validate campaign
-    if not campaign or campaign.get('status') != constants.STATUS_RUNNING:
-        # log error
-        vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-                file=FILE,
-                campaign_key=campaign_key,
-            )
-        )
+    if not campaign:
         return False
 
     # Validate campaign_type

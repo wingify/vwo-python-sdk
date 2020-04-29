@@ -22,6 +22,8 @@ from .helpers import validate_util
 from .logger.logger_manager import VWOLogger, configure_logger
 from .services import singleton
 from .services.settings_file_manager import SettingsFileManager
+from .constants.constants import GOAL_TYPES
+
 
 FILE = FileNameEnum.Vwo.VWO
 
@@ -33,13 +35,14 @@ class VWO(object):
     # The method __init__ has references from "Optimizely Python SDK, version 3.2.0",
     # Copyright 2016-2019, Optimizely, used under Apache 2.0 License.
     # Source - https://github.com/optimizely/python-sdk/blob/master/optimizely/optimizely.py
-    def __init__(self,
-                 settings_file,
-                 logger=None,
-                 user_storage=None,
-                 is_development_mode=False,
-                 *args,
-                 **kwargs):
+    def __init__(
+        self,
+        settings_file,
+        logger=None,
+        user_storage=None,
+        is_development_mode=False,
+        **kwargs
+    ):
         """ Initializes the services required by the VWO APIs.
 
         Args:
@@ -56,8 +59,12 @@ class VWO(object):
 
         # Retrieve log_level from kwargs
         if not logger:
-            log_level = kwargs.get('log_level')
-            self.logger = VWOLogger.getInstance(configure_logger(level=log_level))
+            log_level = kwargs.get("log_level")
+            if not validate_util.is_valid_log_level(log_level):
+                log_level = None
+            self.logger = VWOLogger.getInstance(
+                configure_logger(level=log_level)
+            )
         else:
             # Verify and assign a/the logger
             self.logger = VWOLogger.getInstance(logger)
@@ -68,7 +75,7 @@ class VWO(object):
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SETTINGS_FILE_CORRUPTED.format(
                     file=FILE
-                )
+                ),
             )
             self.is_valid = False
             return
@@ -80,7 +87,7 @@ class VWO(object):
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(
                 file=FILE
-            )
+            ),
         )
 
         # Process the settings file
@@ -88,24 +95,51 @@ class VWO(object):
         self.settings_file = self.config.get_settings_file()
 
         # Assign VariationDecider to vwo
+        if not validate_util.is_valid_service(user_storage, "user_storage"):
+            user_storage = None
         self.variation_decider = VariationDecider(user_storage)
 
         # Assign event dispatcher
+        if is_development_mode and type(is_development_mode) is not bool:
+            self.is_valid = False
+        else:
+            self.is_development_mode = is_development_mode or False
         if is_development_mode:
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(
                     file=FILE
-                )
+                ),
             )
         self.event_dispatcher = EventDispatcher(is_development_mode)
 
+        goal_type_to_track = kwargs.get("goal_type_to_track")
+        if goal_type_to_track and not validate_util.is_valid_goal_type(
+            goal_type_to_track
+        ):
+            self.is_valid = False
+        else:
+            self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
+
+        should_track_returning_user = kwargs.get("should_track_returning_user")
+        if (should_track_returning_user and type(should_track_returning_user) is not bool):
+            self.is_valid = False
+        else:
+            self.should_track_returning_user = (
+                should_track_returning_user or False
+            )
+
+        if not self.is_valid:
+            self.logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.SETTINGS_FILE_CORRUPTED.format(
+                    file=FILE
+                ),
+            )
         # Log successfully initialized SDK
         self.logger.log(
             LogLevelEnum.DEBUG,
-            LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(
-                file=FILE
-            )
+            LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE),
         )
 
     # PUBLIC METHODS
@@ -117,61 +151,66 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return None
 
     def get_variation_name(self, campaign_key, user_id, **kwargs):
         try:
-            return api._get_variation_name(self, campaign_key, user_id, kwargs=kwargs)
+            return api._get_variation_name(
+                self, campaign_key, user_id, kwargs=kwargs
+            )
         except Exception as e:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return None
 
     def track(self, campaign_key, user_id, goal_identifier, **kwargs):
         try:
-            return api._track(self, campaign_key, user_id, goal_identifier, kwargs=kwargs)
+            return api._track(
+                self, campaign_key, user_id, goal_identifier, kwargs=kwargs
+            )
         except Exception as e:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return False
 
     def is_feature_enabled(self, campaign_key, user_id, **kwargs):
         try:
-            return api._is_feature_enabled(self, campaign_key, user_id, kwargs=kwargs)
+            return api._is_feature_enabled(
+                self, campaign_key, user_id, kwargs=kwargs
+            )
         except Exception as e:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return False
 
-    def get_feature_variable_value(self, campaign_key, variable_key, user_id, **kwargs):
+    def get_feature_variable_value(
+        self, campaign_key, variable_key, user_id, **kwargs
+    ):
         try:
-            return api._get_feature_variable_value(self, campaign_key, variable_key, user_id, kwargs=kwargs)
+            return api._get_feature_variable_value(
+                self, campaign_key, variable_key, user_id, kwargs=kwargs
+            )
         except Exception as e:
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return None
 
@@ -182,8 +221,7 @@ class VWO(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
-                    file=FILE,
-                    exception=e
-                )
+                    file=FILE, exception=e
+                ),
             )
             return False

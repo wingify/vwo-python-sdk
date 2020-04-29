@@ -20,11 +20,11 @@ from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
 
-VWO_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, 'https://vwo.com')
+VWO_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, "https://vwo.com")
 FILE = FileNameEnum.Helpers.UuidUtil
 
 
-def generator_for(user_id, account_id):
+def generate_for(user_id, account_id):
     """ Generates desired UUID
 
     Args:
@@ -40,7 +40,7 @@ def generator_for(user_id, account_id):
     user_id_namespace = generate(VWO_NAMESPACE, account_id)
     uuid_for_account_user_id = generate(user_id_namespace, user_id)
 
-    desired_uuid = str(uuid_for_account_user_id).replace('-', '').upper()
+    desired_uuid = str(uuid_for_account_user_id).replace("-", "").upper()
 
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,
@@ -48,8 +48,8 @@ def generator_for(user_id, account_id):
             file=FILE,
             user_id=user_id,
             account_id=account_id,
-            desired_uuid=desired_uuid
-        )
+            desired_uuid=desired_uuid,
+        ),
     )
     return desired_uuid
 

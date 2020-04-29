@@ -18,10 +18,9 @@ from ..helpers import validate_util
 from ..services import singleton
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
-from logging import DEBUG, INFO, WARNING, ERROR
 
 FILE = FileNameEnum.Logger.LoggerManager
-_VWO_LOG_FORMAT = 'VWO-SDK - [%(levelname)s]: %(asctime)s %(message)s'
+_VWO_LOG_FORMAT = "VWO-SDK - [%(levelname)s]: %(asctime)s %(message)s"
 _DEFAULT_LOGGING_LEVEL = logging.ERROR
 
 
@@ -36,7 +35,9 @@ def set_log_handler(logger, handler):
 # The method configure_logger has references from "Optimizely Python SDK, version 3.2.0",
 # Copyright 2016-2019, Optimizely, used under Apache 2.0 License.
 # Source - https://github.com/optimizely/python-sdk/blob/master/optimizely/logger.py
-def configure_logger(name=__name__, level=None, handler=logging.StreamHandler()):
+def configure_logger(
+    name=__name__, level=None, handler=logging.StreamHandler()
+):
     """ Creates a new logger instance with given name if it does not
     exists, else retrives existing logger. Then it configures logging.Logger
     instance received with given level and handler.
@@ -69,21 +70,12 @@ def configure_logger(name=__name__, level=None, handler=logging.StreamHandler())
 
     # Log logger configured with level
     logger.log(
-        DEBUG,
+        logging.DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.LOG_LEVEL_SET.format(
-            file=FILE,
-            level=level
-        ).replace('API_NAME', 'SDK', 1)
+            file=FILE, level=level
+        ).replace("API_NAME", "SDK", 1),
     )
     return logger
-
-
-# For exposing log levels to vwo_instance
-class LogLevels:
-    DEBUG = DEBUG
-    INFO = INFO
-    WARNING = WARNING
-    ERROR = ERROR
 
 
 # VWO singleton Logger
@@ -100,46 +92,48 @@ class VWOLogger(singleton.Singleton):
                     None): A logger instance
         """
         # Set default api name as SDK
-        self.api_name = 'SDK'
+        self.api_name = "SDK"
 
         if not logger:
             self.logger = configure_logger(__name__)
         elif isinstance(logger, logging.Logger):
             logger.log(
-                DEBUG,
+                logging.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.LOGGING_LOGGER_INSTANCE_USED.format(
                     file=FILE
-                ).replace('API_NAME', self.api_name, 1)
+                ).replace(
+                    "API_NAME", self.api_name, 1
+                ),
             )
             self.logger = logger
-        elif validate_util.is_valid_service(logger, 'logger'):
+        elif validate_util.is_valid_service(logger, "logger"):
             try:
                 logger.log(
-                    DEBUG,
+                    logging.DEBUG,
                     LogMessageEnum.DEBUG_MESSAGES.CUSTOM_LOGGER_USED.format(
                         file=FILE
-                    ).replace('API_NAME', self.api_name, 1)
+                    ).replace("API_NAME", self.api_name, 1),
                 )
                 self.logger = logger
             except Exception:
                 self.logger = configure_logger(__name__)
                 self.log(
-                    ERROR,
-                    LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.
-                    format(
-                        file=FILE,
-                        extra_info='log method is invalid.'
-                    ).replace('API_NAME', self.api_name, 1)
+                    logging.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.format(
+                        file=FILE, extra_info="log method is invalid."
+                    ).replace(
+                        "API_NAME", self.api_name, 1
+                    ),
                 )
         else:
             self.logger = configure_logger(__name__)
             self.log(
-                ERROR,
-                LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.
-                format(
-                    file=FILE,
-                    extra_info='log method is not provided.'
-                ).replace('API_NAME', self.api_name, 1)
+                logging.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.format(
+                    file=FILE, extra_info="log method is not provided."
+                ).replace(
+                    "API_NAME", self.api_name, 1
+                ),
             )
 
     def set_api(self, api_name):
@@ -155,7 +149,9 @@ class VWOLogger(singleton.Singleton):
         """
 
         try:
-            self.logger.log(level, message.replace('API_NAME', self.api_name, 1))
+            self.logger.log(
+                level, message.replace("API_NAME", self.api_name, 1)
+            )
         except Exception:
             # Even logging.Logger is broken somehow, simply print to console
             print(level, message)

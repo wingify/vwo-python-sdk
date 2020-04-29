@@ -1,5 +1,5 @@
 [flake8]
-ignore = E111
+ignore = E111, W503
 max-line-length = 120
 max-complexity = 18
 per-file-ignores =

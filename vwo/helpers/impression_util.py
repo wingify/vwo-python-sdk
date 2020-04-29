@@ -21,6 +21,7 @@ from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger.logger_manager import VWOLogger
+
 try:
     from urllib import quote  # Python 2.X
 except ImportError:
@@ -35,7 +36,7 @@ def create_impression(
     variation_id,
     user_id,
     goal_id=None,
-    revenue=None
+    revenue=None,
 ):
     """ Creates the impression from the arguments passed according to
     call type
@@ -54,8 +55,9 @@ def create_impression(
             else impression(dict)
     """
 
-    if (not validate_util.is_valid_non_zero_number(campaign_id) or not
-            validate_util.is_valid_string(user_id)):
+    if not validate_util.is_valid_non_zero_number(
+        campaign_id
+    ) or not validate_util.is_valid_string(user_id):
         return None
 
     is_track_user_api = True
@@ -65,22 +67,20 @@ def create_impression(
     impression = get_common_properties(user_id, settings_file)
 
     impression.update(
-        experiment_id=campaign_id,
-        combination=variation_id,
+        experiment_id=campaign_id, combination=variation_id,
     )
 
     url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL
     logger = VWOLogger.getInstance()
 
     if is_track_user_api:
-        impression.update(ed=json.dumps({'p': constants.PLATFORM}))
+        impression.update(ed=json.dumps({"p": constants.PLATFORM}))
         impression.update(url=url + constants.ENDPOINTS.TRACK_USER)
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_USER.format(
-                file=FILE,
-                properties=json.dumps(impression)
-            )
+                file=FILE, properties=json.dumps(impression)
+            ),
         )
     else:
         impression.update(url=url + constants.ENDPOINTS.TRACK_GOAL)
@@ -90,9 +90,8 @@ def create_impression(
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_GOAL.format(
-                file=FILE,
-                properties=json.dumps(impression)
-            )
+                file=FILE, properties=json.dumps(impression)
+            ),
         )
     return impression
 
@@ -108,15 +107,15 @@ def get_common_properties(user_id, settings_file):
         properties(object): commonly used params for making call to our servers
     """
 
-    account_id = settings_file.get('accountId')
+    account_id = settings_file.get("accountId")
     properties = {
-        'random': generic_util.get_random_number(),
-        'sdk': constants.SDK_NAME,
-        'sdk-v': constants.SDK_VERSION,
-        'ap': constants.PLATFORM,
-        'sId': generic_util.get_current_unix_timestamp(),
-        'u': uuid_util.generator_for(user_id, account_id),
-        'account_id': account_id,
-        'uId': quote(user_id.encode("utf-8")),
+        "random": generic_util.get_random_number(),
+        "sdk": constants.SDK_NAME,
+        "sdk-v": constants.SDK_VERSION,
+        "ap": constants.PLATFORM,
+        "sId": generic_util.get_current_unix_timestamp(),
+        "u": uuid_util.generate_for(user_id, account_id),
+        "account_id": account_id,
+        "uId": quote(user_id.encode("utf-8")),
     }
     return properties
