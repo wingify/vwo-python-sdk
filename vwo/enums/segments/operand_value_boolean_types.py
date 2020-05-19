@@ -14,5 +14,5 @@
 
 
 class OperandValuesBooleanTypes:
-    TRUE = 'true'
-    FALSE = 'false'
+    TRUE = "true"
+    FALSE = "false"

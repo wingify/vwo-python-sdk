@@ -113,41 +113,25 @@ def format_success(success):
 
 
 def cli():
-    parser = ArgumentParser(
-        description="Check Python source files for Apache License headers"
+    parser = ArgumentParser(description="Check Python source files for Apache License headers")
+    parser.add_argument(
+        "path", nargs="*", type=Path, default=[Path.cwd()], help="path(s) of files or directories to check",
     )
     parser.add_argument(
-        "path",
-        nargs="*",
-        type=Path,
-        default=[Path.cwd()],
-        help="path(s) of files or directories to check",
+        "--include-hidden", action="store_true", help="also check hidden files and directories",
     )
     parser.add_argument(
-        "--include-hidden",
-        action="store_true",
-        help="also check hidden files and directories",
+        "--exclude", nargs="+", type=Path, default=[], help="path(s) of files or directories to ignore",
     )
     parser.add_argument(
-        "--exclude",
-        nargs="+",
-        type=Path,
-        default=[],
-        help="path(s) of files or directories to ignore",
-    )
-    parser.add_argument(
-        "--copyright",
-        help="check that the header has a copyright notice containing the "
-        + "provided substring",
+        "--copyright", help="check that the header has a copyright notice containing the " + "provided substring",
     )
     args = parser.parse_args()
 
     success = True
 
     for passed_path in args.path:
-        for file in python_files(
-            passed_path, args.include_hidden, args.exclude
-        ):
+        for file in python_files(passed_path, args.include_hidden, args.exclude):
 
             output = str(file)
 

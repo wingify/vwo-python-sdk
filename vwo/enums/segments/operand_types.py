@@ -14,5 +14,5 @@
 
 
 class OperandTypes:
-    CUSTOM_VARIABLE = 'custom_variable'
-    USER = 'user'
+    CUSTOM_VARIABLE = "custom_variable"
+    USER = "user"

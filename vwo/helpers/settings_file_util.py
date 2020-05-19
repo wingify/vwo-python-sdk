@@ -36,43 +36,37 @@ def get(account_id, sdk_key):
             None if no settings_file is found or sdk_key is incorrect
     """
 
-    is_valid_account_id = validate_util.is_valid_number(account_id) or \
-        validate_util.is_valid_string(account_id)
+    is_valid_account_id = validate_util.is_valid_number(account_id) or validate_util.is_valid_string(account_id)
 
     if not is_valid_account_id or not validate_util.is_valid_string(sdk_key):
-        print(('account_id and sdk_key are required',
-               'for fetching account settings. Aborting!'
-               ), file=sys.stderr)
-        return '{}'
+        print(("account_id and sdk_key are required", "for fetching account settings. Aborting!"), file=sys.stderr)
+        return "{}"
 
     protocol = constants.HTTPS_PROTOCOL
     hostname = constants.ENDPOINTS.BASE_URL
     path = constants.ENDPOINTS.ACCOUNT_SETTINGS
 
     parameters = {
-        'a': account_id,
-        'i': sdk_key,
-        'r': generic_util.get_random_number(),
-        'platform': constants.PLATFORM,
-        'api-version': constants.API_VERSION
+        "a": account_id,
+        "i": sdk_key,
+        "r": generic_util.get_random_number(),
+        "platform": constants.PLATFORM,
+        "api-version": constants.API_VERSION,
     }
     server_url = protocol + hostname + path
     try:
-        settings_file_response = requests.get(
-            server_url,
-            params=parameters
-        )
+        settings_file_response = requests.get(server_url, params=parameters)
         if settings_file_response.status_code != 200:
-            print('Request failed for fetching account settings. '
-                  'Got Status Code: {status_code} '
-                  'and message: {settings_file_response}.'.
-                  format(status_code=settings_file_response.status_code,
-                         settings_file_response=settings_file_response.text
-                         ),
-                  file=sys.stderr
-                  )
+            print(
+                "Request failed for fetching account settings. "
+                "Got Status Code: {status_code} "
+                "and message: {settings_file_response}.".format(
+                    status_code=settings_file_response.status_code, settings_file_response=settings_file_response.text
+                ),
+                file=sys.stderr,
+            )
         settings_file = settings_file_response.text
     except requests.exceptions.RequestException as e:
-        print('Error fetching Settings File', e, file=sys.stderr)
-        return '{}'
+        print("Error fetching Settings File", e, file=sys.stderr)
+        return "{}"
     return settings_file

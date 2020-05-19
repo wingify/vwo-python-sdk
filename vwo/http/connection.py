@@ -18,31 +18,37 @@ import requests
 
 
 class Connection:
+    """ Connection class to provide SDK with network connectivity interfaces """
+
     def __init__(self):
+        """ Initializes connection class with requests session object"""
         self.session = requests.Session()
 
     def get(self, url, params=None):
+        """ Get method, it wraps upon requests' get method.
+        Args:
+            url (str): Unique resource locator
+            params (dict): Parameters to be passed
+        Returns:
+            dict : Status code and Response text
+        """
         try:
             resp = self.session.get(url, params=params)
-            return {
-                'status_code': resp.status_code,
-                'text': resp.text
-            }
+            return {"status_code": resp.status_code, "text": resp.text}
         except Exception:
-            return {
-                'status_code': None,
-                'text': ''
-            }
+            return {"status_code": None, "text": ""}
 
     def post(self, url, params=None, data=None):
+        """ Post method, it wraps upon requests' post method.
+        Args:
+            url (str): Unique resource locator
+            params (dict): Parameters to be passed
+            data (dict): Json data to be passed
+        Returns:
+            dict : Status code and Response text
+        """
         try:
             resp = self.session.post(url, params=params, json=data)
-            return {
-                'status_code': resp.status_code,
-                'text': resp.text
-            }
+            return {"status_code": resp.status_code, "text": resp.text}
         except Exception:
-            return {
-                'status_code': None,
-                'text': ''
-            }
+            return {"status_code": None, "text": ""}

@@ -14,7 +14,7 @@
 
 
 class OperandValueTypesName:
-    REGEX = 'regex'
-    WILDCARD = 'wildcard'
-    LOWER = 'lower'
-    EQUALS = 'equals'
+    REGEX = "regex"
+    WILDCARD = "wildcard"
+    LOWER = "lower"
+    EQUALS = "equals"

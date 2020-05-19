@@ -39,24 +39,20 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
     """
 
     vwo_instance.logger.set_api(API_METHODS.PUSH)
-    if not validate_util.is_valid_string(tag_key) or not validate_util.is_valid_string(tag_value)\
-            or not validate_util.is_valid_string(user_id):
+    if (
+        not validate_util.is_valid_string(tag_key)
+        or not validate_util.is_valid_string(tag_value)
+        or not validate_util.is_valid_string(user_id)
+    ):
         vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.PUSH_API_INVALID_PARAMS.format(
-                file=FILE,
-            )
+            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.PUSH_API_INVALID_PARAMS.format(file=FILE,)
         )
         return False
 
     if len(tag_key) > constants.PUSH_API.TAG_KEY_LENGTH:
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.TAG_KEY_LENGTH_EXCEEDED.format(
-                file=FILE,
-                user_id=user_id,
-                tag_key=tag_key,
-            )
+            LogMessageEnum.ERROR_MESSAGES.TAG_KEY_LENGTH_EXCEEDED.format(file=FILE, user_id=user_id, tag_key=tag_key,),
         )
         return False
 
@@ -64,10 +60,8 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.TAG_VALUE_LENGTH_EXCEEDED.format(
-                file=FILE,
-                user_id=user_id,
-                tag_value=tag_value,
-            )
+                file=FILE, user_id=user_id, tag_value=tag_value,
+            ),
         )
         return False
 
@@ -79,10 +73,10 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
         LogLevelEnum.INFO,
         LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_PUSH_API.format(
             file=FILE,
-            u=impression.get('u'),
-            user_id=impression.get('uId'),
-            account_id=impression.get('account_id'),
-            tags=impression.get('tags')
-        )
+            u=impression.get("u"),
+            user_id=impression.get("uId"),
+            account_id=impression.get("account_id"),
+            tags=impression.get("tags"),
+        ),
     )
     return True

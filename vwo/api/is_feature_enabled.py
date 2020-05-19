@@ -23,7 +23,7 @@ from ..enums.log_level_enum import LogLevelEnum
 FILE = FileNameEnum.Api.IsFeatureEnabled
 
 
-def _is_feature_enabled(vwo_instance, campaign_key, user_id, kwargs={}):
+def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     """ This API method: Identifies whether the user becomes a part
     of feature rollout/test or not.
 
@@ -38,37 +38,32 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, kwargs={}):
     Args:
         campaign_key (string): unique campaign key
         user_id (string): ID assigned to a user
-        custom_variables (dict): Pass it through **kwargs as custom_variables={},
-        Custom variables required for segmentation
+
+    Keywork Args:
+        custom_variables (dict): Custom variables required for segmentation
+        variation_targeting_variables (dict): Whitelisting variables to target users
 
     Returns:
-        Booleann: True if user becomes part of feature test/rollout,
+        bool: True if user becomes part of feature test/rollout,
         otherwise false in case user doesn't becomes part of it.
     """
 
     vwo_instance.logger.set_api(API_METHODS.IS_FEATURE_ENABLED)
     # Retrieve custom variables
-    custom_variables = kwargs.get('custom_variables')
-    variation_targeting_variables = kwargs.get('variation_targeting_variables')
+    custom_variables = kwargs.get("custom_variables")
+    variation_targeting_variables = kwargs.get("variation_targeting_variables")
 
-    if not validate_util.is_valid_string(campaign_key) or not validate_util.is_valid_string(user_id) \
-            or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables)) \
-            or (variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)):  # noqa: E501
+    if (
+        not validate_util.is_valid_string(campaign_key)
+        or not validate_util.is_valid_string(user_id)
+        or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables))
+        or (
+            variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)
+        )
+    ):  # noqa: E501
         # log invalid params
         vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_INVALID_PARAMS.format(
-                file=FILE,
-            )
-        )
-        return False
-
-    if not vwo_instance.is_valid:
-        vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.API_CONFIG_CORRUPTED.format(
-                file=FILE,
-            )
+            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_INVALID_PARAMS.format(file=FILE,)
         )
         return False
 
@@ -80,25 +75,24 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, kwargs={}):
         return False
 
     # Validate campaign_type
-    campaign_type = campaign.get('type')
+    campaign_type = campaign.get("type")
 
     if campaign_type == constants.CAMPAIGN_TYPES.VISUAL_AB:
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
-                file=FILE,
-                user_id=user_id,
-                campaign_key=campaign_key,
-                campaign_type=campaign_type
-            )
+                file=FILE, user_id=user_id, campaign_key=campaign_key, campaign_type=campaign_type
+            ),
         )
         return False
 
     # Get variation
-    variation = vwo_instance.variation_decider.get_variation(user_id,
-                                                             campaign,
-                                                             custom_variables=custom_variables,
-                                                             variation_targeting_variables=variation_targeting_variables)  # noqa: E501
+    variation = vwo_instance.variation_decider.get_variation(
+        user_id,
+        campaign,
+        custom_variables=custom_variables,
+        variation_targeting_variables=variation_targeting_variables,
+    )  # noqa: E501
 
     # If no variation, did not become part of feature_test/rollout
     if not variation:
@@ -106,40 +100,35 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, kwargs={}):
 
     # if campaign type is feature_test Send track call to server
     if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_TEST:
-        impression = impression_util.create_impression(vwo_instance.settings_file,
-                                                       campaign.get('id'),
-                                                       variation.get('id'),
-                                                       user_id)
+        impression = impression_util.create_impression(
+            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+        )
 
         vwo_instance.event_dispatcher.dispatch(impression)
         vwo_instance.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
                 file=FILE,
-                campaign_id=impression.get('experiment_id'),
-                user_id=impression.get('uId'),
-                account_id=impression.get('account_id'),
-                variation_id=impression.get('combination')
-            )
+                campaign_id=impression.get("experiment_id"),
+                user_id=impression.get("uId"),
+                account_id=impression.get("account_id"),
+                variation_id=impression.get("combination"),
+            ),
         )
-        result = variation.get('isFeatureEnabled')
+        result = variation.get("isFeatureEnabled")
         if result:
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
-                    file=FILE,
-                    user_id=user_id,
-                    feature_key=campaign_key,
-                )
+                    file=FILE, user_id=user_id, feature_key=campaign_key,
+                ),
             )
         else:
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
-                    file=FILE,
-                    user_id=user_id,
-                    feature_key=campaign_key,
-                )
+                    file=FILE, user_id=user_id, feature_key=campaign_key,
+                ),
             )
         return result
     return True

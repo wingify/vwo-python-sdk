@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# flake8: noqa
 
-from .vwo import VWO
+from .api.launch import launch
 from .helpers.settings_file_util import get as get_settings_file
 from .storage.user import UserStorage
 
-from .constants.constants import GOAL_TYPES, LOG_LEVELS
+from .constants.constants import GOAL_TYPES
+from .enums import LogLevelEnum as LOG_LEVELS

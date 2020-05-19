@@ -1,1 +1,34 @@
-python3 setup.py license_check
+#!/bin/bash
+
+set -e
+ 
+echo "RUNNING PRE-PUSH SCRIPT"
+python setup.py test
+if [ $? -eq 1 ]
+then
+    echo "Some tests failed for python2" >&2
+    exit 1
+else
+    python3 setup.py test
+    if [ $? -eq 1 ]
+    then
+        echo "Some tests failed for python3" >&2
+        exit 1
+    else
+        python3 setup.py license_check
+        if [ $? -eq 1 ]
+        then
+            echo "License is missing in some files" >&2
+            exit 1
+        else
+            python3 setup.py doc_check
+            if [ $? -eq 1 ]
+            then
+                echo "Doc is missing in some code" >&2
+                exit 1
+            fi
+        fi
+    fi
+fi
+
+echo "DONE: RUNNING PRE-PUSH SCRIPT"

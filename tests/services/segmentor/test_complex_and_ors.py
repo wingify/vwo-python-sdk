@@ -16,42 +16,54 @@
 import unittest
 import json
 from vwo.services.segmentor.segment_evaluator import SegmentEvaluator
-with open('tests/data/segmentor_test_cases.json') as json_file:
+
+with open("tests/data/segmentor_test_cases.json") as json_file:
     segmentor_test_cases = json.load(json_file)
 
 
 class TestComplexAndOrs(unittest.TestCase):
-
     def setUp(self):
         self.segment_evaluator = SegmentEvaluator()
-        self.test_cases = segmentor_test_cases.get('complex_and_ors')
+        self.test_cases = segmentor_test_cases.get("complex_and_ors")
 
     def test_complex_dsl_1(self):
-        test_case = self.test_cases.get('complex_dsl_1')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_1")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_complex_dsl_2(self):
-        test_case = self.test_cases.get('complex_dsl_2')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_2")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_complex_dsl_3(self):
-        test_case = self.test_cases.get('complex_dsl_3')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_3")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_complex_dsl_4(self):
-        test_case = self.test_cases.get('complex_dsl_4')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_4")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_complex_dsl_5(self):
-        test_case = self.test_cases.get('complex_dsl_5')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_5")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_complex_dsl_6(self):
-        test_case = self.test_cases.get('complex_dsl_6')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("complex_dsl_6")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )

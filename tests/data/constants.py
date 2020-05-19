@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-TEST_SDK_KEY = 'dummy_sdk_key'
+TEST_SDK_KEY = "dummy_sdk_key"
 TEST_ACCOUNT_ID = 88888888
-TEST_USER_ID = 'demo_user'
-TEST_CAMPAIGN_KEY = 'demo_campaign'
+TEST_USER_ID = "demo_user"
+TEST_CAMPAIGN_KEY = "demo_campaign"

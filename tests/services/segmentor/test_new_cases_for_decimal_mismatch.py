@@ -16,27 +16,33 @@
 import unittest
 import json
 from vwo.services.segmentor.segment_evaluator import SegmentEvaluator
-with open('tests/data/segmentor_test_cases.json') as json_file:
+
+with open("tests/data/segmentor_test_cases.json") as json_file:
     segmentor_test_cases = json.load(json_file)
 
 
 class TestNewCasesForDecimalMismatch(unittest.TestCase):
-
     def setUp(self):
         self.segment_evaluator = SegmentEvaluator()
-        self.test_cases = segmentor_test_cases.get('new_cases_for_decimal_mismatch')
+        self.test_cases = segmentor_test_cases.get("new_cases_for_decimal_mismatch")
 
     def test_endswith_decimal(self):
-        test_case = self.test_cases.get('endswith_decimal')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("endswith_decimal")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_contains_decimal2(self):
-        test_case = self.test_cases.get('contains_decimal2')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("contains_decimal2")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_contains_decimal(self):
-        test_case = self.test_cases.get('contains_decimal')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("contains_decimal")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )

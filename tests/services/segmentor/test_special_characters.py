@@ -16,19 +16,21 @@ import unittest
 import json
 import sys
 from vwo.services.segmentor.segment_evaluator import SegmentEvaluator
-with open('tests/data/segmentor_test_cases.json') as json_file:
+
+with open("tests/data/segmentor_test_cases.json") as json_file:
     segmentor_test_cases = json.load(json_file)
 
 
 class TestSpecialCharacters(unittest.TestCase):
-
     def setUp(self):
         self.segment_evaluator = SegmentEvaluator()
-        self.test_cases = segmentor_test_cases.get('special_characters')
+        self.test_cases = segmentor_test_cases.get("special_characters")
 
     def test_test_special_character_pound(self):
-        test_case = self.test_cases.get('test_special_character_pound')
+        test_case = self.test_cases.get("test_special_character_pound")
         if sys.version_info[0] < 3:
-            test_case['custom_variables']['eq'] = test_case['custom_variables']['eq'].encode("utf-8")
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+            test_case["custom_variables"]["eq"] = test_case["custom_variables"]["eq"].encode("utf-8")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )

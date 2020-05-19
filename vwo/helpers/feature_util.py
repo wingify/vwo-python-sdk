@@ -18,7 +18,7 @@ from ..constants import constants
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
-from ..logger.logger_manager import VWOLogger
+from ..logger import VWOLogger
 
 FILE = FileNameEnum.Helpers.FeatureUtil
 
@@ -52,10 +52,7 @@ def get_type_casted_feature_value(value, variable_type):
         VWOLogger.getInstance().log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.UNABLE_TO_TYPE_CAST.format(
-                file=FILE,
-                value=value,
-                variable_type=variable_type,
-                of_type=type(value)
-            )
+                file=FILE, value=value, variable_type=variable_type, of_type=type(value)
+            ),
         )
         return None

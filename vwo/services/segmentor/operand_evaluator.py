@@ -20,6 +20,7 @@ from ...helpers.segment_utils import convert_to_true_types, process_custom_varia
 
 
 class OperandEvaluator:
+    """ Class to evaluate different kinds of operands supported by segmentation """
 
     def lower(self, operand_value, custom_variables_value):
         """ Checks if both values are same after 'lowercasing'
@@ -143,10 +144,10 @@ class OperandEvaluator:
         """
 
         # Retrieve corresponding _vwo_user_id value from variation_targeting_variables
-        _vwo_user_id = variation_targeting_variables.get('_vwo_user_id')
+        _vwo_user_id = variation_targeting_variables.get("_vwo_user_id")
 
         # Extract user_id list from operand
-        operand_user_id_list = operand.split(',')
+        operand_user_id_list = operand.split(",")
 
         # check if _vwo_user_id exists in operand_user_id_list or not
         for user_id in operand_user_id_list:

@@ -6,3 +6,4 @@ per-file-ignores =
   vwo/enums/log_message_enum.py:E501
   tests/services/segmentor/*:E501
   tests/data/*:E501
+  */__init__.py: F401

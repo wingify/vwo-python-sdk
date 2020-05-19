@@ -30,16 +30,10 @@ class CustomDimensionUtilTest(unittest.TestCase):
 
     def test_get_url_param_(self):
 
-        with mock.patch(
-            "vwo.helpers.generic_util.get_random_number",
-            return_value="123456789",
-        ), mock.patch(
-            "vwo.helpers.generic_util.get_current_unix_timestamp",
-            return_value="123456789",
+        with mock.patch("vwo.helpers.generic_util.get_random_number", return_value="123456789",), mock.patch(
+            "vwo.helpers.generic_util.get_current_unix_timestamp", return_value="123456789",
         ):
-            result = custom_dimensions_util.get_url_params(
-                self.settings_file, "browser", "chrome", self.user_id,
-            )
+            result = custom_dimensions_util.get_url_params(self.settings_file, "browser", "chrome", self.user_id,)
             tags = {"u": {"browser": "chrome"}}
             params = {
                 "url": "https://dev.visualwebsiteoptimizer.com/server-side/push",

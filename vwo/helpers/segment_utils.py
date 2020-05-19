@@ -21,11 +21,11 @@ from ..enums.segments import OperandValueTypesName, OperandValuesBooleanTypes, O
 
 # This regex returns array of tuples of (operand_type, operand_value)
 # from the string of type "operand_type(operand_value)"
-GROUPING_PATTERN = re.compile('^(.+?)\((.*)\)')  # noqa: W605
+GROUPING_PATTERN = re.compile("^(.+?)\((.*)\)")  # noqa: W605
 
 # This regex returns array of tuples of (starting_star, operand_value, ending_star)
 # from the string of type "*operand_value*"
-WILDCARD_PATTERN = re.compile('(^\*|^)(.+?)(\*$|$)')  # noqa: W605
+WILDCARD_PATTERN = re.compile("(^\*|^)(.+?)(\*$|$)")  # noqa: W605
 
 
 def convert_to_true_types(operator_value, custom_variables_value):

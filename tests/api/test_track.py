@@ -33,9 +33,7 @@ class ClientUserStorage:
         return self.storage.get((user_id, campaign_key))
 
     def set(self, user_data):
-        self.storage[
-            (user_data.get("userId"), user_data.get("campaignKey"))
-        ] = user_data
+        self.storage[(user_data.get("userId"), user_data.get("campaignKey"))] = user_data
 
 
 class TrackTest(unittest.TestCase):
@@ -43,7 +41,7 @@ class TrackTest(unittest.TestCase):
         self.user_id = str(random.random())
         self.settings_file = json.dumps(SETTINGS_FILES.get(config_variant))
 
-        self.vwo = vwo.VWO(
+        self.vwo = vwo.launch(
             self.settings_file,
             is_development_mode=True,
             log_level=TEST_LOG_LEVEL,
@@ -51,9 +49,7 @@ class TrackTest(unittest.TestCase):
         )
         self.campaign_key = config_variant
         try:
-            self.goal_identifier = SETTINGS_FILES[config_variant]["campaigns"][
-                0
-            ]["goals"][0]["identifier"]
+            self.goal_identifier = SETTINGS_FILES[config_variant]["campaigns"][0]["goals"][0]["identifier"]
         except Exception:
             pass
 
@@ -61,30 +57,18 @@ class TrackTest(unittest.TestCase):
         self.set_up()
         self.assertIs(self.vwo.track(123, 456, 789), None)
 
-    def test_track_invalid_config(self):
-        self.set_up("EMPTY_SETTINGS_FILE")
-        self.assertIs(
-            self.vwo.track(self.user_id, "somecampaign", "somegoal"), None
-        )
-
     def test_track_with_no_campaign_key_found(self):
         self.set_up("AB_T_50_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertIs(
-                self.vwo.track(
-                    "NO_SUCH_CAMPAIGN_KEY", test["user"], self.goal_identifier
-                ),
-                None,
+                self.vwo.track("NO_SUCH_CAMPAIGN_KEY", test["user"], self.goal_identifier), None,
             )
 
     def test_track_with_no_goal_identifier_found(self):
         self.set_up("AB_T_50_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertIs(
-                self.vwo.track(
-                    self.campaign_key, test["user"], "NO_SUCH_GOAL_IDENTIFIER"
-                ),
-                None,
+                self.vwo.track(self.campaign_key, test["user"], "NO_SUCH_GOAL_IDENTIFIER"), None,
             )
 
     def test_track_wrong_campaign_type_passed(self):
@@ -96,10 +80,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_50_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None,
             )
 
     def test_track_against_campaign_traffic_100_and_split_50_50_r_int(self):
@@ -107,12 +88,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key,
-                    test["user"],
-                    self.goal_identifier,
-                    revenue_value=23,
-                ),
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier, revenue_value=23,),
                 test["variation"] is not None,
             )
 
@@ -121,12 +97,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key,
-                    test["user"],
-                    self.goal_identifier,
-                    revenue_value=23.3,
-                ),
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier, revenue_value=23.3,),
                 test["variation"] is not None,
             )
 
@@ -135,12 +106,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key,
-                    test["user"],
-                    self.goal_identifier,
-                    revenue_value="23.3",
-                ),
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier, revenue_value="23.3",),
                 test["variation"] is not None,
             )
 
@@ -149,10 +115,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                False,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), False,
             )
 
     def test_track_against_campaign_traffic_100_and_split_50_50_kwargs(self):
@@ -160,12 +123,7 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key,
-                    test["user"],
-                    self.goal_identifier,
-                    revenue_value=23,
-                ),
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier, revenue_value=23,),
                 test["variation"] is not None,
             )
 
@@ -173,60 +131,43 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_20_80")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None,
             )
 
     def test_track_against_campaign_traffic_20_and_split_10_90(self):
         self.set_up("AB_T_20_W_10_90")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None,
             )
 
     def test_track_against_campaign_traffic_100_and_split_0_100(self):
         self.set_up("AB_T_100_W_0_100")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None,
             )
 
     def test_track_against_campaign_traffic_100_and_split_33_x3(self):
         self.set_up("AB_T_100_W_33_33_33")
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None,
             )
 
     # test api raises exception
     # mock.patch referenced from https://stackoverflow.com/a/19107511
     def test_track_raises_exception(self):
         with mock.patch(
-            "vwo.helpers.validate_util.is_valid_string",
-            side_effect=Exception("Test"),
+            "vwo.helpers.validate_util.is_valid_string", side_effect=Exception("Test"),
         ):
             self.set_up()
-            self.assertIs(
-                False, self.vwo.track("SOME_CAMPAIGN", "USER", "GOAL")
-            )
+            self.assertIs(False, self.vwo.track("SOME_CAMPAIGN", "USER", "GOAL"))
 
     def test_track_with_with_no_custom_variables_fails(self):
         self.set_up("T_100_W_50_50_WS")
         for test in USER_EXPECTATIONS["AB_T_100_W_50_50"]:
-            self.track_test(
-                self.vwo.track("T_100_W_50_50_WS", test["user"], "ddd"), False
-            )
+            self.track_test(self.vwo.track("T_100_W_50_50_WS", test["user"], "ddd"), False)
 
     def test_track_revenue_value_and_custom_variables_passed_in_kwargs(self):
         def mock_track(campaign_key, user_id, goal_identifier, **kwargs):
@@ -263,12 +204,7 @@ class TrackTest(unittest.TestCase):
         true_custom_variables = {"a": 987.1234, "hello": "world"}
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
             self.track_test(
-                self.vwo.track(
-                    "T_50_W_50_50_WS",
-                    test["user"],
-                    "ddd",
-                    custom_variables=true_custom_variables,
-                ),
+                self.vwo.track("T_50_W_50_50_WS", test["user"], "ddd", custom_variables=true_custom_variables,),
                 test["variation"] is not None,
             )
 
@@ -277,13 +213,7 @@ class TrackTest(unittest.TestCase):
         false_custom_variables = {"a": 987.12, "hello": "world_world"}
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
             self.track_test(
-                self.vwo.track(
-                    "T_50_W_50_50_WS",
-                    test["user"],
-                    "ddd",
-                    custom_variables=false_custom_variables,
-                ),
-                False,
+                self.vwo.track("T_50_W_50_50_WS", test["user"], "ddd", custom_variables=false_custom_variables,), False,
             )
 
     def test_track_with_no_dsl_remains_unaffected(self):
@@ -291,21 +221,14 @@ class TrackTest(unittest.TestCase):
         true_custom_variables = {"a": 987.1234, "hello": "world"}
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
             self.track_test(
-                self.vwo.track(
-                    "AB_T_50_W_50_50",
-                    test["user"],
-                    "CUSTOM",
-                    custom_variables=true_custom_variables,
-                ),
+                self.vwo.track("AB_T_50_W_50_50", test["user"], "CUSTOM", custom_variables=true_custom_variables,),
                 test["variation"] is not None,
             )
 
     def test_track_with_no_custom_variables_fails(self):
         self.set_up("T_50_W_50_50_WS")
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
-            self.track_test(
-                self.vwo.track("T_50_W_50_50_WS", test["user"], "ddd"), False
-            )
+            self.track_test(self.vwo.track("T_50_W_50_50_WS", test["user"], "ddd"), False)
 
     def test_is_feature_enabled_FT_T_75_W_10_20_30_40_WS_true(self):
         self.set_up("FT_T_75_W_10_20_30_40_WS")
@@ -314,9 +237,7 @@ class TrackTest(unittest.TestCase):
         for test in USER_EXPECTATIONS["T_75_W_10_20_30_40"]:
             self.assertIs(
                 self.vwo.is_feature_enabled(
-                    "FT_T_75_W_10_20_30_40_WS",
-                    test["user"],
-                    custom_variables=true_custom_variables,
+                    "FT_T_75_W_10_20_30_40_WS", test["user"], custom_variables=true_custom_variables,
                 ),
                 test["variation"] is not None and test["variation"] not in feature_not_enabled_variations,
             )
@@ -394,39 +315,27 @@ class TrackTest(unittest.TestCase):
         self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier,
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier,), test["variation"] is not None,
             )
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier,
-                ),
-                False,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier,), False,
             )
 
     def test_should_track_returning_user_true(self):
         self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.track_test(
-                self.vwo.track(
-                    self.campaign_key, test["user"], self.goal_identifier,
-                ),
-                test["variation"] is not None,
+                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier,), test["variation"] is not None,
             )
             self.track_test(
                 self.vwo.track(
-                    self.campaign_key,
-                    test["user"],
-                    self.goal_identifier,
-                    should_track_returning_user=True,
+                    self.campaign_key, test["user"], self.goal_identifier, should_track_returning_user=True,
                 ),
                 test["variation"] is not None,
             )
 
     def test_multi_track_none(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -440,15 +349,13 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_multi_track_list(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
         )
-        result = vwo_instance.track(
-            ["global_test_1", "feature_test_1"], "user", "track1"
-        )
+        result = vwo_instance.track(["global_test_1", "feature_test_1"], "user", "track1")
         expected = {
             "global_test_1": True,
             "feature_test_1": True,
@@ -456,25 +363,21 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_multi_track_list_no_goal_found_should_return_false_in_map(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
         )
-        result = vwo_instance.track(
-            ["global_test_1", "feature_test_1"], "user", "track5"
-        )
+        result = vwo_instance.track(["global_test_1", "feature_test_1"], "user", "track5")
         expected = {
             "global_test_1": False,
             "feature_test_1": False,
         }
         self.assertDictEqual(result, expected)
 
-    def test_single_track_in_list_no_goal_found_should_return_false_in_map(
-        self,
-    ):
-        vwo_instance = vwo.VWO(
+    def test_single_track_in_list_no_goal_found_should_return_false_in_map(self,):
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -485,7 +388,7 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_single_track_in_str_no_goal_found_should_return_None(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -496,7 +399,7 @@ class TrackTest(unittest.TestCase):
         self.assertEquals(result, expected)
 
     def test_multi_track_list_no_campaign_found_should_return_empty_map(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -507,7 +410,7 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_multi_track_list_1_item_no_goal_found(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -518,10 +421,8 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     # Preference type tests
-    def test_all_goal_type_should_be_tracked_by_default_no_where_type_specified(
-        self,
-    ):
-        vwo_instance = vwo.VWO(
+    def test_all_goal_type_should_be_tracked_by_default_no_where_type_specified(self,):
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -532,7 +433,7 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_all_custom_should_be_tracked_specified_in_launch_api(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -544,7 +445,7 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_all_revenue_should_be_tracked_specified_in_launch_api(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -556,61 +457,43 @@ class TrackTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_revenue_to_all(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
-        result = vwo_instance.track(
-            None,
-            "user",
-            "track2",
-            revenue_value=10,
-            goal_type_to_track=vwo.GOAL_TYPES.ALL,
-        )
+        result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.ALL,)
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_revenue_to_custom(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
-        result = vwo_instance.track(
-            None,
-            "user",
-            "track2",
-            revenue_value=10,
-            goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
-        )
+        result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_custom_to_all(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
         )
-        result = vwo_instance.track(
-            None,
-            "user",
-            "track2",
-            revenue_value=10,
-            goal_type_to_track=vwo.GOAL_TYPES.ALL,
-        )
+        result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.ALL,)
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_custom_to_revenue(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -618,17 +501,13 @@ class TrackTest(unittest.TestCase):
             goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
         )
         result = vwo_instance.track(
-            None,
-            "user",
-            "track2",
-            revenue_value=10,
-            goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
+            None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
         expected = {"global_test_1": False, "feature_test_1": True}
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_all_to_revenue(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
@@ -636,41 +515,31 @@ class TrackTest(unittest.TestCase):
             goal_type_to_track=vwo.GOAL_TYPES.ALL,
         )
         result = vwo_instance.track(
-            None,
-            "user",
-            "track2",
-            revenue_value=10,
-            goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
+            None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
         expected = {"global_test_1": False, "feature_test_1": True}
         self.assertDictEqual(result, expected)
 
     def test_change_goal_type_preference_from_all_to_custom(self):
-        vwo_instance = vwo.VWO(
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.ALL,
         )
-        result = vwo_instance.track(
-            None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.CUSTOM
-        )
+        result = vwo_instance.track(None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.CUSTOM)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
 
-    def test_all_revenue_should_be_tracked_overwrite_specified_in_launch_api_1_should_fail_no_revenue(
-        self,
-    ):
-        vwo_instance = vwo.VWO(
+    def test_all_revenue_should_be_tracked_overwrite_specified_in_launch_api_1_should_fail_no_revenue(self,):
+        vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
             is_development_mode=True,
             log_level=40,
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
-        result = vwo_instance.track(
-            None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.ALL
-        )
+        result = vwo_instance.track(None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.ALL)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)

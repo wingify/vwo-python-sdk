@@ -27,7 +27,7 @@ pip install vwo-python-sdk
 import vwo
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
-vwo_client_instance = vwo.VWO(settings_file)
+vwo_client_instance = vwo.launch(settings_file)
 ```
 
 **API usage**
@@ -50,7 +50,7 @@ import vwo
 from vwo import LogLevels
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
-vwo_client_instance = vwo.VWO(settings_file, log_level=LogLevels.DEBUG)
+vwo_client_instance = vwo.launch(settings_file, log_level=LogLevels.DEBUG)
 ```
 
 **Custom Logger** - implement your own logger method
@@ -64,7 +64,7 @@ class CustomLogger:
       # ...write to file or database or integrate with any third-party service
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
-vwo_client_instance = vwo.VWO(settings_file, logger = CustomLogger())
+vwo_client_instance = vwo.launch(settings_file, logger = CustomLogger())
 ```
 
 **User Storage Service**
@@ -84,7 +84,7 @@ class user_storage(UserStorage):
 us = user_storage()
 
 settings_file = vwo.get_settings_file(account_id, sdk_key)
-vwo_client_instance = vwo.VWO(settings_file, user_storage = us)
+vwo_client_instance = vwo.launch(settings_file, user_storage = us)
 ```
 
 ## Documentation

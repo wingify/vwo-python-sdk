@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2020-05-19
+### Added
+- Introduced launch API to initialize the VWO instance
+- Integrated black formatter and doc_checker pre-push hook for development
+
+#### Before
+```py
+from vwo import VWO
+vwo_client_instance = VWO(settings_file)
+```
+#### After
+```py
+from vwo import launch
+vwo_client_instance = launch(settings_file)
+```
 
 ## [1.8.0] - 2020-04-29
 ### Changed

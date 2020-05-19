@@ -20,7 +20,7 @@ from ..constants import constants
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
-from ..logger.logger_manager import VWOLogger
+from ..logger import VWOLogger
 
 FILE = FileNameEnum.Helpers.CampaignUtil
 
@@ -37,16 +37,11 @@ def get_campaign(settings_file, campaign_key):
     """
 
     for campaign in settings_file.get("campaigns"):
-        if (
-            campaign.get("key") == campaign_key
-            and campaign.get("status") == constants.STATUS_RUNNING
-        ):
+        if campaign.get("key") == campaign_key and campaign.get("status") == constants.STATUS_RUNNING:
             return campaign
     VWOLogger.getInstance().log(
         LogLevelEnum.ERROR,
-        LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-            file=FILE, campaign_key=campaign_key,
-        ),
+        LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(file=FILE, campaign_key=campaign_key,),
     )
     return None
 
@@ -68,16 +63,13 @@ def get_campaigns(settings_file, campaign_keys):
     for campaign_key in campaign_keys:
         if (
             campaign_key_map.get(campaign_key)
-            and campaign_key_map.get(campaign_key).get("status")
-            == constants.STATUS_RUNNING
+            and campaign_key_map.get(campaign_key).get("status") == constants.STATUS_RUNNING
         ):
             found_campaigns[campaign_key] = campaign_key_map.get(campaign_key)
         else:
             VWOLogger.getInstance().log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(
-                    file=FILE, campaign_key=campaign_key,
-                ),
+                LogMessageEnum.ERROR_MESSAGES.CAMPAIGN_NOT_RUNNING.format(file=FILE, campaign_key=campaign_key),
             )
     return found_campaigns
 
@@ -88,12 +80,8 @@ def set_variation_allocation(campaign):
     Args:
         campaign (dict): Campaign object
     """
-    variation_allocations_ranges = get_variation_allocation_ranges(
-        campaign.get("variations")
-    )
-    set_variation_allocation_from_ranges(
-        campaign.get("variations"), variation_allocations_ranges
-    )
+    variation_allocations_ranges = get_variation_allocation_ranges(campaign.get("variations"))
+    set_variation_allocation_from_ranges(campaign.get("variations"), variation_allocations_ranges)
     for variation in campaign.get("variations"):
         VWOLogger.getInstance().log(
             LogLevelEnum.INFO,
@@ -108,9 +96,7 @@ def set_variation_allocation(campaign):
         )
 
 
-def set_variation_allocation_from_ranges(
-    variations, variation_allocations_ranges
-):
+def set_variation_allocation_from_ranges(variations, variation_allocations_ranges):
     """Sets variations allocation ranges on each variation as start_variation_allocation and
     end_variation_allocation.
 

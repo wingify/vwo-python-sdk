@@ -22,7 +22,7 @@ from ..enums.log_level_enum import LogLevelEnum
 FILE = FileNameEnum.Api.GetFeatureVariableValue
 
 
-def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_id, kwargs={}):
+def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_id, **kwargs):
     """ Returns the feature variable corresponding to the variable_key
     passed. It typecasts the value to the corresponding value type
     found in settings_file
@@ -39,8 +39,10 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
         campaign_key (string): unique campaign key
         variable_key (string): variable key
         user_id (string): ID assigned to a user
-        custom_variables (dict): Pass it through **kwargs as custom_variables={},
-        Custom variables required for segmentation
+
+    Keywork Args:
+        custom_variables (dict): Custom variables required for segmentation
+        variation_targeting_variables (dict): Whitelisting variables to target users
 
     Returns:
         variable(bool, str, int, float)|None: If variation is assigned then
@@ -49,28 +51,21 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
 
     vwo_instance.logger.set_api(API_METHODS.GET_FEATURE_VARIABLE_VALUE)
     # Retrieve custom variables
-    custom_variables = kwargs.get('custom_variables')
-    variation_targeting_variables = kwargs.get('variation_targeting_variables')
+    custom_variables = kwargs.get("custom_variables")
+    variation_targeting_variables = kwargs.get("variation_targeting_variables")
 
-    if not validate_util.is_valid_string(campaign_key) or \
-        not validate_util.is_valid_string(variable_key) or \
-            not validate_util.is_valid_string(user_id) \
-            or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables)) \
-            or (variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)):  # noqa: E501
-        vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_VALUE_API_INVALID_PARAMS.format(
-                file=FILE,
-            )
+    if (
+        not validate_util.is_valid_string(campaign_key)
+        or not validate_util.is_valid_string(variable_key)
+        or not validate_util.is_valid_string(user_id)
+        or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables))
+        or (
+            variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)
         )
-        return None
-
-    if not vwo_instance.is_valid:
+    ):  # noqa: E501
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.API_CONFIG_CORRUPTED.format(
-                file=FILE,
-            )
+            LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_VALUE_API_INVALID_PARAMS.format(file=FILE,),
         )
         return None
 
@@ -81,24 +76,23 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
     if not campaign:
         return None
 
-    campaign_type = campaign.get('type')
+    campaign_type = campaign.get("type")
 
     if campaign_type == constants.CAMPAIGN_TYPES.VISUAL_AB:
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
-                file=FILE,
-                campaign_key=campaign_key,
-                campaign_type=campaign_type,
-                user_id=user_id
-            )
+                file=FILE, campaign_key=campaign_key, campaign_type=campaign_type, user_id=user_id
+            ),
         )
         return None
 
-    variation = vwo_instance.variation_decider.get_variation(user_id,
-                                                             campaign,
-                                                             custom_variables=custom_variables,
-                                                             variation_targeting_variables=variation_targeting_variables)  # noqa: E501
+    variation = vwo_instance.variation_decider.get_variation(
+        user_id,
+        campaign,
+        custom_variables=custom_variables,
+        variation_targeting_variables=variation_targeting_variables,
+    )  # noqa: E501
 
     # Check if variation has been assigned to user
     if not variation:
@@ -108,29 +102,25 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
     variable = None
 
     if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
-        variables = campaign.get('variables')
+        variables = campaign.get("variables")
 
     elif campaign_type == constants.CAMPAIGN_TYPES.FEATURE_TEST:
-        if variation.get('isFeatureEnabled') is False:
+        if variation.get("isFeatureEnabled") is False:
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
-                    file=FILE,
-                    feature_key=campaign_key,
-                    user_id=user_id,
-                )
+                    file=FILE, feature_key=campaign_key, user_id=user_id,
+                ),
             )
             variation = campaign_util.get_control_variation(campaign)
         else:
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
-                    file=FILE,
-                    feature_key=campaign_key,
-                    user_id=user_id,
-                )
+                    file=FILE, feature_key=campaign_key, user_id=user_id,
+                ),
             )
-        variables = variation.get('variables')
+        variables = variation.get("variables")
 
     variable = campaign_util.get_variable(variables, variable_key)
 
@@ -144,7 +134,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
                 campaign_key=campaign_key,
                 campaign_type=campaign_type,
                 user_id=user_id,
-            )
+            ),
         )
         return None
 
@@ -153,11 +143,11 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
         LogMessageEnum.INFO_MESSAGES.VARIABLE_FOUND.format(
             file=FILE,
             variable_key=variable_key,
-            variable_value=variable.get('value'),
+            variable_value=variable.get("value"),
             campaign_key=campaign_key,
             campaign_type=campaign_type,
             user_id=user_id,
-        )
+        ),
     )
 
-    return feature_util.get_type_casted_feature_value(variable.get('value'), variable.get('type'))
+    return feature_util.get_type_casted_feature_value(variable.get("value"), variable.get("type"))

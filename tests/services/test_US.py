@@ -22,11 +22,12 @@ class USTest(unittest.TestCase):
     def test_class_initialization(self):
         class US(UserStorage):
             pass
+
         self.assertIsNotNone(US())
 
     def test_check_get_is_present(self):
         us = UserStorage()
-        self.assertIsNone(us.get(123, 'None'))
+        self.assertIsNone(us.get(123, "None"))
 
     def test_check_set_is_present(self):
         us = UserStorage()

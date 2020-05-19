@@ -22,6 +22,7 @@ FILE = FileNameEnum.Services.SegmentEvaluator
 
 
 class SegmentEvaluator:
+    """ Class to evaluate segments defined in VWO app """
 
     def __init__(self):
         """ Initializes this class with VWOLogger and OperandEvaluator """

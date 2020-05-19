@@ -14,5 +14,5 @@
 
 
 class ResultStatus:
-    PASSED = 'passed'
-    FAILED = 'failed'
+    PASSED = "passed"
+    FAILED = "failed"

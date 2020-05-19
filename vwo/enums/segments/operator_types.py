@@ -14,6 +14,6 @@
 
 
 class OperatorTypes:
-    AND = 'and'
-    OR = 'or'
-    NOT = 'not'
+    AND = "and"
+    OR = "or"
+    NOT = "not"

@@ -16,42 +16,54 @@
 import unittest
 import json
 from vwo.services.segmentor.segment_evaluator import SegmentEvaluator
-with open('tests/data/segmentor_test_cases.json') as json_file:
+
+with open("tests/data/segmentor_test_cases.json") as json_file:
     segmentor_test_cases = json.load(json_file)
 
 
 class TestRegex(unittest.TestCase):
-
     def setUp(self):
         self.segment_evaluator = SegmentEvaluator()
-        self.test_cases = segmentor_test_cases.get('regex')
+        self.test_cases = segmentor_test_cases.get("regex")
 
     def test_regex_operand_mismatch2(self):
-        test_case = self.test_cases.get('regex_operand_mismatch2')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("regex_operand_mismatch2")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_regex_operand2(self):
-        test_case = self.test_cases.get('regex_operand2')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("regex_operand2")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_invalid_regex(self):
-        test_case = self.test_cases.get('invalid_regex')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("invalid_regex")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_invalid_regex2(self):
-        test_case = self.test_cases.get('invalid_regex2')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("invalid_regex2")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_regex_operand_case_mismatch(self):
-        test_case = self.test_cases.get('regex_operand_case_mismatch')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("regex_operand_case_mismatch")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )
 
     def test_regex_operand(self):
-        test_case = self.test_cases.get('regex_operand')
-        self.assertIs(self.segment_evaluator.evaluate(test_case.get('dsl'),
-                      test_case.get('custom_variables')), test_case.get('expectation'))
+        test_case = self.test_cases.get("regex_operand")
+        self.assertIs(
+            self.segment_evaluator.evaluate(test_case.get("dsl"), test_case.get("custom_variables")),
+            test_case.get("expectation"),
+        )

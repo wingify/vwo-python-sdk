@@ -33,17 +33,10 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 50},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 230,
                 "percentTraffic": 50,
@@ -60,21 +53,12 @@ SETTINGS_FILES = {
         "campaigns": [
             {
                 "goals": [
-                    {
-                        "identifier": "abcd",
-                        "id": 1,
-                        "type": "REVENUE_TRACKING",
-                    },
+                    {"identifier": "abcd", "id": 1, "type": "REVENUE_TRACKING"},
                     {"identifier": "CUSTOM", "id": 214, "type": "CUSTOM_GOAL"},
                 ],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 50},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -90,17 +74,10 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 215, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 215, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 20},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 80,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 80},
                 ],
                 "id": 232,
                 "percentTraffic": 100,
@@ -116,17 +93,10 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 216, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 216, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 10},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 90,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 90},
                 ],
                 "id": 233,
                 "percentTraffic": 20,
@@ -142,17 +112,10 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 217, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 217, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 0},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 100,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 100},
                 ],
                 "id": 234,
                 "percentTraffic": 100,
@@ -168,28 +131,11 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 33.3333,
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 33.3333,
-                    },
-                    {
-                        "id": 3,
-                        "name": "Variation-2",
-                        "changes": {},
-                        "weight": 33.3333,
-                    },
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 33.3333},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 33.3333},
+                    {"id": 3, "name": "Variation-2", "changes": {}, "weight": 33.3333},
                 ],
                 "id": 235,
                 "percentTraffic": 100,
@@ -205,13 +151,7 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "GOAL_NEW",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "GOAL_NEW", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": "1", "name": "Control", "weight": 40},
                     {"id": "2", "name": "Variation-1", "weight": 60},
@@ -230,35 +170,13 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "this_is_a_string",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
-                    {
-                        "id": 1,
-                        "key": "FLOAT_VARIABLE",
-                        "type": "double",
-                        "value": 123.456,
-                    },
-                    {
-                        "id": 2,
-                        "key": "BOOLEAN_VARIABLE",
-                        "type": "boolean",
-                        "value": True,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "this_is_a_string"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
+                    {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 123.456},
+                    {"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True},
                 ],
                 "id": 29,
                 "percentTraffic": 0,
@@ -277,30 +195,10 @@ SETTINGS_FILES = {
                 "goals": [],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "this_is_a_string",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
-                    {
-                        "id": 1,
-                        "key": "FLOAT_VARIABLE",
-                        "type": "double",
-                        "value": 123.456,
-                    },
-                    {
-                        "id": 2,
-                        "key": "BOOLEAN_VARIABLE",
-                        "type": "boolean",
-                        "value": True,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "this_is_a_string"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
+                    {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 123.456},
+                    {"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True},
                 ],
                 "id": 29,
                 "percentTraffic": 25,
@@ -319,30 +217,10 @@ SETTINGS_FILES = {
                 "goals": [],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "this_is_a_string",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
-                    {
-                        "id": 1,
-                        "key": "FLOAT_VARIABLE",
-                        "type": "double",
-                        "value": 123.456,
-                    },
-                    {
-                        "id": 2,
-                        "key": "BOOLEAN_VARIABLE",
-                        "type": "boolean",
-                        "value": True,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "this_is_a_string"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
+                    {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 123.456},
+                    {"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True},
                 ],
                 "id": 29,
                 "percentTraffic": 50,
@@ -361,30 +239,10 @@ SETTINGS_FILES = {
                 "goals": [],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "this_is_a_string",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
-                    {
-                        "id": 1,
-                        "key": "FLOAT_VARIABLE",
-                        "type": "double",
-                        "value": 123.456,
-                    },
-                    {
-                        "id": 2,
-                        "key": "BOOLEAN_VARIABLE",
-                        "type": "boolean",
-                        "value": True,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "this_is_a_string"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
+                    {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 123.456},
+                    {"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True},
                 ],
                 "id": 29,
                 "percentTraffic": 75,
@@ -403,30 +261,10 @@ SETTINGS_FILES = {
                 "goals": [],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "this_is_a_string",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
-                    {
-                        "id": 1,
-                        "key": "FLOAT_VARIABLE",
-                        "type": "double",
-                        "value": 123.456,
-                    },
-                    {
-                        "id": 2,
-                        "key": "BOOLEAN_VARIABLE",
-                        "type": "boolean",
-                        "value": True,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "this_is_a_string"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
+                    {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 123.456},
+                    {"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True},
                 ],
                 "id": 29,
                 "percentTraffic": 100,
@@ -446,62 +284,22 @@ SETTINGS_FILES = {
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
                     # STRING:
-                    {
-                        "id": 1,
-                        "key": "STRING_TO_INTEGER",
-                        "type": "integer",
-                        "value": "123",
-                    },
-                    {
-                        "id": 2,
-                        "key": "STRING_TO_FLOAT",
-                        "type": "double",
-                        "value": "123.456",
-                    },
+                    {"id": 1, "key": "STRING_TO_INTEGER", "type": "integer", "value": "123"},
+                    {"id": 2, "key": "STRING_TO_FLOAT", "type": "double", "value": "123.456"},
                     # STRING_TO_BOOLEAN NOT POSSIBLE
                     # BOLLEAN:
-                    {
-                        "id": 3,
-                        "key": "BOOLEAN_TO_STRING",
-                        "type": "string",
-                        "value": True,
-                    },
+                    {"id": 3, "key": "BOOLEAN_TO_STRING", "type": "string", "value": True},
                     # BOOLEAN TO INT, DOUBLE NOT POSSIBLE
                     # INTEGER:
-                    {
-                        "id": 4,
-                        "key": "INTEGER_TO_STRING",
-                        "type": "string",
-                        "value": 24,
-                    },
-                    {
-                        "id": 5,
-                        "key": "INTEGER_TO_FLOAT",
-                        "type": "double",
-                        "value": 24,
-                    },
+                    {"id": 4, "key": "INTEGER_TO_STRING", "type": "string", "value": 24},
+                    {"id": 5, "key": "INTEGER_TO_FLOAT", "type": "double", "value": 24},
                     # INTEGER TO BOOLEAN NOT POSSIBLE
                     # FLOAT:
-                    {
-                        "id": 6,
-                        "key": "FLOAT_TO_STRING",
-                        "type": "string",
-                        "value": 24.24,
-                    },
-                    {
-                        "id": 7,
-                        "key": "FLOAT_TO_INTEGER",
-                        "type": "integer",
-                        "value": 24.0,
-                    },
+                    {"id": 6, "key": "FLOAT_TO_STRING", "type": "string", "value": 24.24},
+                    {"id": 7, "key": "FLOAT_TO_INTEGER", "type": "integer", "value": 24.0},
                     # FLOAT TO BOOLEAN NOT POSSIBLE
                     # WRONG CASES
-                    {
-                        "id": 8,
-                        "key": "WRONG_BOOLEAN",
-                        "type": "boolean",
-                        "value": "True",
-                    },
+                    {"id": 8, "key": "WRONG_BOOLEAN", "type": "boolean", "value": "True"},
                 ],
                 "id": 29,
                 "percentTraffic": 100,
@@ -517,31 +315,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -550,18 +332,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -570,18 +342,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -590,18 +352,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -620,31 +372,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -653,18 +389,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -673,18 +399,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -693,18 +409,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -723,31 +429,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -756,18 +446,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -776,18 +456,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -796,18 +466,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -826,31 +486,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -859,18 +503,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -879,18 +513,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -899,18 +523,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -929,31 +543,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -962,18 +560,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -982,18 +570,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1002,18 +580,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1032,31 +600,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -1065,18 +617,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -1085,18 +627,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1105,18 +637,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -1137,18 +659,8 @@ SETTINGS_FILES = {
                 "goals": [],
                 "variations": [{"id": "1", "name": "Control", "weight": 100}],
                 "variables": [
-                    {
-                        "id": 1,
-                        "key": "STRING_VARIABLE",
-                        "type": "string",
-                        "value": "d1",
-                    },
-                    {
-                        "id": 2,
-                        "key": "INTEGER_VARIABLE",
-                        "type": "integer",
-                        "value": 123,
-                    },
+                    {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "d1"},
+                    {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                 ],
                 "id": 29,
                 "percentTraffic": 50,
@@ -1157,31 +669,15 @@ SETTINGS_FILES = {
                 "type": "FEATURE_ROLLOUT",
             },
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 50,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "d2",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 321,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "d2"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 321},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -1190,18 +686,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 50,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "d1",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "d1"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1213,13 +699,7 @@ SETTINGS_FILES = {
                 "type": "FEATURE_TEST",
             },
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM_RECOMMENDATION_AB_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM_RECOMMENDATION_AB_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": "1", "name": "Control", "weight": 40},
                     {"id": "2", "name": "Variation-1", "weight": 60},
@@ -1237,65 +717,18 @@ SETTINGS_FILES = {
     "T_75_W_10_TIMES_10": {
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 231, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 231, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 10},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 3,
-                        "name": "Variation-2",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 4,
-                        "name": "Variation-3",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 5,
-                        "name": "Variation-4",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 6,
-                        "name": "Variation-5",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 7,
-                        "name": "Variation-6",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 8,
-                        "name": "Variation-7",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 9,
-                        "name": "Variation-8",
-                        "changes": {},
-                        "weight": 10,
-                    },
-                    {
-                        "id": 10,
-                        "name": "Variation-9",
-                        "changes": {},
-                        "weight": 10,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 10},
+                    {"id": 3, "name": "Variation-2", "changes": {}, "weight": 10},
+                    {"id": 4, "name": "Variation-3", "changes": {}, "weight": 10},
+                    {"id": 5, "name": "Variation-4", "changes": {}, "weight": 10},
+                    {"id": 6, "name": "Variation-5", "changes": {}, "weight": 10},
+                    {"id": 7, "name": "Variation-6", "changes": {}, "weight": 10},
+                    {"id": 8, "name": "Variation-7", "changes": {}, "weight": 10},
+                    {"id": 9, "name": "Variation-8", "changes": {}, "weight": 10},
+                    {"id": 10, "name": "Variation-9", "changes": {}, "weight": 10},
                 ],
                 "id": 260,
                 "percentTraffic": 75,
@@ -1312,31 +745,16 @@ SETTINGS_FILES = {
         "campaigns": [
             {
                 "percentTraffic": 100,
-                "goals": [
-                    {"identifier": "ddd", "id": 453, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "ddd", "id": 453, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 50},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 174,
                 "segments": {
                     "and": [
-                        {
-                            "or": [
-                                {"custom_variable": {"a": "wildcard(*123*)"}}
-                            ]
-                        },
-                        {
-                            "or": [
-                                {"custom_variable": {"hello": "regex(world)"}}
-                            ]
-                        },
+                        {"or": [{"custom_variable": {"a": "wildcard(*123*)"}}]},
+                        {"or": [{"custom_variable": {"hello": "regex(world)"}}]},
                     ]
                 },
                 "key": "T_100_W_50_50_WS",
@@ -1352,31 +770,16 @@ SETTINGS_FILES = {
         "campaigns": [
             {
                 "percentTraffic": 50,
-                "goals": [
-                    {"identifier": "ddd", "id": 453, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "ddd", "id": 453, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {"id": 1, "name": "Control", "changes": {}, "weight": 50},
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50,
-                    },
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 174,
                 "segments": {
                     "and": [
-                        {
-                            "or": [
-                                {"custom_variable": {"a": "wildcard(*123*)"}}
-                            ]
-                        },
-                        {
-                            "or": [
-                                {"custom_variable": {"hello": "regex(world)"}}
-                            ]
-                        },
+                        {"or": [{"custom_variable": {"a": "wildcard(*123*)"}}]},
+                        {"or": [{"custom_variable": {"hello": "regex(world)"}}]},
                     ]
                 },
                 "key": "T_50_W_50_50_WS",
@@ -1391,31 +794,15 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "FEATURE_TEST_GOAL",
-                        "id": 203,
-                        "type": "CUSTOM_GOAL",
-                    }
-                ],
+                "goals": [{"identifier": "FEATURE_TEST_GOAL", "id": 203, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": "1",
                         "name": "Control",
                         "weight": 10,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Control string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 123,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Control string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 123},
                         ],
                         "isFeatureEnabled": False,
                     },
@@ -1424,18 +811,8 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "weight": 20,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-1 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 456,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-1 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 456},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1444,18 +821,8 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "weight": 30,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-2 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 789,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-2 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 789},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1464,18 +831,8 @@ SETTINGS_FILES = {
                         "name": "Variation-3",
                         "weight": 40,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "Variation-3 string",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 100,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "Variation-3 string"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 100},
                         ],
                         "isFeatureEnabled": True,
                     },
@@ -1487,16 +844,8 @@ SETTINGS_FILES = {
                 "type": "FEATURE_TEST",
                 "segments": {
                     "and": [
-                        {
-                            "or": [
-                                {"custom_variable": {"a": "wildcard(*123*)"}}
-                            ]
-                        },
-                        {
-                            "or": [
-                                {"custom_variable": {"hello": "regex(world)"}}
-                            ]
-                        },
+                        {"or": [{"custom_variable": {"a": "wildcard(*123*)"}}]},
+                        {"or": [{"custom_variable": {"hello": "regex(world)"}}]},
                     ]
                 },
             },
@@ -1508,42 +857,28 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": 1,
                         "name": "Control",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [{"custom_variable": {"safari": "true"}}]
-                        },
+                        "segments": {"or": [{"custom_variable": {"safari": "true"}}]},
                     },
                     {
                         "id": 2,
                         "name": "Variation-1",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [
-                                {
-                                    "custom_variable": {
-                                        "browser": "wildcard(chrome*)"
-                                    }
-                                }
-                            ]
-                        },
+                        "segments": {"or": [{"custom_variable": {"browser": "wildcard(chrome*)"}}]},
                     },
                     {
                         "id": 3,
                         "name": "Variation-2",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [{"custom_variable": {"chrome": "false"}}]
-                        },
+                        "segments": {"or": [{"custom_variable": {"chrome": "false"}}]},
                     },
                 ],
                 "id": 235,
@@ -1554,15 +889,7 @@ SETTINGS_FILES = {
                 "isForcedVariationEnabled": True,
                 "segments": {
                     "and": [
-                        {
-                            "or": [
-                                {
-                                    "custom_variable": {
-                                        "contains_vwo": "wildcard(*vwo*)"
-                                    }
-                                }
-                            ]
-                        },
+                        {"or": [{"custom_variable": {"contains_vwo": "wildcard(*vwo*)"}}]},
                         {
                             "and": [
                                 {
@@ -1617,39 +944,15 @@ SETTINGS_FILES = {
                                                         },
                                                     ]
                                                 },
-                                                {
-                                                    "or": [
-                                                        {
-                                                            "custom_variable": {
-                                                                "regex_for_zeros": "regex(^[0]+$)"
-                                                            }
-                                                        }
-                                                    ]
-                                                },
+                                                {"or": [{"custom_variable": {"regex_for_zeros": "regex(^[0]+$)"}}]},
                                             ]
                                         },
-                                        {
-                                            "or": [
-                                                {
-                                                    "custom_variable": {
-                                                        "regex_real_number": "regex(^\\d+(\\.\\d+)?)"
-                                                    }
-                                                }
-                                            ]
-                                        },
+                                        {"or": [{"custom_variable": {"regex_real_number": "regex(^\\d+(\\.\\d+)?)"}}]},
                                     ]
                                 },
                                 {
                                     "or": [
-                                        {
-                                            "or": [
-                                                {
-                                                    "custom_variable": {
-                                                        "this_is_regex": "regex(this\\s+is\\s+text)"
-                                                    }
-                                                }
-                                            ]
-                                        },
+                                        {"or": [{"custom_variable": {"this_is_regex": "regex(this\\s+is\\s+text)"}}]},
                                         {
                                             "and": [
                                                 {
@@ -1715,38 +1018,19 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 218, "type": "CUSTOM_GOAL"}],
                 "variations": [
                     {
                         "id": 1,
                         "name": "Control",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [{"custom_variable": {"safari": "true"}}]
-                        },
+                        "segments": {"or": [{"custom_variable": {"safari": "true"}}]},
                         "isFeatureEnabled": False,
                         "variables": [
-                            {
-                                "id": 1,
-                                "key": "STRING_VARIABLE",
-                                "type": "string",
-                                "value": "CONTROL_STRING_VARIABLE",
-                            },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 0,
-                            },
-                            {
-                                "id": 1,
-                                "key": "FLOAT_VARIABLE",
-                                "type": "double",
-                                "value": 0.0,
-                            },
+                            {"id": 1, "key": "STRING_VARIABLE", "type": "string", "value": "CONTROL_STRING_VARIABLE"},
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 0},
+                            {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 0.0},
                         ],
                     },
                     {
@@ -1754,15 +1038,7 @@ SETTINGS_FILES = {
                         "name": "Variation-1",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [
-                                {
-                                    "custom_variable": {
-                                        "browser": "wildcard(chrome*)"
-                                    }
-                                }
-                            ]
-                        },
+                        "segments": {"or": [{"custom_variable": {"browser": "wildcard(chrome*)"}}]},
                         "isFeatureEnabled": True,
                         "variables": [
                             {
@@ -1771,18 +1047,8 @@ SETTINGS_FILES = {
                                 "type": "string",
                                 "value": "VARIATION-1_STRING_VARIABLE",
                             },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 1,
-                            },
-                            {
-                                "id": 1,
-                                "key": "FLOAT_VARIABLE",
-                                "type": "double",
-                                "value": 1.1,
-                            },
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 1},
+                            {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 1.1},
                         ],
                     },
                     {
@@ -1790,9 +1056,7 @@ SETTINGS_FILES = {
                         "name": "Variation-2",
                         "changes": {},
                         "weight": 33.3333,
-                        "segments": {
-                            "or": [{"custom_variable": {"chrome": "false"}}]
-                        },
+                        "segments": {"or": [{"custom_variable": {"chrome": "false"}}]},
                         "isFeatureEnabled": False,
                         "variables": [
                             {
@@ -1801,18 +1065,8 @@ SETTINGS_FILES = {
                                 "type": "string",
                                 "value": "VARIATION-2_STRING_VARIABLE",
                             },
-                            {
-                                "id": 2,
-                                "key": "INTEGER_VARIABLE",
-                                "type": "integer",
-                                "value": 2,
-                            },
-                            {
-                                "id": 1,
-                                "key": "FLOAT_VARIABLE",
-                                "type": "double",
-                                "value": 2.2,
-                            },
+                            {"id": 2, "key": "INTEGER_VARIABLE", "type": "integer", "value": 2},
+                            {"id": 1, "key": "FLOAT_VARIABLE", "type": "double", "value": 2.2},
                         ],
                     },
                 ],
@@ -1824,15 +1078,7 @@ SETTINGS_FILES = {
                 "isForcedVariationEnabled": True,
                 "segments": {
                     "and": [
-                        {
-                            "or": [
-                                {
-                                    "custom_variable": {
-                                        "contains_vwo": "wildcard(*vwo*)"
-                                    }
-                                }
-                            ]
-                        },
+                        {"or": [{"custom_variable": {"contains_vwo": "wildcard(*vwo*)"}}]},
                         {
                             "and": [
                                 {
@@ -1887,39 +1133,15 @@ SETTINGS_FILES = {
                                                         },
                                                     ]
                                                 },
-                                                {
-                                                    "or": [
-                                                        {
-                                                            "custom_variable": {
-                                                                "regex_for_zeros": "regex(^[0]+$)"
-                                                            }
-                                                        }
-                                                    ]
-                                                },
+                                                {"or": [{"custom_variable": {"regex_for_zeros": "regex(^[0]+$)"}}]},
                                             ]
                                         },
-                                        {
-                                            "or": [
-                                                {
-                                                    "custom_variable": {
-                                                        "regex_real_number": "regex(^\\d+(\\.\\d+)?)"
-                                                    }
-                                                }
-                                            ]
-                                        },
+                                        {"or": [{"custom_variable": {"regex_real_number": "regex(^\\d+(\\.\\d+)?)"}}]},
                                     ]
                                 },
                                 {
                                     "or": [
-                                        {
-                                            "or": [
-                                                {
-                                                    "custom_variable": {
-                                                        "this_is_regex": "regex(this\\s+is\\s+text)"
-                                                    }
-                                                }
-                                            ]
-                                        },
+                                        {"or": [{"custom_variable": {"this_is_regex": "regex(this\\s+is\\s+text)"}}]},
                                         {
                                             "and": [
                                                 {
@@ -1988,16 +1210,8 @@ SETTINGS_FILES = {
                 "goals": [
                     {"id": 1, "identifier": "track1", "type": "CUSTOM_GOAL"},
                     {"id": 2, "identifier": "track2", "type": "CUSTOM_GOAL"},
-                    {
-                        "id": 3,
-                        "identifier": "track3",
-                        "type": "REVENUE_TRACKING",
-                    },
-                    {
-                        "id": 4,
-                        "identifier": "track4",
-                        "type": "REVENUE_TRACKING",
-                    },
+                    {"id": 3, "identifier": "track3", "type": "REVENUE_TRACKING"},
+                    {"id": 4, "identifier": "track4", "type": "REVENUE_TRACKING"},
                 ],
                 "id": 1,
                 "isForcedVariationEnabled": False,
@@ -2007,40 +1221,17 @@ SETTINGS_FILES = {
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
                 "variations": [
-                    {
-                        "changes": {},
-                        "id": 1,
-                        "name": "Control",
-                        "weight": 33.3333,
-                    },
-                    {
-                        "changes": {},
-                        "id": 2,
-                        "name": "Variation-1",
-                        "weight": 33.3333,
-                    },
-                    {
-                        "changes": {},
-                        "id": 3,
-                        "name": "Variation-2",
-                        "weight": 33.3333,
-                    },
+                    {"changes": {}, "id": 1, "name": "Control", "weight": 33.3333},
+                    {"changes": {}, "id": 2, "name": "Variation-1", "weight": 33.3333},
+                    {"changes": {}, "id": 3, "name": "Variation-2", "weight": 33.3333},
                 ],
             },
             {
                 "goals": [
                     {"id": 1, "identifier": "track1", "type": "CUSTOM_GOAL"},
                     {"id": 3, "identifier": "track3", "type": "CUSTOM_GOAL"},
-                    {
-                        "id": 2,
-                        "identifier": "track2",
-                        "type": "REVENUE_TRACKING",
-                    },
-                    {
-                        "id": 4,
-                        "identifier": "track4",
-                        "type": "REVENUE_TRACKING",
-                    },
+                    {"id": 2, "identifier": "track2", "type": "REVENUE_TRACKING"},
+                    {"id": 4, "identifier": "track4", "type": "REVENUE_TRACKING"},
                 ],
                 "id": 2,
                 "isForcedVariationEnabled": False,
@@ -2055,14 +1246,7 @@ SETTINGS_FILES = {
                         "id": 1,
                         "isFeatureEnabled": False,
                         "name": "Control",
-                        "variables": [
-                            {
-                                "id": 1,
-                                "key": "string_1",
-                                "type": "string",
-                                "value": "default",
-                            }
-                        ],
+                        "variables": [{"id": 1, "key": "string_1", "type": "string", "value": "default"}],
                         "weight": 50,
                     },
                     {
@@ -2070,14 +1254,7 @@ SETTINGS_FILES = {
                         "id": 2,
                         "isFeatureEnabled": True,
                         "name": "Variation-1",
-                        "variables": [
-                            {
-                                "id": 1,
-                                "key": "string_1",
-                                "type": "string",
-                                "value": "default",
-                            }
-                        ],
+                        "variables": [{"id": 1, "key": "string_1", "type": "string", "value": "default"}],
                         "weight": 50,
                     },
                 ],

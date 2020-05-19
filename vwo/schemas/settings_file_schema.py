@@ -21,27 +21,11 @@ from .empty_object_schema import EMPTY_OBJECT
 
 
 SETTINGS_FILE_SCHEMA = {
-    'type': 'object',
-    'properties': {
-        'version': {
-            'type': ['number', 'string']
-        },
-        'accountId': {
-            'type': ['number', 'string']
-        },
-        'campaigns': {
-            'if': {
-                'type': 'array'
-            },
-            'then': {
-                'items': CAMPAIGN
-            },
-            'else': EMPTY_OBJECT
-        }
+    "type": "object",
+    "properties": {
+        "version": {"type": ["number", "string"]},
+        "accountId": {"type": ["number", "string"]},
+        "campaigns": {"if": {"type": "array"}, "then": {"items": CAMPAIGN}, "else": EMPTY_OBJECT},
     },
-    'required': [
-        'version',
-        'accountId',
-        'campaigns'
-    ]
+    "required": ["version", "accountId", "campaigns"],
 }

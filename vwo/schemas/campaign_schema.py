@@ -19,60 +19,17 @@ from .empty_object_schema import EMPTY_OBJECT
 
 
 CAMPAIGN = {
-    'type': 'object',
-    'properties': {
-        'id': {
-            'type': ['number', 'string']
-        },
-        'key': {
-            'type': ['string']
-        },
-        'status': {
-            'type': ['string']
-        },
-        'percentTraffic': {
-            'type': ['number']
-        },
-        'type': {
-            'type': ['string']
-        },
-        'variations': {
-            'if': {
-                'type': 'array'
-            },
-            'then': {
-                'items': VARIATION
-            },
-            'else': EMPTY_OBJECT
-        },
-        'goals': {
-            'if': {
-                'type': 'array'
-            },
-            'then': {
-                'items': GOAL
-            },
-            'else': EMPTY_OBJECT
-        },
-        'variables': {
-            'if': {
-                'type': 'array',
-            },
-            'then': {
-                'items': VARIABLE
-            },
-            'else': EMPTY_OBJECT
-        },
-        'segments': {
-            'type': 'object'
-        }
+    "type": "object",
+    "properties": {
+        "id": {"type": ["number", "string"]},
+        "key": {"type": ["string"]},
+        "status": {"type": ["string"]},
+        "percentTraffic": {"type": ["number"]},
+        "type": {"type": ["string"]},
+        "variations": {"if": {"type": "array"}, "then": {"items": VARIATION}, "else": EMPTY_OBJECT},
+        "goals": {"if": {"type": "array"}, "then": {"items": GOAL}, "else": EMPTY_OBJECT},
+        "variables": {"if": {"type": "array"}, "then": {"items": VARIABLE}, "else": EMPTY_OBJECT},
+        "segments": {"type": "object"},
     },
-    'required': [
-        'id',
-        'key',
-        'status',
-        'percentTraffic',
-        'variations',
-        'goals',
-    ]
+    "required": ["id", "key", "status", "percentTraffic", "variations", "goals"],
 }

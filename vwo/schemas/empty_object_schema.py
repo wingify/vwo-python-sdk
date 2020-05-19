@@ -12,7 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-EMPTY_OBJECT = {
-    'type': 'object',
-    'maxProperties': 0
-}
+EMPTY_OBJECT = {"type": "object", "maxProperties": 0}

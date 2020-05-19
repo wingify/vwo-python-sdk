@@ -19,7 +19,7 @@ from ..helpers import validate_util
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
-from ..logger.logger_manager import VWOLogger
+from ..logger import VWOLogger
 
 # Took reference from StackOverflow(https://stackoverflow.com/) to:
 # convert signed to unsigned integer in python from StackOverflow
@@ -49,7 +49,7 @@ class Bucketer(object):
             (dict|None): variation data allotted to the user or None if not
         """
         for variation in variations:
-            if variation.get('start_variation_allocation') <= bucket_value <= variation.get('end_variation_allocation'):
+            if variation.get("start_variation_allocation") <= bucket_value <= variation.get("end_variation_allocation"):
                 return variation
         return None
 
@@ -66,18 +66,15 @@ class Bucketer(object):
         """
 
         hash_value = Hasher.hash(user_id, constants.SEED_VALUE) & U_MAX_32_BIT
-        ratio = hash_value / (2**32)
+        ratio = hash_value / (2 ** 32)
         multiplied_value = (max_value * ratio + 1) * multiplier
         bucket_value = int(multiplied_value)
 
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.USER_HASH_BUCKET_VALUE.format(
-                file=FILE,
-                hash_value=hash_value,
-                bucket_value=bucket_value,
-                user_id=user_id
-            )
+                file=FILE, hash_value=hash_value, bucket_value=bucket_value, user_id=user_id
+            ),
         )
         return bucket_value
 
@@ -96,34 +93,27 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FILE,
-                    user_id=user_id,
-                    method='is_user_part_of_campaign'
-                )
+                    file=FILE, user_id=user_id, method="is_user_part_of_campaign"
+                ),
             )
             return False
 
         if not campaign:
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(
-                    file=FILE,
-                    method='is_user_part_of_campaign'
-                )
+                LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(file=FILE, method="is_user_part_of_campaign"),
             )
             return False
 
-        traffic_allocation = campaign.get('percentTraffic')
+        traffic_allocation = campaign.get("percentTraffic")
 
         value_assigned_to_user = self.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_PERCENT)
         is_user_part = value_assigned_to_user != 0 and value_assigned_to_user <= traffic_allocation
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_ELIGIBILITY_FOR_CAMPAIGN.format(
-                file=FILE,
-                user_id=user_id,
-                is_user_part=is_user_part
-            )
+                file=FILE, user_id=user_id, is_user_part=is_user_part
+            ),
         )
         return is_user_part
 
@@ -144,37 +134,30 @@ class Bucketer(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.INVALID_USER_ID.format(
-                    file=FILE,
-                    user_id=user_id,
-                    method='bucket_user_to_variation'
-                )
+                    file=FILE, user_id=user_id, method="bucket_user_to_variation"
+                ),
             )
             return None
 
         if not campaign:
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(
-                    file=FILE,
-                    method='bucket_user_to_variation'
-                )
+                LogMessageEnum.ERROR_MESSAGES.INVALID_CAMPAIGN.format(file=FILE, method="bucket_user_to_variation"),
             )
             return None
 
-        normalize = constants.MAX_TRAFFIC_VALUE / campaign.get('percentTraffic')
+        normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
         multiplier = normalize / 100
-        bucket_value = self.get_bucket_value_for_user(user_id,
-                                                      constants.MAX_TRAFFIC_VALUE,
-                                                      multiplier)
+        bucket_value = self.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE, multiplier)
 
         self.logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VARIATION_HASH_BUCKET_VALUE.format(
                 file=FILE,
                 user_id=user_id,
-                campaign_key=campaign.get('key'),
-                percent_traffic=campaign.get('percentTraffic'),
-                bucket_value=bucket_value
-            )
+                campaign_key=campaign.get("key"),
+                percent_traffic=campaign.get("percentTraffic"),
+                bucket_value=bucket_value,
+            ),
         )
-        return self.get_variation(campaign.get('variations'), bucket_value)
+        return self.get_variation(campaign.get("variations"), bucket_value)

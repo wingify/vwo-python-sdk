@@ -24,11 +24,25 @@ import subprocess
 
 current_directory = os.path.join(os.path.dirname(__file__))
 
-with open(os.path.join(current_directory, 'requirements.txt')) as f:
-  REQUIREMENTS = f.read().splitlines()
+with open(os.path.join(current_directory, "requirements.txt")) as f:
+    REQUIREMENTS = f.read().splitlines()
 
 with open("README.md", "r") as f:
     long_description = f.read()
+
+
+class DocCheckCommand(Command):
+    description = "Doc Check"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call("python3 ./scripts/doc_check.py", shell=True)
 
 
 class LicenseCheckCommand(Command):
@@ -42,7 +56,10 @@ class LicenseCheckCommand(Command):
         pass
 
     def run(self):
-        subprocess.call('python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "2019-2020 Wingify Software Pvt. Ltd."', shell=True)
+        subprocess.call(
+            'python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "2019-2020 Wingify Software Pvt. Ltd."',
+            shell=True,
+        )
 
 
 class ReleasePatchCommand(Command):
@@ -89,49 +106,49 @@ class ReleaseMajorCommand(Command):
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
+
     def run(self):
-        print('\nRUNNING POST INSTALL DEVELOP SCRIPT \n')
+        print("\nRUNNING POST INSTALL DEVELOP SCRIPT \n")
 
         subprocess.call("pre-commit install;", shell=True)  # skipcq: BAN-B602
         # skipcq: BAN-B602
         subprocess.call("chmod +x post-install.sh; ./post-install.sh", shell=True)
 
-        print('\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n')
+        print("\nDONE: RUNNING POST INSTALL DEVELOP SCRIPT \n")
 
         develop.run(self)
 
 
 setup(
-    name='vwo-python-sdk',
-    version='1.8.0',
-    description='Python SDK for VWO server-side A/B Testing',
-    long_description='Some issue with twine rendering markdown README.md',
-    author='VWO',
-    author_email='dev@wingify.com',
-    url='https://github.com/wingify/vwo-python-sdk',
-    license='Apache License 2.0',
+    name="vwo-python-sdk",
+    version="1.8.0",
+    description="Python SDK for VWO server-side A/B Testing",
+    long_description="Some issue with twine rendering markdown README.md",
+    author="VWO",
+    author_email="dev@wingify.com",
+    url="https://github.com/wingify/vwo-python-sdk",
+    license="Apache License 2.0",
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Web Environment",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     cmdclass={
-        'develop': PostDevelopCommand,
-        'patch': ReleasePatchCommand,
-        'minor': ReleaseMinorCommand,
-        'major': ReleaseMajorCommand,
-        'license_check': LicenseCheckCommand,
+        "develop": PostDevelopCommand,
+        "patch": ReleasePatchCommand,
+        "minor": ReleaseMinorCommand,
+        "major": ReleaseMajorCommand,
+        "license_check": LicenseCheckCommand,
+        "doc_check": DocCheckCommand,
     },
-    packages=find_packages(
-        exclude=['tests']
-    ),
-    install_requires=REQUIREMENTS
+    packages=find_packages(exclude=["tests"]),
+    install_requires=REQUIREMENTS,
 )

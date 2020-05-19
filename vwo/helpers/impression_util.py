@@ -20,7 +20,7 @@ from ..helpers import generic_util, uuid_util, validate_util
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
-from ..logger.logger_manager import VWOLogger
+from ..logger import VWOLogger
 
 try:
     from urllib import quote  # Python 2.X
@@ -31,12 +31,7 @@ FILE = FileNameEnum.Helpers.ImpressionUtil
 
 
 def create_impression(
-    settings_file,
-    campaign_id,
-    variation_id,
-    user_id,
-    goal_id=None,
-    revenue=None,
+    settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None,
 ):
     """ Creates the impression from the arguments passed according to
     call type
@@ -55,9 +50,7 @@ def create_impression(
             else impression(dict)
     """
 
-    if not validate_util.is_valid_non_zero_number(
-        campaign_id
-    ) or not validate_util.is_valid_string(user_id):
+    if not validate_util.is_valid_non_zero_number(campaign_id) or not validate_util.is_valid_string(user_id):
         return None
 
     is_track_user_api = True

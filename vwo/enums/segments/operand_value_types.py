@@ -14,9 +14,9 @@
 
 
 class OperandValueTypes:
-    lower = 'lower'
-    contains = 'contains'
-    startswith = 'startswith'
-    endswith = 'endswith'
-    regex = 'regex'
-    equals = 'equals'
+    lower = "lower"
+    contains = "contains"
+    startswith = "startswith"
+    endswith = "endswith"
+    regex = "regex"
+    equals = "equals"
