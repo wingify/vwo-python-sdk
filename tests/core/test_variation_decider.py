@@ -41,6 +41,7 @@ class VariationDeciderTest(unittest.TestCase):
         campaign_util.set_variation_allocation(self.dummy_campaign)
         self.variation_decider = VariationDecider()
         self.user_storage = ClientUserStorage()
+        self.variation_decider_with_us = VariationDecider(self.user_storage)
 
     def test_init_with_valid_user_storage(self):
         class US:

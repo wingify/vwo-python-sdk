@@ -14,6 +14,7 @@
 
 import unittest
 import json
+import sys
 
 from vwo.helpers import validate_util
 from ..data.settings_files import SETTINGS_FILES
@@ -42,3 +43,13 @@ class ValidateUtilTest(unittest.TestCase):
 
         result = validate_util.is_valid_service(InvalidUtility, "InvalidUtility")
         self.assertIs(result, False)
+
+    def test_is_valid_unicode_true(self):
+        if sys.version_info[0] < 3:
+            val = u"some_value"
+            self.assertIs(True, validate_util.is_valid_unicode(val))
+
+    def test_is_valid_unicode_false(self):
+        if sys.version_info[0] < 3:
+            val = "some_value"
+            self.assertIs(False, validate_util.is_valid_unicode(val))

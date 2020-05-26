@@ -543,3 +543,40 @@ class TrackTest(unittest.TestCase):
         result = vwo_instance.track(None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.ALL)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
+
+    def test_invalid_goal_type_passed_should_return_None(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True,
+        )
+        result = vwo_instance.track(None, "user", "track2", goal_type_to_track="vwo.GOAL_TYPES.CUSTOM")
+        self.assertIsNone(result)
+
+    def test_invalid_should_track_returning_user_passed_should_return_None(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True,
+        )
+        result = vwo_instance.track(None, "user", "track2", should_track_returning_user="True")
+        self.assertIsNone(result)
+
+    def test_no_global_goal_found(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True,
+        )
+        result = vwo_instance.track(None, "user", "goal_not_existing")
+        self.assertIsNone(result)
+
+    def test_track_invalid_campaign_specifier_passed(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True,
+        )
+        result = vwo_instance.track(True, "user", "goal_not_existing")
+        self.assertIsNone(result)
+
+    def test_track_should_add_goalIdentifiers_if_variation_is_found_in_user_storage_prior_track(self):
+        user_storage = ClientUserStorage()
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True, user_storage=user_storage
+        )
+        vwo_instance.activate("AB_T_100_W_50_50", "user")
+        vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
+        self.assertEquals(user_storage.get("user", "AB_T_100_W_50_50").get("goalIdentifiers"), "CUSTOM")

@@ -245,17 +245,6 @@ def get_control_variation(campaign):
     return None
 
 
-def get_segments(campaign):
-    """ Returns segments from the campaign
-
-    Args:
-        campaign(dict): Running campaign
-    Returns:
-        segments(dict): a dsl of segments
-    """
-    return campaign.get("segments")
-
-
 def scale_variations(variations):
     """ It extracts the weights from all the variations inside the campaign
     and scales them so that the total sum of eligible variations' weights become 100%

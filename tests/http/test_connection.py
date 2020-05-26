@@ -17,6 +17,12 @@ import unittest
 from vwo.http import connection
 
 
+class Response:
+    def __init__(self, status_code, text):
+        self.status_code = status_code
+        self.text = text
+
+
 class ConnectionTest(unittest.TestCase):
     def setUp(self):
         self.connection = connection.Connection()
@@ -25,3 +31,22 @@ class ConnectionTest(unittest.TestCase):
         with mock.patch("requests.Session.get", side_effect=Exception("REQUEST FAILED")):
             result = self.connection.get("https://vwo.com/")
             self.assertDictEqual(result, {"status_code": None, "text": ""})
+
+    def test_connection_get(self):
+        resp = Response(200, "success")
+        return_value = {"status_code": 200, "text": "success"}
+        with mock.patch("requests.Session.get", return_value=resp):
+            result = self.connection.get("https://vwo.com/")
+            self.assertDictEqual(result, return_value)
+
+    def test_connection_post_with_exception(self):
+        with mock.patch("requests.Session.post", side_effect=Exception("REQUEST FAILED")):
+            result = self.connection.post("https://vwo.com/")
+            self.assertDictEqual(result, {"status_code": None, "text": ""})
+
+    def test_connection_post(self):
+        resp = Response(200, "success")
+        return_value = {"status_code": 200, "text": "success"}
+        with mock.patch("requests.Session.post", return_value=resp):
+            result = self.connection.post("https://vwo.com/")
+            self.assertDictEqual(result, return_value)
