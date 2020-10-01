@@ -123,7 +123,7 @@ setup(
     name="vwo-python-sdk",
     version="1.8.1",
     description="Python SDK for VWO server-side A/B Testing",
-    long_description="Some issue with twine rendering markdown README.md",
+    long_description="Python SDK for VWO server-side A/B Testing. For more info visit https://developers.vwo.com/reference#fullstack-introduction",
     author="VWO",
     author_email="dev@wingify.com",
     url="https://github.com/wingify/vwo-python-sdk",
