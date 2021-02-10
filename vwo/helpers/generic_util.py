@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,9 +83,7 @@ def safe_method(method, fail_return_value, FILE):
         try:
             return method(*args, **kwargs)
         except Exception as e:
-            logger.log(
-                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(file=FILE, exception=e),
-            )
+            logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(file=FILE, exception=e))
             return fail_return_value
 
     return inner_method

@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
 
     if not valid_params:
         vwo_instance.logger.log(
-            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.TRACK_API_INVALID_PARAMS.format(file=FILE),
+            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.TRACK_API_INVALID_PARAMS.format(file=FILE)
         )
         return None
 
@@ -97,14 +97,14 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             campaign_goal_list = [(campaign, goal)]
     elif type(campaign_specifier) is list:
         campaigns = campaign_util.get_campaigns(vwo_instance.settings_file, campaign_specifier).values()
-        (campaign_goal_list, campaigns_without_goal,) = campaign_util.get_campaigns_with_goal_id(
+        (campaign_goal_list, campaigns_without_goal) = campaign_util.get_campaigns_with_goal_id(
             campaigns, goal_identifier
         )
         for campaign in campaigns_without_goal:
             vwo_instance.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.TRACK_API_GOAL_NOT_FOUND.format(
-                    file=FILE, goal_identifier=goal_identifier, user_id=user_id, campaign_key=campaign.get("key"),
+                    file=FILE, goal_identifier=goal_identifier, user_id=user_id, campaign_key=campaign.get("key")
                 ),
             )
     elif campaign_specifier is None:
@@ -186,7 +186,7 @@ def track_campaign_goal(
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.INVALID_API.format(
-                file=FILE, user_id=user_id, campaign_key=campaign.get("key"), campaign_type=campaign_type,
+                file=FILE, user_id=user_id, campaign_key=campaign.get("key"), campaign_type=campaign_type
             ),
         )
         return False
@@ -203,7 +203,7 @@ def track_campaign_goal(
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(
-                file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key"),
+                file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key")
             ),
         )
         return False
@@ -221,7 +221,7 @@ def track_campaign_goal(
 
     if variation:
         impression = impression_util.create_impression(
-            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id, goal.get("id"), revenue_value,
+            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id, goal.get("id"), revenue_value
         )
 
         vwo_instance.event_dispatcher.dispatch(impression)

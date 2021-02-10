@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class LicenseCheckCommand(Command):
 
     def run(self):
         subprocess.call(
-            'python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "2019-2020 Wingify Software Pvt. Ltd."',
+            'python3 ./scripts/apache_license_check.py vwo/ tests/ setup.py --copyright "2019-2021 Wingify Software Pvt. Ltd."',
             shell=True,
         )
 
@@ -123,7 +123,8 @@ setup(
     name="vwo-python-sdk",
     version="1.8.1",
     description="Python SDK for VWO server-side A/B Testing",
-    long_description="Python SDK for VWO server-side A/B Testing. For more info visit https://developers.vwo.com/reference#fullstack-introduction",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="VWO",
     author_email="dev@wingify.com",
     url="https://github.com/wingify/vwo-python-sdk",

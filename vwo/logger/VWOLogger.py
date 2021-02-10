@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ class VWOLogger:
                     self.log(
                         logging.ERROR,
                         LogMessageEnum.ERROR_MESSAGES.CUSTOM_LOGGER_MISCONFIGURED.format(
-                            file=FILE, extra_info="log method is not provided or invalid.",
+                            file=FILE, extra_info="log method is not provided or invalid."
                         ).replace("API_NAME", self.api_name, 1),
                     )
         else:

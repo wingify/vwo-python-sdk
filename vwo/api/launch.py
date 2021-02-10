@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,12 +73,8 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         or (goal_type_to_track and not validate_util.is_valid_goal_type(goal_type_to_track))
         or (should_track_returning_user and type(should_track_returning_user) is not bool)
     ):
-        logger.log(
-            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.LAUNCH_API_INVALID_PARAMS.format(file=FILE),
-        )
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.LAUNCH_API_INVALID_PARAMS.format(file=FILE))
         return None
     else:
-        logger.log(
-            LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(file=FILE),
-        )
+        logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(file=FILE))
         return VWO(settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user)

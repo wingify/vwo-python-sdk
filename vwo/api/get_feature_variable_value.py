@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
     ):  # noqa: E501
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_VALUE_API_INVALID_PARAMS.format(file=FILE,),
+            LogMessageEnum.ERROR_MESSAGES.GET_FEATURE_VARIABLE_VALUE_API_INVALID_PARAMS.format(file=FILE),
         )
         return None
 
@@ -109,7 +109,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
-                    file=FILE, feature_key=campaign_key, user_id=user_id,
+                    file=FILE, feature_key=campaign_key, user_id=user_id
                 ),
             )
             variation = campaign_util.get_control_variation(campaign)
@@ -117,7 +117,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
-                    file=FILE, feature_key=campaign_key, user_id=user_id,
+                    file=FILE, feature_key=campaign_key, user_id=user_id
                 ),
             )
         variables = variation.get("variables")

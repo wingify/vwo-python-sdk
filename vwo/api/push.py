@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,14 +45,14 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
         or not validate_util.is_valid_string(user_id)
     ):
         vwo_instance.logger.log(
-            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.PUSH_API_INVALID_PARAMS.format(file=FILE,)
+            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.PUSH_API_INVALID_PARAMS.format(file=FILE)
         )
         return False
 
     if len(tag_key) > constants.PUSH_API.TAG_KEY_LENGTH:
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.TAG_KEY_LENGTH_EXCEEDED.format(file=FILE, user_id=user_id, tag_key=tag_key,),
+            LogMessageEnum.ERROR_MESSAGES.TAG_KEY_LENGTH_EXCEEDED.format(file=FILE, user_id=user_id, tag_key=tag_key),
         )
         return False
 
@@ -60,7 +60,7 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
         vwo_instance.logger.log(
             LogLevelEnum.ERROR,
             LogMessageEnum.ERROR_MESSAGES.TAG_VALUE_LENGTH_EXCEEDED.format(
-                file=FILE, user_id=user_id, tag_value=tag_value,
+                file=FILE, user_id=user_id, tag_value=tag_value
             ),
         )
         return False

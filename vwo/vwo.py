@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,15 +53,11 @@ class VWO(object):
         self.settings_file = self.config.get_settings_file()
         self.variation_decider = VariationDecider(user_storage)
         if is_development_mode:
-            self.logger.log(
-                LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(file=FILE),
-            )
+            self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(file=FILE))
         self.event_dispatcher = EventDispatcher(is_development_mode or False)
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
         self.should_track_returning_user = should_track_returning_user or False
-        self.logger.log(
-            LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE),
-        )
+        self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
 
     # PUBLIC METHODS
     activate = safe_method(api._activate, None, FILE)

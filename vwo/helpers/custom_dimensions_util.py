@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,9 +40,7 @@ def get_url_params(settings_file, tag_key, tag_value, user_id):
     tag = {"u": {tag_key: tag_value}}
 
     params = impression_util.get_common_properties(user_id, settings_file)
-    params.update(
-        url=url, tags=json.dumps(tag),
-    )
+    params.update(url=url, tags=json.dumps(tag))
 
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,

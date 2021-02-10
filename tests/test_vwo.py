@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class VWOTest(unittest.TestCase):
         self.user_id = str(random.random())
         self.settings_file = json.dumps(SETTINGS_FILES.get(config_variant))
 
-        self.vwo = vwo.launch(self.settings_file, is_development_mode=True, log_level=TEST_LOG_LEVEL,)
+        self.vwo = vwo.launch(self.settings_file, is_development_mode=True, log_level=TEST_LOG_LEVEL)
         self.campaign_key = config_variant
         try:
             self.goal_identifier = SETTINGS_FILES[config_variant]["campaigns"][0]["goals"][0]["identifier"]
@@ -45,11 +45,11 @@ class VWOTest(unittest.TestCase):
         self.assertIs(self.vwo, None)
 
     def test_vwo_initialized_with_provided_log_level_DEBUG(self):
-        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), log_level=vwo.LOG_LEVELS.DEBUG,)
+        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), log_level=vwo.LOG_LEVELS.DEBUG)
         self.assertEquals(vwo_instance.logger.logger.level, logging.DEBUG)
 
     def test_vwo_initialized_with_provided_log_level_WARNING(self):
-        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), log_level=vwo.LOG_LEVELS.WARNING,)
+        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), log_level=vwo.LOG_LEVELS.WARNING)
         self.assertEquals(vwo_instance.logger.logger.level, logging.WARNING)
 
     def test_vwo_initialized_with_provided_log_level_50_fails_creation_of_instance(self):
@@ -82,7 +82,5 @@ class VWOTest(unittest.TestCase):
         else:
             builtin_module_name = "builtins"
         with mock.patch(builtin_module_name + ".print") as mock_print:
-            vwo.launch(
-                json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), logger=CustomLogger(),
-            )
+            vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), logger=CustomLogger())
             mock_print.assert_called()

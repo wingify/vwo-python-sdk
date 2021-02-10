@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,11 +21,7 @@ from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
 from ..constants.constants import LOG_LEVELS, GOAL_TYPES
 from . import generic_util
 
-services = {
-    "logger": ["log"],
-    "event_dispatcher": ["dispatch"],
-    "user_storage": ["get", "set"],
-}
+services = {"logger": ["log"], "event_dispatcher": ["dispatch"], "user_storage": ["get", "set"]}
 
 
 def is_valid_settings_file(settings_file):

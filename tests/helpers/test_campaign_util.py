@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -105,12 +105,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_1_2_3_4_to_10_20_30_40(self):
-        variations = [
-            {"weight": 1},
-            {"weight": 2},
-            {"weight": 3},
-            {"weight": 4},
-        ]
+        variations = [{"weight": 1}, {"weight": 2}, {"weight": 3}, {"weight": 4}]
         campaign_util.scale_variations(variations)
         self.assertEquals(variations[0]["weight"], 10)
         self.assertEquals(variations[1]["weight"], 20)
@@ -148,12 +143,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertEquals(variation_allocations_ranges_list[2], (6669, 10002))
 
     def test_get_variation_allocation_ranges_10_20_30_40(self):
-        variations = [
-            {"weight": 10},
-            {"weight": 20},
-            {"weight": 30},
-            {"weight": 40},
-        ]
+        variations = [{"weight": 10}, {"weight": 20}, {"weight": 30}, {"weight": 40}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1000))
         self.assertEquals(variation_allocations_ranges_list[1], (1001, 3000))
@@ -167,46 +157,31 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertEquals(variation_allocations_ranges_list[1], (1301, 10000))
 
     def test_get_variation_allocation_ranges_1_99(self):
-        variations = [
-            {"weight": 1},
-            {"weight": 99},
-        ]
+        variations = [{"weight": 1}, {"weight": 99}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 100))
         self.assertEquals(variation_allocations_ranges_list[1], (101, 10000))
 
     def test_get_variation_allocation_ranges_99_1(self):
-        variations = [
-            {"weight": 99},
-            {"weight": 1},
-        ]
+        variations = [{"weight": 99}, {"weight": 1}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 9900))
         self.assertEquals(variation_allocations_ranges_list[1], (9901, 10000))
 
     def test_get_variation_allocation_ranges_0pt1_99pt9(self):
-        variations = [
-            {"weight": 0.1},
-            {"weight": 99.9},
-        ]
+        variations = [{"weight": 0.1}, {"weight": 99.9}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 10))
         self.assertEquals(variation_allocations_ranges_list[1], (11, 10000))
 
     def test_get_variation_allocation_ranges_0pt01_99pt99(self):
-        variations = [
-            {"weight": 0.01},
-            {"weight": 99.99},
-        ]
+        variations = [{"weight": 0.01}, {"weight": 99.99}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1))
         self.assertEquals(variation_allocations_ranges_list[1], (2, 10000))
 
     def test_get_variation_allocation_ranges_0pt001_99pt999(self):
-        variations = [
-            {"weight": 0.001},
-            {"weight": 99.999},
-        ]
+        variations = [{"weight": 0.001}, {"weight": 99.999}]
         variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1))
         self.assertEquals(variation_allocations_ranges_list[1], (2, 10001))
@@ -252,9 +227,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertEquals(result, 12)
 
     def test_scale_variations_0_weight(self):
-        variations = [
-            {"weight": 0},
-        ]
+        variations = [{"weight": 0}]
         campaign_util.scale_variations(variations)
         self.assertEquals(variations[0]["weight"], 100)
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
@@ -275,19 +248,13 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_0pt1_weight(self):
-        variations = [
-            {"weight": 0.1},
-        ]
+        variations = [{"weight": 0.1}]
         campaign_util.scale_variations(variations)
         self.assertEquals(variations[0]["weight"], 100)
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_0pt1_0pt1_0pt1_weight(self):
-        variations = [
-            {"weight": 0.1},
-            {"weight": 0.1},
-            {"weight": 0.1},
-        ]
+        variations = [{"weight": 0.1}, {"weight": 0.1}, {"weight": 0.1}]
         campaign_util.scale_variations(variations)
         self.assertAlmostEquals(variations[0]["weight"], 33.3333333)
         self.assertAlmostEquals(variations[1]["weight"], 33.3333333)
@@ -295,11 +262,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_0pt01_0pt01_0pt01_weight(self):
-        variations = [
-            {"weight": 0.01},
-            {"weight": 0.01},
-            {"weight": 0.01},
-        ]
+        variations = [{"weight": 0.01}, {"weight": 0.01}, {"weight": 0.01}]
         campaign_util.scale_variations(variations)
         self.assertAlmostEquals(variations[0]["weight"], 33.3333333)
         self.assertAlmostEquals(variations[1]["weight"], 33.3333333)
@@ -307,11 +270,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_0pt001_0pt01_0pt1_weight(self):
-        variations = [
-            {"weight": 0.001},
-            {"weight": 0.01},
-            {"weight": 0.1},
-        ]
+        variations = [{"weight": 0.001}, {"weight": 0.01}, {"weight": 0.1}]
         campaign_util.scale_variations(variations)
         self.assertAlmostEquals(variations[0]["weight"], 0.9009009009009009)
         self.assertAlmostEquals(variations[1]["weight"], 9.00900900900901)
@@ -319,11 +278,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_10pt234_33pt456_44pt444_weight(self):
-        variations = [
-            {"weight": 10.234},
-            {"weight": 33.456},
-            {"weight": 44.444},
-        ]
+        variations = [{"weight": 10.234}, {"weight": 33.456}, {"weight": 44.444}]
         campaign_util.scale_variations(variations)
         self.assertAlmostEquals(variations[0]["weight"], 11.611863752921685)
         self.assertAlmostEquals(variations[1]["weight"], 37.96037851453468)
@@ -331,13 +286,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
     def test_scale_variations_10pt234_33pt456_44pt444_0ppt1_0pt_1weight(self):
-        variations = [
-            {"weight": 10.234},
-            {"weight": 33.456},
-            {"weight": 44.444},
-            {"weight": 0.1},
-            {"weight": 0.1},
-        ]
+        variations = [{"weight": 10.234}, {"weight": 33.456}, {"weight": 44.444}, {"weight": 0.1}, {"weight": 0.1}]
         campaign_util.scale_variations(variations)
         self.assertAlmostEquals(variations[0]["weight"], 11.585572939072158)
         self.assertAlmostEquals(variations[1]["weight"], 37.874431136368784)

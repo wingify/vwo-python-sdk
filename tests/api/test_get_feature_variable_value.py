@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -147,9 +147,7 @@ class GetFeatureVariableValueTest(unittest.TestCase):
 
     def test_get_feature_variable_wrong_variable_types_return_none(self):
         self.set_up("FR_WRONG_VARIABLE_TYPE")
-        tests = [
-            ("WRONG_BOOLEAN", None, "boolean", None),
-        ]
+        tests = [("WRONG_BOOLEAN", None, "boolean", None)]
         for test in tests:
             result = self.vwo.get_feature_variable_value("FR_WRONG_VARIABLE_TYPE", test[0], "Zin")
             self.assertEquals(result, test[1])

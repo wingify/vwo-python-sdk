@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ class VariationDecider(object):
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_GOT_NO_VARIATION.format(
-                file=FILE, user_id=user_id, campaign_key=campaign.get("key"), campaign_type=campaign.get("type"),
+                file=FILE, user_id=user_id, campaign_key=campaign.get("key"), campaign_type=campaign.get("type")
             ),
         )
         return None
@@ -227,7 +227,7 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.WHITELISTING_SKIPPED.format(
-                    file=FILE, user_id=user_id, campaign_key=campaign.get("key"),
+                    file=FILE, user_id=user_id, campaign_key=campaign.get("key")
                 ),
             )
             return None
@@ -377,7 +377,7 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_VARIABLES.format(
-                    file=FILE, user_id=user_id, campaign_key=campaign.get("key"), segmentation_type="whitelisting",
+                    file=FILE, user_id=user_id, campaign_key=campaign.get("key"), segmentation_type="whitelisting"
                 ),
             )
             variation_targeting_variables = {}
@@ -400,7 +400,7 @@ class VariationDecider(object):
                 )
             else:
                 try:
-                    result = self.segment_evaluator.evaluate(variation.get("segments"), variation_targeting_variables,)
+                    result = self.segment_evaluator.evaluate(variation.get("segments"), variation_targeting_variables)
                     self.logger.log(
                         LogLevelEnum.DEBUG,
                         LogMessageEnum.DEBUG_MESSAGES.SEGMENTATION_STATUS.format(
@@ -444,11 +444,7 @@ class VariationDecider(object):
         Returns:
             dict: a user_storage_data object with specified properties
         """
-        new_user_storage_data = {
-            "userId": user_id,
-            "campaignKey": campaign_key,
-            "variationName": variation_name,
-        }
+        new_user_storage_data = {"userId": user_id, "campaignKey": campaign_key, "variationName": variation_name}
         # For track only, to store the goals tracked
         if kwargs.get("goal_data"):
             new_user_storage_data["goalIdentifiers"] = kwargs.get("goal_data").get("identifier")
@@ -466,9 +462,7 @@ class VariationDecider(object):
         """
 
         if not self.user_storage:
-            self.logger.log(
-                LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(file=FILE),
-            )
+            self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(file=FILE))
             return False
         try:
             user_storage_data = self.user_storage.get(user_id, campaign_key)
@@ -499,9 +493,7 @@ class VariationDecider(object):
         """
 
         if not self.user_storage:
-            self.logger.log(
-                LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_SET.format(file=FILE),
-            )
+            self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_SET.format(file=FILE))
             return False
 
         try:
@@ -509,7 +501,7 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SAVING_DATA_USER_STORAGE_STATUS.format(
-                    file=FILE, user_id=user_storage_data.get("userId"), status="successful",
+                    file=FILE, user_id=user_storage_data.get("userId"), status="successful"
                 ),
             )
             return True
@@ -517,7 +509,7 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.ERROR,
                 LogMessageEnum.ERROR_MESSAGES.SET_USER_STORAGE_FAILED.format(
-                    file=FILE, user_id=user_storage_data.get("userId"), error_message=e,
+                    file=FILE, user_id=user_storage_data.get("userId"), error_message=e
                 ),
             )
             return False

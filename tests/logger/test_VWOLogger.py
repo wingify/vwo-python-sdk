@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ class VWOLoggerTest(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as fakeOutput:
             logger_instance.log(logging.ERROR, "This logger instance used print for log")  # noqa: 501
             self.assertEqual(
-                fakeOutput.getvalue().strip(), str(logging.ERROR) + " " + "This logger instance used print for log",
+                fakeOutput.getvalue().strip(), str(logging.ERROR) + " " + "This logger instance used print for log"
             )  # noqa: 501
 
         logger_instance.logger.log = default_logging_logger

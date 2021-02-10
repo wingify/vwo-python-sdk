@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ SETTINGS_FILES = {
                 "key": "FR_T_0_W_100",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -205,7 +205,7 @@ SETTINGS_FILES = {
                 "key": "FR_T_25_W_100",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -227,7 +227,7 @@ SETTINGS_FILES = {
                 "key": "FR_T_50_W_100",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -249,7 +249,7 @@ SETTINGS_FILES = {
                 "key": "FR_T_75_W_100",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -271,7 +271,7 @@ SETTINGS_FILES = {
                 "key": "FR_T_100_W_100",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -306,7 +306,7 @@ SETTINGS_FILES = {
                 "key": "FR_WRONG_VARIABLE_TYPE",
                 "status": "RUNNING",
                 "type": "FEATURE_ROLLOUT",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -363,7 +363,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_0_W_10_20_30_40",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -420,7 +420,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_25_W_10_20_30_40",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -477,7 +477,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_50_W_10_20_30_40",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -534,7 +534,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_75_W_10_20_30_40",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -591,7 +591,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_100_W_10_20_30_40",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -648,7 +648,7 @@ SETTINGS_FILES = {
                 "key": "FT_T_100_W_10_20_30_40_IFEF",
                 "status": "RUNNING",
                 "type": "FEATURE_TEST",
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,
@@ -848,7 +848,7 @@ SETTINGS_FILES = {
                         {"or": [{"custom_variable": {"hello": "regex(world)"}}]},
                     ]
                 },
-            },
+            }
         ],
         "accountId": 123456,
         "version": 2,

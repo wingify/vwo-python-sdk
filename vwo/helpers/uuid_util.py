@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ def generate_for(user_id, account_id):
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,
         LogMessageEnum.DEBUG_MESSAGES.UUID_FOR_USER.format(
-            file=FILE, user_id=user_id, account_id=account_id, desired_uuid=desired_uuid,
+            file=FILE, user_id=user_id, account_id=account_id, desired_uuid=desired_uuid
         ),
     )
     return desired_uuid

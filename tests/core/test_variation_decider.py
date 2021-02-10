@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -72,14 +72,14 @@ class VariationDeciderTest(unittest.TestCase):
 
         # First let variation_decider compute variation, and store
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign,)
+        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
         # Now check whether the variation_decider is able to retrieve
         # variation for user_storage, no campaign is required
         # for this.
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign,)
+        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
@@ -96,7 +96,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider(US())
 
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign,)
+        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
@@ -114,11 +114,11 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider(US())
 
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign,)
+        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign,)
+        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
@@ -144,11 +144,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = settings_file["campaigns"][0]
-        false_variation_targeting_variables = {
-            "chrome": "true",
-            "safari": "false",
-            "browser": "firefox 106.69",
-        }
+        false_variation_targeting_variables = {"chrome": "true", "safari": "false", "browser": "firefox 106.69"}
         result_variation = variation_decider.find_targeted_variation(
             "Sarah", campaign, false_variation_targeting_variables
         )
@@ -158,11 +154,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = settings_file["campaigns"][0]
-        true_variation_targeting_variables = {
-            "chrome": "false",
-            "safari": "true",
-            "browser": "chrome 107.107",
-        }
+        true_variation_targeting_variables = {"chrome": "false", "safari": "true", "browser": "chrome 107.107"}
         result_variation = variation_decider.find_targeted_variation(
             "Sarah", campaign, true_variation_targeting_variables
         )
@@ -214,11 +206,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = settings_file["campaigns"][0]
-        false_variation_targeting_variables = {
-            "chrome": "true",
-            "safari": "false",
-            "browser": "firefox 106.69",
-        }
+        false_variation_targeting_variables = {"chrome": "true", "safari": "false", "browser": "firefox 106.69"}
         variation_list = variation_decider._get_white_listed_variations_list(
             "Sarah", campaign, false_variation_targeting_variables
         )
@@ -229,11 +217,7 @@ class VariationDeciderTest(unittest.TestCase):
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
         campaign["variations"][0]["segments"] = {}
-        false_variation_targeting_variables = {
-            "chrome": "true",
-            "safari": "false",
-            "browser": "firefox 106.69",
-        }
+        false_variation_targeting_variables = {"chrome": "true", "safari": "false", "browser": "firefox 106.69"}
         variation_list = variation_decider._get_white_listed_variations_list(
             "Sarah", campaign, false_variation_targeting_variables
         )
@@ -244,11 +228,7 @@ class VariationDeciderTest(unittest.TestCase):
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
         campaign["variations"][1]["segments"] = {"or": [{"custom_variable": {"browser": "wildcard(firefox*)"}}]}
-        false_variation_targeting_variables = {
-            "chrome": "true",
-            "safari": "false",
-            "browser": "firefox 106.69",
-        }
+        false_variation_targeting_variables = {"chrome": "true", "safari": "false", "browser": "firefox 106.69"}
         variation_list = variation_decider._get_white_listed_variations_list(
             "Sarah", campaign, false_variation_targeting_variables
         )
@@ -259,11 +239,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
-        true_variation_targeting_variables = {
-            "chrome": "false",
-            "safari": "true",
-            "browser": "chrome 107.107",
-        }
+        true_variation_targeting_variables = {"chrome": "false", "safari": "true", "browser": "chrome 107.107"}
         variation_list = variation_decider._get_white_listed_variations_list(
             "Sarah", campaign, true_variation_targeting_variables
         )
@@ -300,11 +276,7 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_user_storage_data_true(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
-        user_storage_data = {
-            "userId": "Sarah",
-            "campaignKey": "FEATURE_TEST_1",
-            "variationName": "DESIGN_4",
-        }
+        user_storage_data = {"userId": "Sarah", "campaignKey": "FEATURE_TEST_1", "variationName": "DESIGN_4"}
         client_storage.set(user_storage_data)
         result_user_storage_data = variation_decider._get_user_storage_data("Sarah", "FEATURE_TEST_1")
         self.assertDictEqual(result_user_storage_data, user_storage_data)
@@ -312,11 +284,7 @@ class VariationDeciderTest(unittest.TestCase):
     def test_get_user_storage_data_false_different_campaign(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
-        user_storage_data = {
-            "userId": "Sarah",
-            "campaignKey": "FEATURE_TEST_2",
-            "variationName": "DESIGN_4",
-        }
+        user_storage_data = {"userId": "Sarah", "campaignKey": "FEATURE_TEST_2", "variationName": "DESIGN_4"}
         client_storage.set(user_storage_data)
         result_user_storage_data = variation_decider._get_user_storage_data("Sarah", "FEATURE_TEST_1")
         self.assertIsNone(result_user_storage_data)
@@ -326,11 +294,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider(user_storage=client_storage)
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = settings_file["campaigns"][0]
-        user_storage_data = {
-            "userId": "Sarah",
-            "campaignKey": "FEATURE_TEST_2",
-            "variationName": "None",
-        }
+        user_storage_data = {"userId": "Sarah", "campaignKey": "FEATURE_TEST_2", "variationName": "None"}
         client_storage.set(user_storage_data)
         user_storage_data = variation_decider._get_user_storage_data("Sarah", campaign.get("key"))
         result_variation = variation_decider.get_variation_from_user_storage("Sarah", campaign, user_storage_data)

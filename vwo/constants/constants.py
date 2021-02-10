@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,12 +82,7 @@ class PUSH_API:
     TAG_KEY_LENGTH = 255
 
 
-PY_VARIABLE_TYPES = {
-    "string": str,
-    "integer": int,
-    "double": float,
-    "boolean": bool,
-}
+PY_VARIABLE_TYPES = {"string": str, "integer": int, "double": float, "boolean": bool}
 
 
 # For exposing log levels to vwo_instance

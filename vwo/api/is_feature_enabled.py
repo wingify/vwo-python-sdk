@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     ):  # noqa: E501
         # log invalid params
         vwo_instance.logger.log(
-            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_INVALID_PARAMS.format(file=FILE,)
+            LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IS_FEATURE_ENABLED_API_INVALID_PARAMS.format(file=FILE)
         )
         return False
 
@@ -120,14 +120,14 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
-                    file=FILE, user_id=user_id, feature_key=campaign_key,
+                    file=FILE, user_id=user_id, feature_key=campaign_key
                 ),
             )
         else:
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
-                    file=FILE, user_id=user_id, feature_key=campaign_key,
+                    file=FILE, user_id=user_id, feature_key=campaign_key
                 ),
             )
         return result

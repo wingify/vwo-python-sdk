@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Wingify Software Pvt. Ltd.
+# Copyright 2019-2021 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,11 +55,11 @@ class EventDispatcher(object):
 
         if result is True:
             self.logger.log(
-                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(file=FILE, end_point=url,)
+                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(file=FILE, end_point=url)
             )
             return True
         else:
             self.logger.log(
-                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url,)
+                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url)
             )
             return False
