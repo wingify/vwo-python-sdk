@@ -28,7 +28,8 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
     returns a VWO instance.
 
     Args:
-        settings_file (dict): settings_file consisting all the campaign related data
+        settings_file (json_string): stringified json representing the settings_file consisting all 
+            the campaign related data
         logger (object): an object capable of logging events happening inside the SDK
         user_storage (object): a storage service object capable of doing get and set on
         SDK provide data

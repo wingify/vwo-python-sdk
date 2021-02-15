@@ -35,6 +35,7 @@ class CustomDimensionUtilTest(unittest.TestCase):
         ):
             result = custom_dimensions_util.get_url_params(self.settings_file, "browser", "chrome", self.user_id)
             tags = {"u": {"browser": "chrome"}}
+            sdk_key = self.settings_file.get("sdkKey")
             params = {
                 "url": "https://dev.visualwebsiteoptimizer.com/server-side/push",
                 "account_id": TEST_ACCOUNT_ID,
@@ -46,5 +47,6 @@ class CustomDimensionUtilTest(unittest.TestCase):
                 "sdk-v": constants.SDK_VERSION,
                 "ap": constants.PLATFORM,
                 "uId": self.user_id,
+                "env": sdk_key
             }
             self.assertDictEqual(params, result)

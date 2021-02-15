@@ -38,7 +38,8 @@ class VWO(object):
         Else object initialization fails.
 
         Args:
-            settings_file (dict): settings_file consisting all the campaign related data
+            settings_file (json_string): stringified json representing the settings_file consisting all 
+                the campaign related data
             user_storage (object): a storage service object capable of doing get and set on
             SDK provide data
             is_development_mode (bool): should the SDK be initialized in development mode,
@@ -66,3 +67,4 @@ class VWO(object):
     is_feature_enabled = safe_method(api._is_feature_enabled, False, FILE)
     get_feature_variable_value = safe_method(api._get_feature_variable_value, None, FILE)
     push = safe_method(api._push, False, FILE)
+    get_and_update_settings_file = safe_method(api._get_and_update_settings_file, None, FILE)

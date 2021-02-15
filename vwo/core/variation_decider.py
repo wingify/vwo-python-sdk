@@ -34,9 +34,7 @@ class VariationDecider(object):
             UserStorage and logger.
 
         Args:
-            settings_file (dict): settings_file consisting all the campaign
-            related data
-            user_storage: Class instance having the capability of
+            user_storage (Class|None): Class instance having the capability of
                 get and set.
         """
         self.logger = VWOLogger.getInstance()

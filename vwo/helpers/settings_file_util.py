@@ -22,16 +22,17 @@ from ..constants import constants
 from ..helpers import generic_util, validate_util
 
 
-def get(account_id, sdk_key):
+def get(account_id, sdk_key, is_via_webhook=False):
     """ Get method to retrieve settings_file for customer from our server
 
     Args:
         account_id (string): Account ID of user
         sdk_key (string): Unique sdk key for user,
             can be retrieved from our webside
+        is_via_webhook (bool): is triggered via webhook flag
 
     Returns:
-        json_string|None: Json representation of settings_file,
+        json_string|None: stringified json representing the settings_file,
             as received from the website,
             None if no settings_file is found or sdk_key is incorrect
     """
@@ -41,10 +42,10 @@ def get(account_id, sdk_key):
     if not is_valid_account_id or not validate_util.is_valid_string(sdk_key):
         print(("account_id and sdk_key are required", "for fetching account settings. Aborting!"), file=sys.stderr)
         return "{}"
-
+    
     protocol = constants.HTTPS_PROTOCOL
     hostname = constants.ENDPOINTS.BASE_URL
-    path = constants.ENDPOINTS.ACCOUNT_SETTINGS
+    path = constants.ENDPOINTS.WEBHOOKS_ACCOUNT_SETTINGS if is_via_webhook else constants.ENDPOINTS.ACCOUNT_SETTINGS
 
     parameters = {
         "a": account_id,
@@ -59,9 +60,12 @@ def get(account_id, sdk_key):
         if settings_file_response.status_code != 200:
             print(
                 "Request failed for fetching account settings. "
+                "{via_webhook_message}"
                 "Got Status Code: {status_code} "
                 "and message: {settings_file_response}.".format(
-                    status_code=settings_file_response.status_code, settings_file_response=settings_file_response.text
+                    via_webhook_message="[via Webhook] " if is_via_webhook else "",
+                    status_code=settings_file_response.status_code, 
+                    settings_file_response=settings_file_response.text
                 ),
                 file=sys.stderr,
             )

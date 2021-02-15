@@ -29,6 +29,7 @@ class FileNameEnum:
         GetFeatureVariableValue = API_PATH + "get_feature_variable_value"
         Push = API_PATH + "push"
         Launch = API_PATH + "launch"
+        GetAndUpdateSettingsFile = API_PATH + "get_and_update_settings_file"
 
     class Core:
         CORE_PATH = "vwo/core/"

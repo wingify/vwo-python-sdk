@@ -97,6 +97,7 @@ def get_common_properties(user_id, settings_file):
     """
 
     account_id = settings_file.get("accountId")
+    sdk_key = settings_file.get("sdkKey")
     properties = {
         "random": generic_util.get_random_number(),
         "sdk": constants.SDK_NAME,
@@ -106,5 +107,6 @@ def get_common_properties(user_id, settings_file):
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
         "uId": quote(user_id.encode("utf-8")),
+        "env": sdk_key
     }
     return properties

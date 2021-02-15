@@ -73,6 +73,25 @@ class SettingsFileTest(unittest.TestCase):
             )
         random.random = default_random
 
+    def test_get_settings_file_error_status_code_via_webhook(self):
+        """ Test that get_settings_file returns None if status_code != 200 when webhook is enabled. """
+        default_random = random.random
+
+        def dummy_random():
+            return 0.05353966086631112
+
+        random.random = dummy_random
+        with mock.patch("requests.get") as mock_request_get, mock.patch("sys.stderr", new=StringIO()) as fakeOutput:
+            mock_request_get.return_value.status_code = 503
+            mock_request_get.return_value.text = '{"message":"Invalid api key"}'
+            result = get_settings_file(TEST_ACCOUNT_ID, "TEST_SDK_KEY", is_via_webhook=True)
+            self.assertEqual(result, '{"message":"Invalid api key"}')
+            self.assertEqual(
+                fakeOutput.getvalue().strip(),
+                'Request failed for fetching account settings. [via Webhook] Got Status Code: 503 and message: {"message":"Invalid api key"}.',  # noqa: E501
+            )
+        random.random = default_random
+
     def test_get_settings_with_exception(self):
         """ Test that get_settings_file raises exception. """
         default_random = random.random

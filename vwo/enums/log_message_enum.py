@@ -89,6 +89,8 @@ class LogMessageEnum:
         SEGMENTATION_STATUS = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} with variables: {variables} {status} {segmentation_type} {variation_status}"
 
         GOAL_ALREADY_TRACKED = "({file}): [API_NAME] Goal:{goal_identifier} of Campaign:{campaign_key} for User ID:{user_id} has already been tracked earlier. Skipping now. Check docs on how to force tracking for returning visitors."
+        SETTINGS_FILE_UPDATED = "({file}): [API_NAME] vwo_sdk_instance is updated with the latest settings_file"
+        SETTINGS_FILE_NOT_UPDATED = "({file}): [API_NAME] settings_file fetched are same as earlier fetched settings"
 
     class WARNING_MESSAGES:
         """ Classobj encapsulating various WARNING messages """
@@ -142,3 +144,4 @@ class LogMessageEnum:
         NO_CAMPAIGN_FOUND = (
             "({file}): [API_NAME] No campaign found for goal_identifier:{goal_identifier}. Please verify from VWO app."
         )
+        INVALID_SETTINGS_FILE = "({file}): [API_NAME] settings_file fetched is not proper for the account_id: {account_id}."

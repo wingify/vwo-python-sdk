@@ -32,6 +32,7 @@ HTTPS_PROTOCOL = "https://"
 class ENDPOINTS:
     BASE_URL = "dev.visualwebsiteoptimizer.com"
     ACCOUNT_SETTINGS = "/server-side/settings"
+    WEBHOOKS_ACCOUNT_SETTINGS = "/server-side/pull"
     TRACK_USER = "/server-side/track-user"
     TRACK_GOAL = "/server-side/track-goal"
     PUSH = "/server-side/push"
@@ -56,6 +57,7 @@ class API_METHODS:
     IS_FEATURE_ENABLED = "is_feature_enabled"
     GET_FEATURE_VARIABLE_VALUE = "get_feature_variable_value"
     PUSH = "push"
+    GET_AND_UPDATE_SETTINGS_FILE = "get_and_update_settings_file"
 
 
 class GOAL_TYPES:
