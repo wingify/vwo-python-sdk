@@ -32,13 +32,13 @@ class VWO(object):
     """ Core class of the SDK, consisting all the APIs featured in VWO Full Stack Server Side Testing """
 
     def __init__(
-        self, settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user
+        self, settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user, batch_event_settings
     ):
         """ __init__ method to initialize the VWO object, all the argument types should be pre-checked.
         Else object initialization fails.
 
         Args:
-            settings_file (json_string): stringified json representing the settings_file consisting all 
+            settings_file (json_string): stringified json representing the settings_file consisting all
                 the campaign related data
             user_storage (object): a storage service object capable of doing get and set on
             SDK provide data
@@ -55,7 +55,7 @@ class VWO(object):
         self.variation_decider = VariationDecider(user_storage)
         if is_development_mode:
             self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SET_DEVELOPMENT_MODE.format(file=FILE))
-        self.event_dispatcher = EventDispatcher(is_development_mode or False)
+        self.event_dispatcher = EventDispatcher(is_development_mode=is_development_mode or False, batch_event_settings=batch_event_settings, sdk_key=self.settings_file.get("sdkKey"))
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
         self.should_track_returning_user = should_track_returning_user or False
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
@@ -67,4 +67,5 @@ class VWO(object):
     is_feature_enabled = safe_method(api._is_feature_enabled, False, FILE)
     get_feature_variable_value = safe_method(api._get_feature_variable_value, None, FILE)
     push = safe_method(api._push, False, FILE)
+    flush_events = safe_method(api._flush_events, False, FILE)
     get_and_update_settings_file = safe_method(api._get_and_update_settings_file, None, FILE)

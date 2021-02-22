@@ -36,11 +36,13 @@ class ENDPOINTS:
     TRACK_USER = "/server-side/track-user"
     TRACK_GOAL = "/server-side/track-goal"
     PUSH = "/server-side/push"
+    BATCH_EVENTS = '/server-side/batch-events'
 
 
 class EVENTS:
     TRACK_USER = "track-user"
     TRACK_GOAL = "track-goal"
+    PUSH = "push"
 
 
 class DATA_TYPE:
@@ -57,6 +59,7 @@ class API_METHODS:
     IS_FEATURE_ENABLED = "is_feature_enabled"
     GET_FEATURE_VARIABLE_VALUE = "get_feature_variable_value"
     PUSH = "push"
+    FLUSH_EVENTS = "flush_events"
     GET_AND_UPDATE_SETTINGS_FILE = "get_and_update_settings_file"
 
 
@@ -64,6 +67,17 @@ class GOAL_TYPES:
     REVENUE = "REVENUE_TRACKING"
     CUSTOM = "CUSTOM_GOAL"
     ALL = "ALL"
+
+
+class BATCH_EVENTS:
+    EVENTS_PER_REQUEST = 'events_per_request'
+    REQUEST_TIME_INTERVAL = 'request_time_interval'
+    FLUSH_CALLBACK = 'flush_callback'
+    MAX_EVENTS_PER_REQUEST = 5000
+    MIN_EVENTS_PER_REQUEST = 1
+    DEFAULT_EVENTS_PER_REQUEST = 100
+    DEFAULT_REQUEST_TIME_INTERVAL = 600
+    MIN_REQUEST_TIME_INTERVAL = 1
 
 
 class CAMPAIGN_TYPES:

@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2021-02-20
+### Added
+- Added support for batching of events sent to VWO server
+- Intoduced `batch_events` config in launch API for setting when to send bulk events
+- Added `flush_events` API to manually flush the batch events queue when `batch_events` config is passed. Note: `batch_events` config i.e. `events_per_request` and `request_time_interval` won't be considered while manually flushing
+- If `request_time_interval` is passed, it will only set the timer when the first event will arrive
+- If `request_time_interval` is provided, after flushing of events, new interval will be registered when the first event will arrive
+
+```js
+def flush_callback(err, events):
+  print(err)
+  print(events)
+
+settings_file = vwo.get_settings_file(account_id, sdk_key)
+vwo_client_instance = vwo.launch(
+    settings_file=settings_file,
+    batch_events={
+        'events_per_request': 1000, # specify the number of events
+         'request_time_interval': 10000, # specify the time limit fordraining the events (in seconds)
+        'flush_callback': flush_callback # optional callback to execute when queue events are flushed
+    }
+)
+
+# (optional): Manually flush the batch events queue to send impressions to VWO server.
+vwo_client_instance.flush_events(mode='sync'); // two modes are available sync and async
+```
+
 ## [1.10.0] - 2021-02-15
 ### Added
 - Webhooks support

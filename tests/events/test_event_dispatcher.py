@@ -14,6 +14,7 @@
 
 import mock
 import unittest
+import time
 
 from vwo.event import event_dispatcher
 from ..data.constants import TEST_ACCOUNT_ID, TEST_USER_ID
@@ -34,10 +35,16 @@ test_properties = {
     "account_id": TEST_ACCOUNT_ID,
 }
 
+test_event_batching_settings = {
+    'events_per_request': 5,
+    'request_time_interval': 1
+}
+
 
 class DispatcherTest(unittest.TestCase):
     def setUp(self):
         self.dispatcher = event_dispatcher.EventDispatcher()
+        self.async_dispatcher = event_dispatcher.EventDispatcher(batch_event_settings=test_event_batching_settings, sdk_key="sample_key")
 
     def test_dispatch_sends_event(self):
         properties = test_properties.copy()
@@ -55,3 +62,33 @@ class DispatcherTest(unittest.TestCase):
         with mock.patch("vwo.http.connection.Connection.get", return_value={"status_code": 503}):
             result = self.dispatcher.dispatch(properties)
             self.assertIs(result, False)
+
+    def test_event_batching_dispatch_sends_event(self):
+        with mock.patch(
+            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
+        ) as mock_connection_post:
+            self.assertIs(len(self.async_dispatcher.queue), 0)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 1)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 2)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 3)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 4)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 0)
+        mock_connection_post.assert_called_once()
+
+    def test_event_batching_dispatch_sends_event_with_timer(self):
+        with mock.patch(
+            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
+        ) as mock_connection_post:
+            self.assertIs(len(self.async_dispatcher.queue), 0)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 1)
+            result = self.async_dispatcher.dispatch(test_properties.copy())
+            self.assertIs(len(self.async_dispatcher.queue), 2)
+            time.sleep(1.1)
+            self.assertIs(len(self.async_dispatcher.queue), 0)
+        mock_connection_post.assert_called_once()

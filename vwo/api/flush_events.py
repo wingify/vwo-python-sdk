@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# flake8: noqa
+from ..constants.constants import API_METHODS
 
-from .activate import _activate
-from .get_feature_variable_value import _get_feature_variable_value
-from .get_variation_name import _get_variation_name
-from .is_feature_enabled import _is_feature_enabled
-from .push import _push
-from .track import _track
-from .flush_events import _flush_events
-from .get_and_update_settings_file import _get_and_update_settings_file
+
+def _flush_events(vwo_instance, mode):
+    """ This API method: Flushes the queue and syncs the events to VWO
+        servers.
+
+    Args:
+        mode(string): In sync mode, function makes a synchronous call before exiting
+            In async mode, function spawns a thread to sync to VWO and exits
+    """
+    vwo_instance.logger.set_api(API_METHODS.FLUSH_EVENTS)
+    vwo_instance.event_dispatcher.flush_queue(manual=True, mode=mode)

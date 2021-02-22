@@ -18,8 +18,11 @@ import sys
 import json
 import jsonschema
 from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
-from ..constants.constants import LOG_LEVELS, GOAL_TYPES
+from ..constants.constants import LOG_LEVELS, GOAL_TYPES, BATCH_EVENTS
 from . import generic_util
+from ..logger import VWOLogger
+from ..enums.log_level_enum import LogLevelEnum
+from ..enums.log_message_enum import LogMessageEnum
 
 services = {"logger": ["log"], "event_dispatcher": ["dispatch"], "user_storage": ["get", "set"]}
 
@@ -174,3 +177,49 @@ def is_valid_basic_data_type(val):
         bool: True if basic data type else False
     """
     return type(val) in [int, float, bool, str]
+
+
+def is_valid_batch_event_settings(val, file):
+    """ Validates if the value passed batch_event_settings has correct data type and values or not.
+
+    Args:
+        val (dict): value to be tested
+
+    Returns:
+        bool: True if all conditions are passed else False
+    """
+    logger = VWOLogger.getInstance()
+
+    if not (type(val) is dict):
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=file))
+        return False
+
+    events_per_request = val.get(BATCH_EVENTS.EVENTS_PER_REQUEST)
+    request_time_interval = val.get(BATCH_EVENTS.REQUEST_TIME_INTERVAL)
+    flush_callback = val.get(BATCH_EVENTS.FLUSH_CALLBACK)
+
+    if events_per_request is None and request_time_interval is None:
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENT_BATCHING_INSUFFICIENT.format(file=file))
+        return False
+
+    if not(type(events_per_request) in [int]):
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENTS_PER_REQUEST_INVALID.format(file=file))
+        return False
+
+    if not(type(request_time_interval) in [int, float]):
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.REQUEST_TIME_INTERVAL_INVALID.format(file=file))
+        return False
+
+    if events_per_request < BATCH_EVENTS.MIN_EVENTS_PER_REQUEST or events_per_request > BATCH_EVENTS.MAX_EVENTS_PER_REQUEST:
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENTS_PER_REQUEST_OUT_OF_BOUNDS.format(file=file, min_value=BATCH_EVENTS.MIN_EVENTS_PER_REQUEST, max_value=BATCH_EVENTS.MAX_EVENTS_PER_REQUEST))
+        return False
+
+    if request_time_interval < BATCH_EVENTS.MIN_REQUEST_TIME_INTERVAL:
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.REQUEST_TIME_INTERVAL_OUT_OF_BOUNDS.format(file=file, min_value=BATCH_EVENTS.MIN_REQUEST_TIME_INTERVAL))
+        return False
+
+    if flush_callback is not None and not callable(flush_callback):
+        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.FLUSH_CALLBACK_INVALID.format(file=file))
+        return False
+
+    return True

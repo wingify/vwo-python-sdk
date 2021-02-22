@@ -38,17 +38,19 @@ class Connection:
         except Exception:
             return {"status_code": None, "text": ""}
 
-    def post(self, url, params=None, data=None):
+    def post(self, url, params=None, data=None, headers=None):
         """ Post method, it wraps upon requests' post method.
         Args:
             url (str): Unique resource locator
             params (dict): Parameters to be passed
             data (dict): Json data to be passed
+            headers (dict): Headers for request
         Returns:
             dict : Status code and Response text
         """
         try:
-            resp = self.session.post(url, params=params, json=data)
+            resp = self.session.post(url, params=params, json=data, headers=headers)
+
             return {"status_code": resp.status_code, "text": resp.text}
         except Exception:
             return {"status_code": None, "text": ""}
