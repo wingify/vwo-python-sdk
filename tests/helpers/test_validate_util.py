@@ -76,6 +76,13 @@ class ValidateUtilTest(unittest.TestCase):
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
+    def test_is_valid_batch_event_settings_request_time_interval_passed_with_character(self):
+        val = {
+            'request_time_interval': 'a'
+        }
+        result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
+        self.assertIs(result, False)
+
     def test_is_valid_batch_event_settings_request_time_interval_below_limit(self):
         val = {
             'request_time_interval': 0.2
@@ -98,3 +105,9 @@ class ValidateUtilTest(unittest.TestCase):
         }
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
+
+    def test_is_valid_batch_event_settings_non_dict(self):
+        val = 1
+        result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
+        self.assertIs(result, False)
+

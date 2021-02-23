@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - If `request_time_interval` is passed, it will only set the timer when the first event will arrive
 - If `request_time_interval` is provided, after flushing of events, new interval will be registered when the first event will arrive
 
-```js
+```py
 def flush_callback(err, events):
   print(err)
   print(events)
