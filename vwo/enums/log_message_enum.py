@@ -168,3 +168,5 @@ class LogMessageEnum:
         EVENTS_PER_REQUEST_OUT_OF_BOUNDS = "({file}): events_per_request should be >= {min_value} and <= {max_value}"
         REQUEST_TIME_INTERVAL_OUT_OF_BOUNDS = "({file}): request_time_interval should be >= {min_value}"
         FLUSH_CALLBACK_INVALID = "({file}): flush_callback is not callable"
+        INTEGRATIONS_SERVICE_CALLBACK_INVALID = "({file}): Integrations service callback is not callable"
+        INTEGRATIONS_SERVICE_CALLBACK_EXECUTION_ERROR = "({file}): Error while executing integrations service callback. Error message: {error_message}"

@@ -59,3 +59,4 @@ class FileNameEnum:
         SERVICES_PATH = "vwo/services/"
         SettingsFileManager = SERVICES_PATH + "settings_file_manager"
         SegmentEvaluator = SERVICES_PATH + "segment_evaluator"
+        HooksManager = SERVICES_PATH + "hooks_manager"

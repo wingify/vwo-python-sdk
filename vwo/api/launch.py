@@ -43,6 +43,9 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         api. Default value is vwo.GOAL_TYPES.ALL
         should_track_returning_user (bool): should returning user be tracked again.
         Default value is False
+        batch_events (dict): settings for configuring and enabling event batching
+        integrations (dict): an integrations service instance for third party integrations
+
 
     Returns:
         VWO object: Successfully creates and returns a VWO object with passed params
@@ -54,6 +57,7 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
     goal_type_to_track = kwargs.get("goal_type_to_track")
     should_track_returning_user = kwargs.get("should_track_returning_user")
     batch_event_settings = kwargs.get("batch_events")
+    integrations = kwargs.get("integrations")
 
     invalid_log_level = False
     if log_level and not validate_util.is_valid_log_level(log_level):
@@ -75,9 +79,10 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         or (goal_type_to_track and not validate_util.is_valid_goal_type(goal_type_to_track))
         or (should_track_returning_user and type(should_track_returning_user) is not bool)
         or (batch_event_settings and not validate_util.is_valid_batch_event_settings(val=batch_event_settings, file=FILE))
+        or (integrations and not validate_util.is_valid_service(integrations, "integrations"))
     ):
         logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.LAUNCH_API_INVALID_PARAMS.format(file=FILE))
         return None
     else:
         logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(file=FILE))
-        return VWO(settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user, batch_event_settings)
+        return VWO(settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user, batch_event_settings, integrations)

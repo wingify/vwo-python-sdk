@@ -18,13 +18,13 @@ import sys
 import json
 import jsonschema
 from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
-from ..constants.constants import LOG_LEVELS, GOAL_TYPES, BATCH_EVENTS
+from ..constants.constants import INTEGRATIONS, LOG_LEVELS, GOAL_TYPES, BATCH_EVENTS
 from . import generic_util
 from ..logger import VWOLogger
 from ..enums.log_level_enum import LogLevelEnum
 from ..enums.log_message_enum import LogMessageEnum
 
-services = {"logger": ["log"], "event_dispatcher": ["dispatch"], "user_storage": ["get", "set"]}
+services = {"logger": ["log"], "event_dispatcher": ["dispatch"], "user_storage": ["get", "set"], "integrations": ["callback"]}
 
 
 def is_valid_settings_file(settings_file):
@@ -202,7 +202,7 @@ def is_valid_batch_event_settings(val, file):
     """
     logger = VWOLogger.getInstance()
 
-    if not (type(val) is dict):
+    if not is_valid_dict(val):
         logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENT_BATCHING_NOT_OBJECT.format(file=file))
         return False
 
@@ -237,3 +237,4 @@ def is_valid_batch_event_settings(val, file):
         return False
 
     return True
+

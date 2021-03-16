@@ -4,8 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.12.0] - 2021-03-08
+## [1.13.0] - 2021-03-16
+
+### Added
+
+- Exposed lifecycle hook events. This feature allows sending VWO data to third party integrations.
+
 ### Changed
+
+- Introduced `integrations` param in `launch` API to enable receiving hooks for the third party integrations.
+
+```py
+class Integrations(object):
+    def __init__(self):
+        pass
+
+    def callback(self, properties):
+        print(properties)
+
+vwo_instance = vwo.launch(settings_file, integrations=Integrations())
+```
+
+## [1.12.0] - 2021-03-16
+
+### Changed
+
 - If User Storage Service is provided, do not track same visitor multiple times.
 
 You can pass `should_track_returning_user` as `True` in case you prefer to track duplicate visitors.

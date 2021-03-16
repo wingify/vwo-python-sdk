@@ -16,11 +16,13 @@ import copy
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
+from ..enums.hooks_enum import HooksEnum
 from ..enums.segments.result_status import ResultStatus
-from ..helpers import validate_util, campaign_util
+from ..helpers import validate_util, campaign_util, uuid_util
 from ..logger import VWOLogger
 from .bucketer import Bucketer
 from ..services.segmentor import SegmentEvaluator
+from ..services.hooks_manager import HooksManager
 from ..constants import constants
 
 FILE = FileNameEnum.Core.VariationDecider
@@ -29,18 +31,22 @@ FILE = FileNameEnum.Core.VariationDecider
 class VariationDecider(object):
     """ Class responsible for deciding the variation for a visitor """
 
-    def __init__(self, user_storage=None):
+    def __init__(self, user_storage=None, account_id=None, integrations=None):
         """ Initializes VariationDecider with settings_file,
             UserStorage and logger.
 
         Args:
             user_storage (Class|None): Class instance having the capability of
                 get and set.
+            account_id (string): Account ID of user
+            integrations (dict|None): an integrations service instance for third party integrations
         """
         self.logger = VWOLogger.getInstance()
         self.bucketer = Bucketer()
         self.segment_evaluator = SegmentEvaluator()
         self.user_storage = user_storage
+        self.account_id = account_id
+        self.hooks_manager = HooksManager(integrations) if integrations else None
 
     def get_variation(self, user_id, campaign, **kwargs):
         """ Returns variation for the user for given campaign
@@ -71,6 +77,31 @@ class VariationDecider(object):
         variation_targeting_variables = kwargs.get("variation_targeting_variables")
         goal_data = kwargs.get("goal_data")
         api_method = kwargs.get("api_method")
+
+        decision = {
+            # campaign info
+            "campaign_id": campaign.get("id"),
+            "campaign_key": campaign.get("key"),
+            "campaign_type": campaign.get("type"),
+            # campaign segmentation conditions
+            "custom_variables": custom_variables,
+            # event name
+            "event": HooksEnum.DecisionTypes.CAMPAIGN_DECISION,
+            # goal tracked in case of track API
+            "goal_identifier": goal_data and goal_data.get("identifier"),
+            # campaign whitelisting flag
+            "is_forced_variation_enabled": campaign.get("isForcedVariationEnabled"),
+            "sdk_version": constants.SDK_VERSION,
+            # API name which triggered the event
+            "source": api_method,
+            # Passed in API
+            "user_id": user_id,
+            # Campaign Whitelisting conditions
+            "variation_targeting_variables": variation_targeting_variables,
+            # VWO generated UUID based on passed UserId and Account ID
+            "vwo_user_id": uuid_util.generate_for(user_id, self.account_id),
+        }
+
         # Evaluate whitelisting at first
         targeted_variation = self.find_targeted_variation(user_id, campaign, variation_targeting_variables)
         if targeted_variation:
@@ -84,8 +115,22 @@ class VariationDecider(object):
                     campaign_type=campaign.get("type"),
                 ),
             )
+
+            decision.update({"from_user_storage_service": False, "is_user_whitelisted": True})
+            if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                decision.update({"is_feature_enabled": True})
+            else:
+                if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                    decision.update({"is_feature_enabled": targeted_variation.get("isFeatureEnabled")})
+
+                decision.update(
+                    {"variation_id": targeted_variation.get("id"), "variation_name": targeted_variation.get("name")}
+                )
+            if self.hooks_manager is not None:
+                self.hooks_manager.execute(decision)
+
             return targeted_variation
-        
+
         campaign_type = campaign.get("type")
         is_user_tracked = self.identify_tracked_user_from_user_storage(user_id, campaign_key=campaign.get("key"))
         if (
@@ -98,10 +143,7 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.CAMPAIGN_NOT_ACTIVATED.format(
-                    file=FILE,
-                    campaign_key=campaign.get("key"),
-                    user_id=user_id,
-                    api_method=api_method
+                    file=FILE, campaign_key=campaign.get("key"), user_id=user_id, api_method=api_method
                 ),
             )
 
@@ -111,7 +153,7 @@ class VariationDecider(object):
                     file=FILE,
                     campaign_key=campaign.get("key"),
                     user_id=user_id,
-                    reason= 'track it' if api_method is constants.API_METHODS.TRACK  else 'get the decision/value'
+                    reason="track it" if api_method is constants.API_METHODS.TRACK else "get the decision/value",
                 ),
             )
 
@@ -140,6 +182,19 @@ class VariationDecider(object):
             if variation is not None:
                 if goal_data:
                     self.update_goals_tracked_in_user_storage(goal_data, user_storage_data)
+
+                decision.update({"from_user_storage_service": True, "is_user_whitelisted": False})
+                if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                    decision.update({"is_feature_enabled": True})
+                else:
+                    if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                        decision.update({"is_feature_enabled": variation.get("isFeatureEnabled")})
+
+                    decision.update({"variation_id": variation.get("id"), "variation_name": variation.get("name")})
+
+                if self.hooks_manager is not None:
+                    self.hooks_manager.execute(decision)
+
                 return variation
 
         # Evaluate pre-segmentation and percent-traffic
@@ -161,6 +216,19 @@ class VariationDecider(object):
                     campaign_type=campaign.get("type"),
                 ),
             )
+
+            decision.update({"from_user_storage_service": False, "is_user_whitelisted": False})
+            if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+                decision.update({"is_feature_enabled": True})
+            else:
+                if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                    decision.update({"is_feature_enabled": variation.get("isFeatureEnabled")})
+
+                decision.update({"variation_id": variation.get("id"), "variation_name": variation.get("name")})
+
+            if self.hooks_manager is not None:
+                self.hooks_manager.execute(decision)
+
             return variation
 
         # No variation
@@ -190,7 +258,7 @@ class VariationDecider(object):
         ):
             return True
         return False
-    
+
     def identify_tracked_user_from_user_storage(self, user_id, campaign_key):
         """ Identifies whether a user has been already tracked or not.
 

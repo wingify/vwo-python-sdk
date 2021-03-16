@@ -94,10 +94,7 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
         return None
 
     # check if user has already been tracked
-    is_user_tracked = vwo_instance.variation_decider.identify_tracked_user_from_user_storage(
-        user_id,
-        campaign_key
-    )
+    is_user_tracked = vwo_instance.variation_decider.identify_tracked_user_from_user_storage(user_id, campaign_key)
 
     # Once the matching RUNNING campaign is found, assign the
     # deterministic variation to the user_id provided
@@ -134,12 +131,8 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
         vwo_instance.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_ALREADY_TRACKED.format(
-                file=FILE,
-                user_id=user_id,
-                campaign_key=campaign_key,
-                api_method=constants.API_METHODS.ACTIVATE,
-            )
+                file=FILE, user_id=user_id, campaign_key=campaign_key, api_method=constants.API_METHODS.ACTIVATE
+            ),
         )
-
 
     return variation.get("name")

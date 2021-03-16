@@ -86,6 +86,10 @@ class CAMPAIGN_TYPES:
     FEATURE_ROLLOUT = "FEATURE_ROLLOUT"
 
 
+class INTEGRATIONS:
+    CALLBACK = "callback"
+
+
 class VARIABLE_TYPES:
     STRING = "string"
     INTEGER = "integer"
