@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2021-03-08
+### Changed
+- If User Storage Service is provided, do not track same visitor multiple times.
+
+You can pass `should_track_returning_user` as `True` in case you prefer to track duplicate visitors.
+
+```py
+vwo_client_instance.activate(campaign_key, user_id, should_track_returning_user=True)
+```
+
+Or, you can also pass `should_track_returning_user` at the time of instantiating VWO SDK client. This will avoid passing the flag in different API calls.
+
+```py
+vwo_client_instance = vwo.launch(
+    settings_file=settings_file,
+    user_storage_service = user_storage_service,
+    should_track_returning_user=True
+)
+```
+
+If `should_track_returning_user` param is passed at the time of instantiating the SDK as well as in the API options as mentioned above, then the API options value will be considered.
+
+- If User Storage Service is provided, campaign activation is mandatory before tracking any goal, getting variation of a campaign, and getting value of the feature's variable.
+
+**Correct Usage**
+
+```py
+vwo_client_instance.activate(campaign_key, user_id, custom_variables = custom_variables, variation_targeting_variables = variation_targeting_variables)
+vwo_client_instance.track(campaign_key, user_id, goal_identifier, custom_variables = custom_variables, variation_targeting_variables = variation_targeting_variables)
+```
+
+**Wrong Usage**
+
+```py
+# Calling track API before activate API
+# This will not track goal as campaign has not been activated yet.
+vwo_client_instance.track(campaign_key, user_id, goal_identifier, custom_variables = custom_variables, variation_targeting_variables = variation_targeting_variables)
+
+# After calling track API
+vwo_client_instance.activate(campaign_key, user_id, custom_variables = custom_variables, variation_targeting_variables = variation_targeting_variables)
+```
+
 ## [1.11.0] - 2021-02-20
 ### Added
 - Added support for batching of events sent to VWO server

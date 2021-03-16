@@ -89,6 +89,7 @@ def _get_variation_name(vwo_instance, campaign_key, user_id, **kwargs):
         campaign,
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
+        api_method=constants.API_METHODS.GET_VARIATION_NAME,
     )  # noqa: E501
 
     # Check if variation_name has been assigned

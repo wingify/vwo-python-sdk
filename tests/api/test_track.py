@@ -298,6 +298,7 @@ class TrackTest(unittest.TestCase):
     def test_should_track_returning_user_false(self):
         self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
         for test in USER_EXPECTATIONS[self.campaign_key]:
+            self.vwo.activate(self.campaign_key, test["user"])
             self.track_test(
                 self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None
             )
@@ -306,6 +307,7 @@ class TrackTest(unittest.TestCase):
     def test_should_track_returning_user_true(self):
         self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
         for test in USER_EXPECTATIONS[self.campaign_key]:
+            self.vwo.activate(self.campaign_key, test["user"])
             self.track_test(
                 self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None
             )
@@ -321,6 +323,8 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track1")
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -332,7 +336,9 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
-        result = vwo_instance.track(["global_test_1", "feature_test_1"], "user", "track1")
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
+        result = vwo_instance.track(["feature_test_1", "global_test_1"], "user", "track1")
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
 
@@ -343,6 +349,8 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(["global_test_1", "feature_test_1"], "user", "track5")
         expected = {"global_test_1": False, "feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -354,6 +362,7 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(["feature_test_1"], "user", "track5")
         expected = {"feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -365,6 +374,7 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track("feature_test_1", "user", "track5")
         expected = None
         self.assertEquals(result, expected)
@@ -376,6 +386,7 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.activate("feature_test_2", "user")
         result = vwo_instance.track(["feature_test_2"], "user", "track1")
         expected = {}
         self.assertDictEqual(result, expected)
@@ -387,6 +398,8 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(["feature_test_1"], "user", "track5")
         expected = {"feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -399,6 +412,8 @@ class TrackTest(unittest.TestCase):
             log_level=40,
             user_storage=ClientUserStorage(),
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=1)
         expected = {"feature_test_1": True, "global_test_1": True}
         self.assertDictEqual(result, expected)
@@ -411,6 +426,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2")
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -423,6 +440,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10)
         expected = {"global_test_1": False, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -435,6 +454,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.ALL)
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -447,6 +468,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.CUSTOM)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -459,6 +482,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.ALL)
         expected = {"global_test_1": True, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -471,6 +496,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.CUSTOM,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.REVENUE)
         expected = {"global_test_1": False, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -483,6 +510,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.ALL,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", revenue_value=10, goal_type_to_track=vwo.GOAL_TYPES.REVENUE)
         expected = {"global_test_1": False, "feature_test_1": True}
         self.assertDictEqual(result, expected)
@@ -495,6 +524,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.ALL,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.CUSTOM)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -507,6 +538,8 @@ class TrackTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
             goal_type_to_track=vwo.GOAL_TYPES.REVENUE,
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.activate("feature_test_1", "user2")
         result = vwo_instance.track(None, "user", "track2", goal_type_to_track=vwo.GOAL_TYPES.ALL)
         expected = {"global_test_1": True, "feature_test_1": False}
         self.assertDictEqual(result, expected)
@@ -515,6 +548,8 @@ class TrackTest(unittest.TestCase):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", goal_type_to_track="vwo.GOAL_TYPES.CUSTOM")
         self.assertIsNone(result)
 
@@ -522,6 +557,8 @@ class TrackTest(unittest.TestCase):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "track2", should_track_returning_user="True")
         self.assertIsNone(result)
 
@@ -529,6 +566,8 @@ class TrackTest(unittest.TestCase):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True
         )
+        vwo_instance.activate("global_test_1", "user")
+        vwo_instance.is_feature_enabled("feature_test_1", "user")
         result = vwo_instance.track(None, "user", "goal_not_existing")
         self.assertIsNone(result)
 
@@ -547,3 +586,54 @@ class TrackTest(unittest.TestCase):
         vwo_instance.activate("AB_T_100_W_50_50", "user")
         vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
         self.assertEquals(user_storage.get("user", "AB_T_100_W_50_50").get("goalIdentifiers"), "CUSTOM")
+
+
+    def test_track_should_work_when_called_before_is_feature_enabled_when_no_user_storage_provided(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True
+        )
+
+        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+            vwo_instance.track("FT_T_100_W_10_20_30_40", "user", "FEATURE_TEST_GOAL")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
+            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+
+    def test_track_should_work_when_called_before_activate_when_no_user_storage_provided(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True
+        )
+
+        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+            vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
+            vwo_instance.activate("AB_T_100_W_50_50", "user")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+
+    def test_track_should_fail_when_called_before_is_feature_enabled_when_user_storage_provided(self):
+        user_storage = ClientUserStorage()
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, user_storage=user_storage
+        )
+
+        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+            vwo_instance.track("FT_T_100_W_10_20_30_40", "user", "FEATURE_TEST_GOAL")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 0)
+            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
+            mock_event_dispatcher_dispatch.reset_mock()
+
+    def test_track_should_fail_when_called_before_activate_when_user_storage_provided(self):
+        user_storage = ClientUserStorage()
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True, user_storage=user_storage
+        )
+
+        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+            vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 0)
+            vwo_instance.activate("AB_T_100_W_50_50", "user")
+            self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
+            mock_event_dispatcher_dispatch.reset_mock()

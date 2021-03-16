@@ -42,6 +42,7 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     Keywork Args:
         custom_variables (dict): Custom variables required for segmentation
         variation_targeting_variables (dict): Whitelisting variables to target users
+        should_track_returning_user (bool): should returning user be tracked again.
 
     Returns:
         strings|None: If variation is assigned then variation-name
@@ -52,11 +53,16 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
+    should_track_returning_user = kwargs.get("should_track_returning_user")
+
+    if should_track_returning_user is None:
+        should_track_returning_user = vwo_instance.should_track_returning_user or False
 
     # Validate input parameters
     if (
         not validate_util.is_valid_string(campaign_key)
         or not validate_util.is_valid_string(user_id)
+        or not validate_util.is_valid_bool(should_track_returning_user)
         or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables))
         or (
             variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)
@@ -87,6 +93,12 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
         )
         return None
 
+    # check if user has already been tracked
+    is_user_tracked = vwo_instance.variation_decider.identify_tracked_user_from_user_storage(
+        user_id,
+        campaign_key
+    )
+
     # Once the matching RUNNING campaign is found, assign the
     # deterministic variation to the user_id provided
     variation = vwo_instance.variation_decider.get_variation(
@@ -94,27 +106,40 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
         campaign,
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
+        api_method=constants.API_METHODS.ACTIVATE,
     )  # noqa: E501
 
     # Check if variation_name has been assigned
     if not variation:
         return None
 
-    # Variation found, dispatch log to our servers
-    impression = impression_util.create_impression(
-        vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
-    )
-    vwo_instance.event_dispatcher.dispatch(impression)
+    if is_user_tracked is False or should_track_returning_user:
+        # Variation found, dispatch event to our servers
+        impression = impression_util.create_impression(
+            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+        )
+        vwo_instance.event_dispatcher.dispatch(impression)
 
-    vwo_instance.logger.log(
-        LogLevelEnum.INFO,
-        LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
-            file=FILE,
-            campaign_id=impression.get("experiment_id"),
-            user_id=impression.get("uId"),
-            account_id=impression.get("account_id"),
-            variation_id=impression.get("combination"),
-        ),
-    )
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
+                file=FILE,
+                campaign_id=impression.get("experiment_id"),
+                user_id=impression.get("uId"),
+                account_id=impression.get("account_id"),
+                variation_id=impression.get("combination"),
+            ),
+        )
+    else:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.USER_ALREADY_TRACKED.format(
+                file=FILE,
+                user_id=user_id,
+                campaign_key=campaign_key,
+                api_method=constants.API_METHODS.ACTIVATE,
+            )
+        )
+
 
     return variation.get("name")

@@ -43,6 +43,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         It is the revenue generated on triggering the goal
         custom_variables (dict): Custom variables required for segmentation
         variation_targeting_variables (dict): Whitelisting variables to target users
+        should_track_returning_user (bool): should returning user be tracked again.
 
     Returns:
         dict|None: None if called for single campaign and no goal tracked or
@@ -217,6 +218,7 @@ def track_campaign_goal(
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
         goal_data={"identifier": goal.get("identifier"), "should_track_returning_user": should_track_returning_user},
+        api_method=constants.API_METHODS.TRACK,
     )
 
     if variation:

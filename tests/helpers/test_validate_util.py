@@ -111,3 +111,10 @@ class ValidateUtilTest(unittest.TestCase):
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
+    def test_is_valid_bool(self):
+        vals = [1, 'test', [], (), {}, lambda x: None, None, False]
+        result = []
+        for val in vals:
+            result.append(validate_util.is_valid_bool(val))
+        self.assertListEqual(result, [False, False, False, False, False, False, False, True])
+

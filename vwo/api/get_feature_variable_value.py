@@ -92,6 +92,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
         campaign,
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
+        api_method=constants.API_METHODS.GET_FEATURE_VARIABLE_VALUE,
     )  # noqa: E501
 
     # Check if variation has been assigned to user

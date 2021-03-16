@@ -60,6 +60,7 @@ class VariationDecider(object):
             custom_variables = {}
             variation_targeting_variables(dict): variables for variation targeting, pass it through **kwargs as
             variation_targeting_variables = {}
+            api_method (string): api's name calling get_variation method
 
         Returns:
             variation (dict|None): Dict object containing the information regarding variation
@@ -69,6 +70,7 @@ class VariationDecider(object):
         custom_variables = kwargs.get("custom_variables")
         variation_targeting_variables = kwargs.get("variation_targeting_variables")
         goal_data = kwargs.get("goal_data")
+        api_method = kwargs.get("api_method")
         # Evaluate whitelisting at first
         targeted_variation = self.find_targeted_variation(user_id, campaign, variation_targeting_variables)
         if targeted_variation:
@@ -83,6 +85,37 @@ class VariationDecider(object):
                 ),
             )
             return targeted_variation
+        
+        campaign_type = campaign.get("type")
+        is_user_tracked = self.identify_tracked_user_from_user_storage(user_id, campaign_key=campaign.get("key"))
+        if (
+            bool(self.user_storage) is True
+            and is_user_tracked is False
+            and campaign_type != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
+            and api_method not in [constants.API_METHODS.IS_FEATURE_ENABLED, constants.API_METHODS.ACTIVATE, None]
+        ):
+
+            self.logger.log(
+                LogLevelEnum.DEBUG,
+                LogMessageEnum.DEBUG_MESSAGES.CAMPAIGN_NOT_ACTIVATED.format(
+                    file=FILE,
+                    campaign_key=campaign.get("key"),
+                    user_id=user_id,
+                    api_method=api_method
+                ),
+            )
+
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.CAMPAIGN_NOT_ACTIVATED.format(
+                    file=FILE,
+                    campaign_key=campaign.get("key"),
+                    user_id=user_id,
+                    reason= 'track it' if api_method is constants.API_METHODS.TRACK  else 'get the decision/value'
+                ),
+            )
+
+            return None
 
         # Try retrieving data from user_storage
         user_storage_data = self._get_user_storage_data(user_id, campaign.get("key"))
@@ -157,6 +190,19 @@ class VariationDecider(object):
         ):
             return True
         return False
+    
+    def identify_tracked_user_from_user_storage(self, user_id, campaign_key):
+        """ Identifies whether a user has been already tracked or not.
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            campaign_key (string): Unique campaign identifier
+
+        Returns:
+            bool: True if user has already been tracked else False
+        """
+        user_storage_data = self._get_user_storage_data(user_id, campaign_key)
+        return bool(user_storage_data)
 
     def update_goals_tracked_in_user_storage(self, goal_data, user_storage_data):
         """ Updates the goals tracked information stored inside the user_storage service

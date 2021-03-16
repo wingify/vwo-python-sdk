@@ -141,6 +141,18 @@ def is_valid_number(val):
     return type(val) == int
 
 
+def is_valid_bool(val):
+    """ Validates if the value passed is a boolean or not.
+
+    Args:
+        val (any type): value to be tested
+
+    Returns:
+        bool: True if bool else False
+    """
+    return type(val) == bool
+
+
 def is_valid_unicode(val):
     """ Validates if the value passed is a python unicode value or not.
 
