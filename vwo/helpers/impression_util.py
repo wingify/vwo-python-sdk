@@ -31,7 +31,7 @@ FILE = FileNameEnum.Helpers.ImpressionUtil
 
 
 def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None):
-    """ Creates the impression from the arguments passed according to
+    """Creates the impression from the arguments passed according to
     call type
 
     Args:
@@ -86,7 +86,7 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
 
 
 def get_common_properties(user_id, settings_file):
-    """ Returns commonly used params for making requests to our servers.
+    """Returns commonly used params for making requests to our servers.
 
     Args:
         user_id (string): Unique identification of user
@@ -106,7 +106,6 @@ def get_common_properties(user_id, settings_file):
         "sId": generic_util.get_current_unix_timestamp(),
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
-        "uId": quote(user_id.encode("utf-8")),
-        "env": sdk_key
+        "env": sdk_key,
     }
     return properties

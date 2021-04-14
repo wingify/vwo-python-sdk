@@ -46,7 +46,6 @@ class CustomDimensionUtilTest(unittest.TestCase):
                 "sdk": constants.SDK_NAME,
                 "sdk-v": constants.SDK_VERSION,
                 "ap": constants.PLATFORM,
-                "uId": self.user_id,
-                "env": sdk_key
+                "env": sdk_key,
             }
             self.assertDictEqual(params, result)
