@@ -233,7 +233,6 @@ def track_campaign_goal(
             LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
                 file=FILE,
                 campaign_id=impression.get("experiment_id"),
-                user_id=impression.get("uId"),
                 account_id=impression.get("account_id"),
                 variation_id=impression.get("combination"),
             ),

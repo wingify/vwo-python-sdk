@@ -24,7 +24,7 @@ FILE = FileNameEnum.Api.Activate
 
 
 def _activate(vwo_instance, campaign_key, user_id, **kwargs):
-    """ This API method: Gets the variation assigned for the user
+    """This API method: Gets the variation assigned for the user
         for the campaign and send the metrics to VWO server
 
     1. Validates the arguments being passed
@@ -122,7 +122,6 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
             LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
                 file=FILE,
                 campaign_id=impression.get("experiment_id"),
-                user_id=impression.get("uId"),
                 account_id=impression.get("account_id"),
                 variation_id=impression.get("combination"),
             ),

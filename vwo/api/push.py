@@ -24,7 +24,7 @@ FILE = FileNameEnum.Api.Push
 
 
 def _push(vwo_instance, tag_key, tag_value, user_id):
-    """ This API method: Makes a call to our server to store the tag_values
+    """This API method: Makes a call to our server to store the tag_values
 
     1. Validates the arguments being passed
     2. Send a call to our server
@@ -74,7 +74,6 @@ def _push(vwo_instance, tag_key, tag_value, user_id):
         LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_PUSH_API.format(
             file=FILE,
             u=impression.get("u"),
-            user_id=impression.get("uId"),
             account_id=impression.get("account_id"),
             tags=impression.get("tags"),
         ),

@@ -17,6 +17,7 @@
 import json
 from ..constants import constants
 from ..helpers import generic_util, uuid_util, validate_util
+from ..services.usage_stats_manager import UsageStats
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
@@ -65,10 +66,11 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
     if is_track_user_api:
         impression.update(ed=json.dumps({"p": constants.PLATFORM}))
         impression.update(url=url + constants.ENDPOINTS.TRACK_USER)
+        impression.update(UsageStats.get_usage_stats())
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_USER.format(
-                file=FILE, properties=json.dumps(impression)
+                file=FILE, properties=get_stringified_log_impression(impression)
             ),
         )
     else:
@@ -79,7 +81,7 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_GOAL.format(
-                file=FILE, properties=json.dumps(impression)
+                file=FILE, properties=get_stringified_log_impression(impression)
             ),
         )
     return impression
@@ -109,3 +111,17 @@ def get_common_properties(user_id, settings_file):
         "env": sdk_key,
     }
     return properties
+
+
+def get_stringified_log_impression(impression):
+    """Remove sensitive keys from the impression to te displayed in the log.
+
+    Args:
+        impression (dict): builted impression
+
+    Returns:
+        impression (json_string): stringified impression without sensitive keys
+    """
+    log_impression = impression.copy()
+    log_impression.pop("env")
+    return json.dumps(log_impression)

@@ -25,7 +25,7 @@ FILE = FileNameEnum.Helpers.CustomDimensionsUtil
 
 
 def get_url_params(settings_file, tag_key, tag_value, user_id):
-    """ Creates a property object for custom dimension push api
+    """Creates a property object for custom dimension push api
 
     Args:
         settings_file (dict): settings_file consisting all the campaign related data
@@ -44,6 +44,8 @@ def get_url_params(settings_file, tag_key, tag_value, user_id):
 
     VWOLogger.getInstance().log(
         LogLevelEnum.DEBUG,
-        LogMessageEnum.DEBUG_MESSAGES.PARAMS_FOR_PUSH_CALL.format(file=FILE, properties=json.dumps(params)),
+        LogMessageEnum.DEBUG_MESSAGES.PARAMS_FOR_PUSH_CALL.format(
+            file=FILE, properties=impression_util.get_stringified_log_impression(params)
+        ),
     )
     return params

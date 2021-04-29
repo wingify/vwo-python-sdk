@@ -14,6 +14,7 @@
 
 import threading
 from ..http.connection import Connection
+from ..services.usage_stats_manager import UsageStats
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
@@ -27,7 +28,7 @@ class EventDispatcher(object):
     """ Class having request making/event dispatching capabilities to our servers"""
 
     def __init__(self, is_development_mode=False, batch_event_settings=None, sdk_key=None):
-        """ Initialize the dispatcher with logger
+        """Initialize the dispatcher with logger
 
         Args:
             is_development_mode: To specify whether the request
@@ -64,7 +65,7 @@ class EventDispatcher(object):
                 self.flush_callback = batch_event_settings.get(constants.BATCH_EVENTS.FLUSH_CALLBACK)
 
     def dispatch(self, impression):
-        """ This method checks for development mode, if it is False then it sends the impression
+        """This method checks for development mode, if it is False then it sends the impression
         to our servers using a vwo.http.connection.Connection object, else return True without
         sending the impression.
 
@@ -89,7 +90,10 @@ class EventDispatcher(object):
         if result is True:
             if self.event_batching is True:
                 self.logger.log(
-                    LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS_QUEUE.format(file=FILE, end_point=url, queue_length=len(self.queue), queue_metadata=self.queue_metadata)
+                    LogLevelEnum.INFO,
+                    LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS_QUEUE.format(
+                        file=FILE, end_point=url, queue_length=len(self.queue), queue_metadata=self.queue_metadata
+                    ),
                 )
             else:
                 self.logger.log(
@@ -99,7 +103,8 @@ class EventDispatcher(object):
         else:
             if self.event_batching is True:
                 self.logger.log(
-                    LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED_QUEUE.format(file=FILE, end_point=url)
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED_QUEUE.format(file=FILE, end_point=url),
                 )
             else:
                 self.logger.log(
@@ -124,7 +129,7 @@ class EventDispatcher(object):
             self.queue.append(payload)
             self.update_queue_metadata(url=url)
             # flush queue periodically
-            if len(self.queue) is 1:
+            if len(self.queue) == 1:
                 self.timer = threading.Timer(self.request_time_interval, self.flush_queue)
                 self.timer.start()
             # flush queue when full
@@ -133,7 +138,11 @@ class EventDispatcher(object):
             return True
         except Exception:
             self.logger.log(
-              LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url,)
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(
+                    file=FILE,
+                    end_point=url,
+                ),
             )
             return False
 
@@ -149,36 +158,31 @@ class EventDispatcher(object):
             payload (dict): Dictionary object containing the information computed from url and impression
         """
         if self.account_id is None:
-            self.account_id = impression.get('account_id')
+            self.account_id = impression.get("account_id")
 
         url_split = url.split("/")
         event_name = url_split[-1]
 
         payload = {
-            'u': impression.get('u'),
-            'sId': impression.get('sId'),
+            "u": impression.get("u"),
+            "sId": impression.get("sId"),
         }
 
         if event_name == constants.EVENTS.TRACK_USER:
-            payload.update({
-                'c': impression.get('combination'),
-                'e': impression.get('experiment_id'),
-                'eT': 1
-            })
+            payload.update({"c": impression.get("combination"), "e": impression.get("experiment_id"), "eT": 1})
         elif event_name == constants.EVENTS.TRACK_GOAL:
-            payload.update({
-                'c': impression.get('combination'),
-                'e': impression.get('experiment_id'),
-                'g': impression.get('goal_id'),
-                'eT': 2
-            })
-            if impression.get('r') is not None:
-                payload.update(r = impression.get('r'))
+            payload.update(
+                {
+                    "c": impression.get("combination"),
+                    "e": impression.get("experiment_id"),
+                    "g": impression.get("goal_id"),
+                    "eT": 2,
+                }
+            )
+            if impression.get("r") is not None:
+                payload.update(r=impression.get("r"))
         elif event_name == constants.EVENTS.PUSH:
-            payload.update({
-                't': impression.get('tags'),
-                'eT': 3
-            })
+            payload.update({"t": impression.get("tags"), "eT": 3})
 
         return payload
 
@@ -197,49 +201,52 @@ class EventDispatcher(object):
         url = url + constants.ENDPOINTS.BATCH_EVENTS
         queue_length = len(events)
         try:
-            query_params = {
-                'a': self.account_id,
-                'sdk': self.sdk,
-                'sdk-v': self.sdk_v
-            }
-            post_data = {
-                'ev': events
-            }
+            query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v}
+            post_data = {"ev": events}
+            query_params.update(UsageStats.get_usage_stats())
             headers = {"Authorization": self.sdk_key}
             resp = self.connection.post(url, params=query_params, data=post_data, headers=headers)
             status_code = resp.get("status_code")
 
             if status_code == 200:
                 self.logger.log(
-                    LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(
-                      file=FILE,
-                      end_point=url,
-                      account_id=self.account_id,
-                    )
+                    LogLevelEnum.INFO,
+                    LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(
+                        file=FILE,
+                        end_point=url,
+                        account_id=self.account_id,
+                    ),
                 )
             elif status_code == 413:
                 self.logger.log(
-                    LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BATCH_EVENT_LIMIT_EXCEEDED.format(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.BATCH_EVENT_LIMIT_EXCEEDED.format(
                         file=FILE,
                         end_point=url,
                         events_per_request=queue_length,
                         account_id=self.account_id,
-                    )
+                    ),
                 )
             else:
                 self.logger.log(
-                    LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE, )
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
+                        file=FILE,
+                    ),
                 )
             if self.flush_callback:
                 self.flush_callback(None, events)
         except Exception as err:
             self.logger.log(
-                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE, )
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
+                    file=FILE,
+                ),
             )
             if self.flush_callback:
                 self.flush_callback(err, events)
 
-    def flush_queue(self, manual=False, mode='async'):
+    def flush_queue(self, manual=False, mode="async"):
         """
         Flush_queue
 
@@ -262,10 +269,10 @@ class EventDispatcher(object):
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.BEFORE_FLUSHING.format(
                 file=FILE,
-                manually='manually' if manual else '',
+                manually="manually" if manual else "",
                 length=no_of_events,
-                timer='Timer will be cleared and registered again' if manual else '',
-                queue_metadata=queue_metadata
+                timer="Timer will be cleared and registered again" if manual else "",
+                queue_metadata=queue_metadata,
             ),
         )
 
@@ -280,14 +287,11 @@ class EventDispatcher(object):
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.AFTER_FLUSHING.format(
-                file=FILE,
-                length=no_of_events,
-                manually='manually' if manual else '',
-                queue_metadata=queue_metadata
+                file=FILE, length=no_of_events, manually="manually" if manual else "", queue_metadata=queue_metadata
             ),
         )
 
-        if mode == 'async':
+        if mode == "async":
             self.spawn_thread_to_sync(events=events)
         else:
             self.sync_with_vwo(events=events)

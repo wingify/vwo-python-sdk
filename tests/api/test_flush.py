@@ -21,7 +21,7 @@ import mock
 import vwo
 from vwo.constants import constants
 from ..data.settings_files import SETTINGS_FILES
-from ..data.constants import TEST_ACCOUNT_ID, TEST_USER_ID
+from ..data.constants import TEST_ACCOUNT_ID
 from ..config.config import TEST_LOG_LEVEL
 
 
@@ -30,7 +30,6 @@ def flush_callback(err, events):
 
 
 test_properties = {
-    "uId": TEST_USER_ID,
     "combination": 1,
     "url": "https://dev.visualwebsiteoptimizer.com/server-side/track-user",
     "ed": '{"p": "%s"}' % constants.PLATFORM,
@@ -44,18 +43,19 @@ test_properties = {
     "account_id": TEST_ACCOUNT_ID,
 }
 
-test_event_batching_settings = {
-    'events_per_request': 5,
-    'request_time_interval': 1,
-    'flush_callback': flush_callback
-}
+test_event_batching_settings = {"events_per_request": 5, "request_time_interval": 1, "flush_callback": flush_callback}
 
 
 class FlushTest(unittest.TestCase):
     def set_up(self, config_variant="AB_T_50_W_50_50", event_batching_settings=None):
         self.user_id = str(random.random())
         self.settings_file = json.dumps(SETTINGS_FILES.get(config_variant))
-        self.vwo = vwo.launch(self.settings_file, is_development_mode=False, log_level=TEST_LOG_LEVEL, batch_events=event_batching_settings)
+        self.vwo = vwo.launch(
+            self.settings_file,
+            is_development_mode=False,
+            log_level=TEST_LOG_LEVEL,
+            batch_events=event_batching_settings,
+        )
 
     def test_flush_sync(self):
         self.set_up(event_batching_settings=test_event_batching_settings)
@@ -63,45 +63,37 @@ class FlushTest(unittest.TestCase):
             "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
         ) as mock_connection_post:
             self.assertIs(len(self.vwo.event_dispatcher.queue), 0)
-            result = self.vwo.event_dispatcher.dispatch(test_properties.copy())
+            self.vwo.event_dispatcher.dispatch(test_properties.copy())
             self.assertIs(len(self.vwo.event_dispatcher.queue), 1)
-            result = self.vwo.event_dispatcher.dispatch(test_properties.copy())
+            self.vwo.event_dispatcher.dispatch(test_properties.copy())
             self.assertIs(len(self.vwo.event_dispatcher.queue), 2)
-            self.vwo.flush_events(mode='sync')
+            self.vwo.flush_events(mode="sync")
             self.assertIs(len(self.vwo.event_dispatcher.queue), 0)
         mock_connection_post.assert_called_once()
 
     def test_flush_async(self):
         self.set_up(event_batching_settings=test_event_batching_settings)
-        with mock.patch(
-            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
-        ) as mock_connection_post:
+        with mock.patch("vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}):
             self.assertIs(len(self.vwo.event_dispatcher.queue), 0)
-            result = self.vwo.event_dispatcher.dispatch(test_properties.copy())
+            self.vwo.event_dispatcher.dispatch(test_properties.copy())
             self.assertIs(len(self.vwo.event_dispatcher.queue), 1)
-            result = self.vwo.event_dispatcher.dispatch(test_properties.copy())
+            self.vwo.event_dispatcher.dispatch(test_properties.copy())
             self.assertIs(len(self.vwo.event_dispatcher.queue), 2)
-            self.vwo.flush_events(mode='async')
+            self.vwo.flush_events(mode="async")
             self.assertIs(len(self.vwo.event_dispatcher.queue), 0)
 
     def test_flush_with_no_events(self):
         self.set_up(event_batching_settings=test_event_batching_settings)
-        with mock.patch(
-            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
-        ) as mock_connection_post:
-            self.vwo.flush_events(mode='sync')
+        with mock.patch("vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}):
+            self.vwo.flush_events(mode="sync")
 
     def test_flush_queue_without_enabling_event_batching(self):
         self.set_up()
-        with mock.patch(
-            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
-        ) as mock_connection_post:
-            self.vwo.flush_events(mode='sync')
+        with mock.patch("vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}):
+            self.vwo.flush_events(mode="sync")
 
     def test_event_batching_with_error(self):
         self.set_up(event_batching_settings=test_event_batching_settings)
-        with mock.patch(
-            "vwo.http.connection.Connection.post", side_effect=Exception("Test")
-        ) as mock_connection_post:
-            result = self.vwo.event_dispatcher.dispatch(test_properties.copy())
-            self.vwo.flush_events(mode='sync')
+        with mock.patch("vwo.http.connection.Connection.post", side_effect=Exception("Test")):
+            self.vwo.event_dispatcher.dispatch(test_properties.copy())
+            self.vwo.flush_events(mode="sync")

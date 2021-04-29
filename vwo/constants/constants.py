@@ -36,7 +36,7 @@ class ENDPOINTS:
     TRACK_USER = "/server-side/track-user"
     TRACK_GOAL = "/server-side/track-goal"
     PUSH = "/server-side/push"
-    BATCH_EVENTS = '/server-side/batch-events'
+    BATCH_EVENTS = "/server-side/batch-events"
 
 
 class EVENTS:
@@ -70,9 +70,9 @@ class GOAL_TYPES:
 
 
 class BATCH_EVENTS:
-    EVENTS_PER_REQUEST = 'events_per_request'
-    REQUEST_TIME_INTERVAL = 'request_time_interval'
-    FLUSH_CALLBACK = 'flush_callback'
+    EVENTS_PER_REQUEST = "events_per_request"
+    REQUEST_TIME_INTERVAL = "request_time_interval"
+    FLUSH_CALLBACK = "flush_callback"
     MAX_EVENTS_PER_REQUEST = 5000
     MIN_EVENTS_PER_REQUEST = 1
     DEFAULT_EVENTS_PER_REQUEST = 100

@@ -16,6 +16,7 @@ from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..enums.log_message_enum import LogMessageEnum
 from ..helpers import validate_util
+from ..services.usage_stats_manager import UsageStats
 from ..vwo import VWO
 from ..logger import VWOLogger
 
@@ -23,7 +24,7 @@ FILE = FileNameEnum.Api.Launch
 
 
 def launch(settings_file, logger=None, user_storage=None, is_development_mode=False, **kwargs):
-    """ Launch api is the gateway to the SDK, it accepts all the launch parameters and
+    """Launch api is the gateway to the SDK, it accepts all the launch parameters and
     initializes required services for the SDK, like logger, event_dispatcher, etc, and
     returns a VWO instance.
 
@@ -44,7 +45,7 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         should_track_returning_user (bool): should returning user be tracked again.
         Default value is False
         batch_events (dict): settings for configuring and enabling event batching
-        integrations (dict): an integrations service instance for third party integrations
+        integrations (object): an integrations service instance for third party integrations
 
 
     Returns:
@@ -68,7 +69,7 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
     if logger and not validate_util.is_valid_service(logger, "logger"):
         logger = None
         invalid_logger = True
-    logger = VWOLogger.getInstance(log_level=log_level, logger=logger)
+    module_logger = VWOLogger.getInstance(log_level=log_level, logger=logger)
 
     if (
         invalid_log_level
@@ -78,11 +79,32 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         or (is_development_mode and type(is_development_mode) is not bool)
         or (goal_type_to_track and not validate_util.is_valid_goal_type(goal_type_to_track))
         or (should_track_returning_user and type(should_track_returning_user) is not bool)
-        or (batch_event_settings and not validate_util.is_valid_batch_event_settings(val=batch_event_settings, file=FILE))
+        or (
+            batch_event_settings
+            and not validate_util.is_valid_batch_event_settings(val=batch_event_settings, file=FILE)
+        )
         or (integrations and not validate_util.is_valid_service(integrations, "integrations"))
     ):
-        logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.LAUNCH_API_INVALID_PARAMS.format(file=FILE))
+        module_logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.LAUNCH_API_INVALID_PARAMS.format(file=FILE))
         return None
     else:
-        logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(file=FILE))
-        return VWO(settings_file, user_storage, is_development_mode, goal_type_to_track, should_track_returning_user, batch_event_settings, integrations)
+        module_logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.VALID_CONFIGURATION.format(file=FILE))
+        if not is_development_mode:
+            UsageStats.collect_usage_stats(
+                batch_event_settings=batch_event_settings,
+                integrations=integrations,
+                storage_service=user_storage,
+                logger=logger,
+                log_level=log_level,
+                should_track_returning_user=should_track_returning_user,
+                goal_type_to_track=goal_type_to_track,
+            )
+        return VWO(
+            settings_file,
+            user_storage,
+            is_development_mode,
+            goal_type_to_track,
+            should_track_returning_user,
+            batch_event_settings,
+            integrations,
+        )

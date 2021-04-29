@@ -70,10 +70,8 @@ class LogMessageEnum:
         USER_GOT_NO_VARIATION = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} did not allot any variation"
         IMPRESSION_SUCCESS = "({file}): [API_NAME] Impression event - {end_point} was successfully received by VWO"
         IMPRESSION_SUCCESS_QUEUE = "({file}): [API_NAME] Impression event - {end_point} was successfully pushed in queue, current queue length : {queue_length}, queue summary: {queue_metadata}"
-        MAIN_KEYS_FOR_IMPRESSION = "({file}): [API_NAME] Having main keys: account_id:{account_id} user_id:{user_id} campaignId:{campaign_id} and variation_id:{variation_id}"
-        MAIN_KEYS_FOR_PUSH_API = (
-            "({file}): [API_NAME] Having main keys: account_id:{account_id} user_id:{user_id} u:{u} and tags:{tags}"
-        )
+        MAIN_KEYS_FOR_IMPRESSION = "({file}): [API_NAME] Having main keys: account_id:{account_id} campaignId:{campaign_id} and variation_id:{variation_id}"
+        MAIN_KEYS_FOR_PUSH_API = "({file}): [API_NAME] Having main keys: account_id:{account_id} u:{u} and tags:{tags}"
         INVALID_VARIATION_KEY = (
             "({file}): [API_NAME] variation was not assigned to user_id:{user_id} for campaign_key:{campaign_key}"
         )
@@ -97,9 +95,13 @@ class LogMessageEnum:
         SETTINGS_FILE_UPDATED = "({file}): [API_NAME] vwo_sdk_instance is updated with the latest settings_file"
         SETTINGS_FILE_NOT_UPDATED = "({file}): [API_NAME] settings_file fetched are same as earlier fetched settings"
 
-        BULK_IMPRESSION_SUCCESS = "({file}): Impression event - {end_point} was successfully received by VWO having account_id:{account_id}"
+        BULK_IMPRESSION_SUCCESS = (
+            "({file}): Impression event - {end_point} was successfully received by VWO having account_id:{account_id}"
+        )
 
-        AFTER_FLUSHING = "({file}): Events queue having {length} events has been flushed {manually}, queue summary: {queue_metadata}"
+        AFTER_FLUSHING = (
+            "({file}): Events queue having {length} events has been flushed {manually}, queue summary: {queue_metadata}"
+        )
         CAMPAIGN_NOT_ACTIVATED = "({file}): Activate the campaign:{campaign_key} for User ID:{user_id} to {reason}."
 
     class WARNING_MESSAGES:
@@ -156,17 +158,25 @@ class LogMessageEnum:
             "({file}): [API_NAME] No campaign found for goal_identifier:{goal_identifier}. Please verify from VWO app."
         )
 
-        BULK_NOT_PROCESSED = "({file}): Batch events couldn't be received by VWO. Calling Flush Callback with error and data."
+        BULK_NOT_PROCESSED = (
+            "({file}): Batch events couldn't be received by VWO. Calling Flush Callback with error and data."
+        )
 
         BATCH_EVENT_LIMIT_EXCEEDED = "({file}): Impression event - {end_point} failed due to exceeding payload size. Parameter events_per_request in batch_events config in launch API has value:{events_per_request} for accountId:{account_id}. Please read the official documentation for knowing the size limits."
-        INVALID_SETTINGS_FILE = "({file}): [API_NAME] settings_file fetched is not proper for the account_id: {account_id}."
+        INVALID_SETTINGS_FILE = (
+            "({file}): [API_NAME] settings_file fetched is not proper for the account_id: {account_id}."
+        )
 
         EVENT_BATCHING_NOT_OBJECT = "({file}): Batch event settings are not of type object"
-        EVENT_BATCHING_INSUFFICIENT = "({file}): Atleast one from events_per_request and request_time_interval must be provided"
+        EVENT_BATCHING_INSUFFICIENT = (
+            "({file}): Atleast one from events_per_request and request_time_interval must be provided"
+        )
         EVENTS_PER_REQUEST_INVALID = "({file}): events_per_request should be an integer"
         REQUEST_TIME_INTERVAL_INVALID = "({file}): request_time_interval should be a number"
         EVENTS_PER_REQUEST_OUT_OF_BOUNDS = "({file}): events_per_request should be >= {min_value} and <= {max_value}"
         REQUEST_TIME_INTERVAL_OUT_OF_BOUNDS = "({file}): request_time_interval should be >= {min_value}"
         FLUSH_CALLBACK_INVALID = "({file}): flush_callback is not callable"
         INTEGRATIONS_SERVICE_CALLBACK_INVALID = "({file}): Integrations service callback is not callable"
-        INTEGRATIONS_SERVICE_CALLBACK_EXECUTION_ERROR = "({file}): Error while executing integrations service callback. Error message: {error_message}"
+        INTEGRATIONS_SERVICE_CALLBACK_EXECUTION_ERROR = (
+            "({file}): Error while executing integrations service callback. Error message: {error_message}"
+        )
