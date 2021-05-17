@@ -42,7 +42,7 @@ def get(account_id, sdk_key, is_via_webhook=False):
     if not is_valid_account_id or not validate_util.is_valid_string(sdk_key):
         print(("account_id and sdk_key are required", "for fetching account settings. Aborting!"), file=sys.stderr)
         return "{}"
-    
+
     protocol = constants.HTTPS_PROTOCOL
     hostname = constants.ENDPOINTS.BASE_URL
     path = constants.ENDPOINTS.WEBHOOKS_ACCOUNT_SETTINGS if is_via_webhook else constants.ENDPOINTS.ACCOUNT_SETTINGS
@@ -53,6 +53,8 @@ def get(account_id, sdk_key, is_via_webhook=False):
         "r": generic_util.get_random_number(),
         "platform": constants.PLATFORM,
         "api-version": constants.API_VERSION,
+        "sdk": constants.SDK_NAME,
+        "sdk-v": constants.SDK_VERSION,
     }
     server_url = protocol + hostname + path
     try:
@@ -64,8 +66,8 @@ def get(account_id, sdk_key, is_via_webhook=False):
                 "Got Status Code: {status_code} "
                 "and message: {settings_file_response}.".format(
                     via_webhook_message="[via Webhook] " if is_via_webhook else "",
-                    status_code=settings_file_response.status_code, 
-                    settings_file_response=settings_file_response.text
+                    status_code=settings_file_response.status_code,
+                    settings_file_response=settings_file_response.text,
                 ),
                 file=sys.stderr,
             )

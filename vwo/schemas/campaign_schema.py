@@ -22,6 +22,7 @@ CAMPAIGN = {
     "type": "object",
     "properties": {
         "id": {"type": ["number", "string"]},
+        "name": {"type": ["string"]},
         "key": {"type": ["string"]},
         "status": {"type": ["string"]},
         "percentTraffic": {"type": ["number"]},
@@ -31,5 +32,5 @@ CAMPAIGN = {
         "variables": {"if": {"type": "array"}, "then": {"items": VARIABLE}, "else": EMPTY_OBJECT},
         "segments": {"type": "object"},
     },
-    "required": ["id", "key", "status", "percentTraffic", "variations", "goals"],
+    "required": ["id", "name", "key", "status", "percentTraffic", "variations", "goals"],
 }

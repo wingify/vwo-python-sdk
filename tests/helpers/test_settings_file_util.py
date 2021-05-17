@@ -50,6 +50,8 @@ class SettingsFileTest(unittest.TestCase):
             "api-version": constants.API_VERSION,
             "r": 0.05353966086631112,
             "platform": constants.PLATFORM,
+            "sdk": constants.SDK_NAME,
+            "sdk-v": constants.SDK_VERSION,
         }
         mock_request_get.assert_called_once_with(url, params=params)
         random.random = default_random
@@ -114,6 +116,8 @@ class SettingsFileTest(unittest.TestCase):
             "api-version": constants.API_VERSION,
             "r": 0.05353966086631112,
             "platform": constants.PLATFORM,
+            "sdk": constants.SDK_NAME,
+            "sdk-v": constants.SDK_VERSION,
         }
         mock_request_get.assert_called_once_with(url, params=params)
         random.random = default_random
