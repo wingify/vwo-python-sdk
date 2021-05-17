@@ -89,7 +89,7 @@ vwo_client_instance = vwo.launch(settings_file, user_storage = us)
 
 ## Documentation
 
-Refer [Official VWO Documentation](https://developers.vwo.com/reference#fullstack-introduction)
+Refer [Official VWO Documentation](https://developers.vwo.com/docs/fullstack-overview)
 
 ## Local development
 
