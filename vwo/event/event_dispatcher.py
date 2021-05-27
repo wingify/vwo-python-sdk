@@ -201,7 +201,7 @@ class EventDispatcher(object):
         url = url + constants.ENDPOINTS.BATCH_EVENTS
         queue_length = len(events)
         try:
-            query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v}
+            query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v, "env": self.sdk_key}
             post_data = {"ev": events}
             query_params.update(UsageStats.get_usage_stats())
             headers = {"Authorization": self.sdk_key}

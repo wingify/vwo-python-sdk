@@ -32,7 +32,7 @@ class VariationDecider(object):
     """ Class responsible for deciding the variation for a visitor """
 
     def __init__(self, user_storage=None, account_id=None, integrations=None):
-        """ Initializes VariationDecider with settings_file,
+        """Initializes VariationDecider with settings_file,
             UserStorage and logger.
 
         Args:
@@ -49,7 +49,7 @@ class VariationDecider(object):
         self.hooks_manager = HooksManager(integrations) if integrations else None
 
     def get_variation(self, user_id, campaign, **kwargs):
-        """ Returns variation for the user for given campaign
+        """Returns variation for the user for given campaign
             This method achieves the variation assignment in the following way:
             1. First get variation from UserStorage, if variation is found in user_storage_data,
                 return from there
@@ -81,6 +81,7 @@ class VariationDecider(object):
         decision = {
             # campaign info
             "campaign_id": campaign.get("id"),
+            "campaign_name": campaign.get("name"),
             "campaign_key": campaign.get("key"),
             "campaign_type": campaign.get("type"),
             # campaign segmentation conditions
@@ -241,7 +242,7 @@ class VariationDecider(object):
         return None
 
     def identify_tracked_goal_from_user_storage(self, goal_data, user_storage_data):
-        """ Identifies whether the given goal has been already tracked or not.
+        """Identifies whether the given goal has been already tracked or not.
 
         Args:
             goal_data (dict): goal related data
@@ -260,7 +261,7 @@ class VariationDecider(object):
         return False
 
     def identify_tracked_user_from_user_storage(self, user_id, campaign_key):
-        """ Identifies whether a user has been already tracked or not.
+        """Identifies whether a user has been already tracked or not.
 
         Args:
             user_id (string): the unique ID assigned to User
@@ -273,7 +274,7 @@ class VariationDecider(object):
         return bool(user_storage_data)
 
     def update_goals_tracked_in_user_storage(self, goal_data, user_storage_data):
-        """ Updates the goals tracked information stored inside the user_storage service
+        """Updates the goals tracked information stored inside the user_storage service
 
         Args:
             goal_data (dict): the goal related data
@@ -288,7 +289,7 @@ class VariationDecider(object):
         self._set_user_storage_data(user_storage_data)
 
     def get_variation_from_user_storage(self, user_id, campaign, user_storage_data):
-        """ Tries retrieving variation from user_storage
+        """Tries retrieving variation from user_storage
 
         Args:
             user_id(string): unique user identifier
@@ -323,7 +324,7 @@ class VariationDecider(object):
         return None
 
     def find_targeted_variation(self, user_id, campaign, variation_targeting_variables):
-        """ Identifies and retrives if there exists any targeted variation in the given campaign
+        """Identifies and retrives if there exists any targeted variation in the given campaign
         for given user_id
 
         Args:
@@ -379,7 +380,7 @@ class VariationDecider(object):
             return targeted_variation
 
     def evaluate_pre_segmentation(self, user_id, campaign, custom_variables):
-        """ Evaluates segmentation for the user_id against the segments found inside
+        """Evaluates segmentation for the user_id against the segments found inside
         the campaign.
 
         Args:
@@ -445,7 +446,7 @@ class VariationDecider(object):
         return result
 
     def is_user_part_of_campaign(self, user_id, campaign):
-        """ Evaluates whether the user should become part of campaign
+        """Evaluates whether the user should become part of campaign
         or not
 
         Args:
@@ -475,7 +476,7 @@ class VariationDecider(object):
     # Private helper methods
 
     def _get_white_listed_variations_list(self, user_id, campaign, variation_targeting_variables):
-        """ Identifies all forced variations which are targeted by variation_targeting_variables
+        """Identifies all forced variations which are targeted by variation_targeting_variables
 
         Args:
             user_id(string): unique user identifier
@@ -543,7 +544,7 @@ class VariationDecider(object):
         return white_listed_variations_list
 
     def _create_user_storage_data(self, user_id, campaign_key, variation_name, **kwargs):
-        """ Creates a user_storage_data object to be set by user_storage service implemented by user
+        """Creates a user_storage_data object to be set by user_storage service implemented by user
 
         Args:
             user_id (str): unique user ID
@@ -563,7 +564,7 @@ class VariationDecider(object):
         return new_user_storage_data
 
     def _get_user_storage_data(self, user_id, campaign_key):
-        """ Get the UserStorageData after looking up into get method
+        """Get the UserStorageData after looking up into get method
         being provided via UserStorage service
 
         Args:
@@ -591,7 +592,7 @@ class VariationDecider(object):
             return False
 
     def _set_user_storage_data(self, user_storage_data):
-        """ If UserStorage is provided and variation was found,
+        """If UserStorage is provided and variation was found,
         set the assigned variation in UserStorage.
             It creates bucket and then stores.
 
