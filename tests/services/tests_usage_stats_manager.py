@@ -54,7 +54,7 @@ class UsageStatsManagerTest(unittest.TestCase):
     def test_usage_stats_manager_CustomLogger(self):
         vwo.launch(json.dumps(SETTINGS_FILES.get("T_100_W_50_50_WS")), logger=CustomLogger())
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1}
+        expected_stats = {"cl": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_CustomLogger_Integrations(self):
@@ -62,7 +62,7 @@ class UsageStatsManagerTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("T_100_W_50_50_WS")), logger=CustomLogger(), integrations=Integrations()
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1}
+        expected_stats = {"cl": 1, "ig": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_CustomLogger_Integrations_UserStorage(self):
@@ -73,7 +73,7 @@ class UsageStatsManagerTest(unittest.TestCase):
             user_storage=ClientUserStorage(),
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1, "is_ss": 1}
+        expected_stats = {"cl": 1, "ig": 1, "ss": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_CustomLogger_Integrations_UserStorage_EventBatching(self):
@@ -88,7 +88,7 @@ class UsageStatsManagerTest(unittest.TestCase):
             },
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1, "is_ss": 1, "is_eb": 1}
+        expected_stats = {"cl": 1, "ig": 1, "ss": 1, "eb": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_CustomLogger_Integrations_UserStorage_EventBatching_TrackReturningUser(
@@ -106,7 +106,7 @@ class UsageStatsManagerTest(unittest.TestCase):
             should_track_returning_user=True,
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1, "is_ss": 1, "is_eb": 1, "tru": 1}
+        expected_stats = {"cl": 1, "ig": 1, "ss": 1, "eb": 1, "tr": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_CustomLogger_Integrations_UserStorage_EventBatching_TrackReturningUser_GoalTypeToTrack(
@@ -125,7 +125,7 @@ class UsageStatsManagerTest(unittest.TestCase):
             goal_type_to_track=constants.GOAL_TYPES.ALL,
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1, "is_ss": 1, "is_eb": 1, "tru": 1, "gt": 1}
+        expected_stats = {"cl": 1, "ig": 1, "ss": 1, "eb": 1, "tr": 1, "gt": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)
 
     def test_usage_stats_manager_Logger_Integrations_UserStorage_EventBatching_ReturningUser_GoalTypeToTrack_LogLevel(
@@ -145,5 +145,5 @@ class UsageStatsManagerTest(unittest.TestCase):
             log_level=constants.LOG_LEVELS.DEBUG,
         )
         collected_stats = UsageStats.get_usage_stats()
-        expected_stats = {"is_cl": 1, "is_i": 1, "is_ss": 1, "is_eb": 1, "tru": 1, "gt": 1, "is_ll": 1}
+        expected_stats = {"cl": 1, "ig": 1, "ss": 1, "eb": 1, "tr": 1, "gt": 1, "ll": 1, "_l": 1}
         self.assertDictEqual(collected_stats, expected_stats)

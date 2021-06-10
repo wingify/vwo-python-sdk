@@ -43,17 +43,20 @@ class UsageStats:
         log_level = kwargs.get("log_level")
 
         data = {
-            "is_eb": int(bool(batch_event_settings)),
-            "is_i": int(bool(integrations)),
-            "is_ss": int(bool(storage_service)),
-            "is_cl": int(bool(logger)),
-            "is_ll": int(bool(log_level)),
-            "tru": int(bool(should_track_returning_user)),
+            "eb": int(bool(batch_event_settings)),
+            "ig": int(bool(integrations)),
+            "ss": int(bool(storage_service)),
+            "cl": int(bool(logger)),
+            "ll": int(bool(log_level)),
+            "tr": int(bool(should_track_returning_user)),
             "gt": int(bool(goal_type_to_track)),
         }
 
         # removing falsy keys from payload
         UsageStats.__usage_stats_data = {k: v for k, v in data.items() if v}
+
+        if UsageStats.__usage_stats_data:
+            UsageStats.__usage_stats_data.update({"_l": 1})
 
     @staticmethod
     def get_usage_stats():

@@ -4,16 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.2] - 2021-06-10
+
+### Changed
+- Update name of usage metrics keys. Start sending `_l` flag to notify VWO server whether to log or not.
+
 ## [1.17.1] - 2021-05-27
 
-## Changed
+### Changed
 
 - `campaign_name` will be available in integrations callback, if callback is defined.
 - Environment Key will be passed in event-batching network call to VWO to view environment specific campaign reports.
 
 ## [1.17.0] - 2021-05-18
 
-## Added
+### Added
 
 - Campaign name will be available in settings and hence, changed settings-schema validations.
 
