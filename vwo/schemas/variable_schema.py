@@ -17,7 +17,7 @@ VARIABLE = {
     "properties": {
         "id": {"type": ["number", "string"]},
         "key": {"type": ["string"]},
-        "value": {"type": ["string", "number", "boolean"]},
+        "value": {"type": ["string", "number", "boolean", "object"]},
         "type": {"type": ["string"]},
     },
     "required": ["id", "value", "key", "type"],

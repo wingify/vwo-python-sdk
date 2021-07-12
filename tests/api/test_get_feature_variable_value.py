@@ -73,6 +73,15 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             if result:
                 self.assertEquals(result, INTEGER_VARIABLE)
 
+    # Test get_feature_variable_value from rollout
+    def test_get_feature_variable_value_type_json_from_rollout(self):
+        self.set_up("FR_T_75_W_100")
+        JSON_VARIABLE = USER_EXPECTATIONS["ROLLOUT_VARIABLES"]["JSON_VARIABLE"]
+        for test in USER_EXPECTATIONS.get("T_75_W_10_20_30_40"):
+            result = self.vwo.get_feature_variable_value("FR_T_75_W_100", "JSON_VARIABLE", test["user"])
+            if result:
+                self.assertEquals(result, JSON_VARIABLE)
+
     # Test get_feature_variable_value from feature test from different feature splits
     def test_get_feature_variable_value_type_string_from_feature_test_t_0(self):
         self.set_up("FT_T_0_W_10_20_30_40")
@@ -137,6 +146,7 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             ("INTEGER_TO_FLOAT", 24.0, "double", float),
             ("FLOAT_TO_STRING", "24.24", "string", str),
             ("FLOAT_TO_INTEGER", 24, "integer", int),
+            ("JSON_STRING_TO_JSON", {"json": "json"}, "json", dict),
         ]
         for test in tests:
             result = self.vwo.get_feature_variable_value("FR_WRONG_VARIABLE_TYPE", test[0], "Zin")
@@ -147,7 +157,13 @@ class GetFeatureVariableValueTest(unittest.TestCase):
 
     def test_get_feature_variable_wrong_variable_types_return_none(self):
         self.set_up("FR_WRONG_VARIABLE_TYPE")
-        tests = [("WRONG_BOOLEAN", None, "boolean", None)]
+        tests = [
+            ("WRONG_BOOLEAN", None, "boolean", None),
+            ("WRONG_JSON_1", None, "json", None),
+            ("WRONG_JSON_2", None, "json", None),
+            ("WRONG_JSON_3", None, "json", None),
+            ("WRONG_JSON_4", None, "json", None),
+        ]
         for test in tests:
             result = self.vwo.get_feature_variable_value("FR_WRONG_VARIABLE_TYPE", test[0], "Zin")
             self.assertEquals(result, test[1])
@@ -246,16 +262,23 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             "starts_with": "starts_with_variable",
         }
         variables = {
-            "Control": {"STRING_VARIABLE": "CONTROL_STRING_VARIABLE", "INTEGER_VARIABLE": 0, "FLOAT_VARIABLE": 0},
+            "Control": {
+                "STRING_VARIABLE": "CONTROL_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 0,
+                "FLOAT_VARIABLE": 0,
+                "JSON_VARIABLE": {"data": "CONTROL_JSON_VARIABLE"},
+            },
             "Variation-1": {
                 "STRING_VARIABLE": "VARIATION-1_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 1,
                 "FLOAT_VARIABLE": 1.1,
+                "JSON_VARIABLE": {"data": "VARIATION-1_JSON_VARIABLE"},
             },
             "Variation-2": {
                 "STRING_VARIABLE": "VARIATION-2_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 2,
                 "FLOAT_VARIABLE": 2.2,
+                "JSON_VARIABLE": {"data": "VARIATION-2_JSON_VARIABLE"},
             },
         }
         feature_not_enabled_variations = ["Control", "Variation-2"]
@@ -273,7 +296,7 @@ class GetFeatureVariableValueTest(unittest.TestCase):
                 expectation = variables.get("Control").get("STRING_VARIABLE")
             self.assertEquals(result, expectation)
 
-    def test_get_feature_variable_value_integerg_against_FT_100_W_33_33_33_WS_WW(self):
+    def test_get_feature_variable_value_integer_against_FT_100_W_33_33_33_WS_WW(self):
         vwo_client_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")),
             log_level=TEST_LOG_LEVEL,
@@ -295,16 +318,23 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             "starts_with": "starts_with_variable",
         }
         variables = {
-            "Control": {"STRING_VARIABLE": "CONTROL_STRING_VARIABLE", "INTEGER_VARIABLE": 0, "FLOAT_VARIABLE": 0},
+            "Control": {
+                "STRING_VARIABLE": "CONTROL_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 0,
+                "FLOAT_VARIABLE": 0,
+                "JSON_VARIABLE": {"data": "CONTROL_JSON_VARIABLE"},
+            },
             "Variation-1": {
                 "STRING_VARIABLE": "VARIATION-1_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 1,
                 "FLOAT_VARIABLE": 1.1,
+                "JSON_VARIABLE": {"data": "VARIATION-1_JSON_VARIABLE"},
             },
             "Variation-2": {
                 "STRING_VARIABLE": "VARIATION-2_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 2,
                 "FLOAT_VARIABLE": 2.2,
+                "JSON_VARIABLE": {"data": "VARIATION-2_JSON_VARIABLE"},
             },
         }
         feature_not_enabled_variations = ["Control", "Variation-2"]
@@ -344,16 +374,23 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             "starts_with": "starts_with_variable",
         }
         variables = {
-            "Control": {"STRING_VARIABLE": "CONTROL_STRING_VARIABLE", "INTEGER_VARIABLE": 0, "FLOAT_VARIABLE": 0},
+            "Control": {
+                "STRING_VARIABLE": "CONTROL_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 0,
+                "FLOAT_VARIABLE": 0,
+                "JSON_VARIABLE": {"data": "CONTROL_JSON_VARIABLE"},
+            },
             "Variation-1": {
                 "STRING_VARIABLE": "VARIATION-1_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 1,
                 "FLOAT_VARIABLE": 1.1,
+                "JSON_VARIABLE": {"data": "VARIATION-1_JSON_VARIABLE"},
             },
             "Variation-2": {
                 "STRING_VARIABLE": "VARIATION-2_STRING_VARIABLE",
                 "INTEGER_VARIABLE": 2,
                 "FLOAT_VARIABLE": 2.2,
+                "JSON_VARIABLE": {"data": "VARIATION-2_JSON_VARIABLE"},
             },
         }
         feature_not_enabled_variations = ["Control", "Variation-2"]
@@ -369,4 +406,60 @@ class GetFeatureVariableValueTest(unittest.TestCase):
                 expectation = variables.get(test["variation"]).get("FLOAT_VARIABLE")
             else:
                 expectation = variables.get("Control").get("FLOAT_VARIABLE")
+            self.assertEquals(result, expectation)
+
+    def test_get_feature_variable_value_json_against_FT_100_W_33_33_33_WS_WW(self):
+        vwo_client_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")),
+            log_level=TEST_LOG_LEVEL,
+            is_development_mode=True,
+        )
+        true_variation_targeting_variables = {"chrome": "false", "safari": "true", "browser": "chrome 107.107"}
+        false_custom_variables = {
+            "contains_vwo": "legends say that vwo is the best",
+            "regex_for_no_zeros": 1223123,
+            "regex_for_all_letters": "dsfASF",
+            "regex_for_small_letters": "sadfksjdf",
+            "regex_real_number": 12321.2242,
+            "regex_for_zeros": 0,
+            "is_equal_to": "!equal_to_variable",
+            "contains": "contains_variable",
+            "regex_for_capital_letters": "SADFLSDLF",
+            "is_not_equal_to": "is_not_equal_to_variable",
+            "this_is_regex": "this    is    regex",
+            "starts_with": "starts_with_variable",
+        }
+        variables = {
+            "Control": {
+                "STRING_VARIABLE": "CONTROL_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 0,
+                "FLOAT_VARIABLE": 0,
+                "JSON_VARIABLE": {"data": "CONTROL_JSON_VARIABLE"},
+            },
+            "Variation-1": {
+                "STRING_VARIABLE": "VARIATION-1_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 1,
+                "FLOAT_VARIABLE": 1.1,
+                "JSON_VARIABLE": {"data": "VARIATION-1_JSON_VARIABLE"},
+            },
+            "Variation-2": {
+                "STRING_VARIABLE": "VARIATION-2_STRING_VARIABLE",
+                "INTEGER_VARIABLE": 2,
+                "FLOAT_VARIABLE": 2.2,
+                "JSON_VARIABLE": {"data": "VARIATION-2_JSON_VARIABLE"},
+            },
+        }
+        feature_not_enabled_variations = ["Control", "Variation-2"]
+        for test in USER_EXPECTATIONS.get("AB_T_100_W_33_33_33"):
+            result = vwo_client_instance.get_feature_variable_value(
+                "FT_100_W_33_33_33_WS_WW",
+                "JSON_VARIABLE",
+                test["user"],
+                custom_variables=false_custom_variables,
+                variation_targeting_variables=true_variation_targeting_variables,
+            )  # noqa:501
+            if test["variation"] not in feature_not_enabled_variations:
+                expectation = variables.get(test["variation"]).get("JSON_VARIABLE")
+            else:
+                expectation = variables.get("Control").get("JSON_VARIABLE")
             self.assertEquals(result, expectation)

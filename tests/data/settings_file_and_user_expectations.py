@@ -393,5 +393,12 @@ USER_EXPECTATIONS = {
         "INTEGER_VARIABLE": 123,
         "DOUBLE_VARIABLE": 123.456,
         "BOOLEAN_VARIABLE": True,
+        "JSON_VARIABLE": {
+            "data_string": "this_is_a_string",
+            "data_integer": "123",
+            "data_boolean": True,
+            "data_double": 123.456,
+            "data_json": {"json": "json"},
+        },
     },
 }
