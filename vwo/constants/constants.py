@@ -95,6 +95,7 @@ class VARIABLE_TYPES:
     INTEGER = "integer"
     DOUBLE = "double"
     BOOLEAN = "boolean"
+    JSON = "json"
 
 
 class PUSH_API:
@@ -102,7 +103,7 @@ class PUSH_API:
     TAG_KEY_LENGTH = 255
 
 
-PY_VARIABLE_TYPES = {"string": str, "integer": int, "double": float, "boolean": bool}
+PY_VARIABLE_TYPES = {"string": str, "integer": int, "double": float, "boolean": bool, "json": dict}
 
 
 # For exposing log levels to vwo_instance

@@ -14,6 +14,8 @@
 
 """ Utility for managing feature related functionalities """
 
+import json
+
 from ..constants import constants
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
@@ -24,7 +26,7 @@ FILE = FileNameEnum.Helpers.FeatureUtil
 
 
 def get_type_casted_feature_value(value, variable_type):
-    """ Returns type casted value to given value type if possbile.
+    """Returns type casted value to given value type if possbile.
 
     Args:
         value (int|float|str|bool): Value to type cast
@@ -44,6 +46,8 @@ def get_type_casted_feature_value(value, variable_type):
             return int(value)
         elif variable_type == constants.VARIABLE_TYPES.DOUBLE:
             return float(value)
+        elif variable_type == constants.VARIABLE_TYPES.JSON:
+            return json.loads(value)
         else:
             # required type is boolean, simply raise exception
             # as it doesn't belong to bool type
