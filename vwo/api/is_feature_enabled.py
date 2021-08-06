@@ -108,49 +108,50 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     if not variation:
         return False
 
-    # if campaign type is feature_test Send track call to server
+    # track user if user has not already been tracked
+    if is_user_tracked is False or should_track_returning_user:
+        impression = impression_util.create_impression(
+            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+        )
+
+        vwo_instance.event_dispatcher.dispatch(impression)
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
+                file=FILE,
+                campaign_id=impression.get("experiment_id"),
+                account_id=impression.get("account_id"),
+                variation_id=impression.get("combination"),
+            ),
+        )
+    else:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.USER_ALREADY_TRACKED.format(
+                file=FILE,
+                user_id=user_id,
+                campaign_key=campaign_key,
+                api_method=constants.API_METHODS.IS_FEATURE_ENABLED,
+            ),
+        )
+
+    # set True as default for feature rollout campaigns
+    result = True
     if campaign_type == constants.CAMPAIGN_TYPES.FEATURE_TEST:
-        # track user if user has not already been tracked
-        if is_user_tracked is False or should_track_returning_user:
-            impression = impression_util.create_impression(
-                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
-            )
-
-            vwo_instance.event_dispatcher.dispatch(impression)
-            vwo_instance.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
-                    file=FILE,
-                    campaign_id=impression.get("experiment_id"),
-                    account_id=impression.get("account_id"),
-                    variation_id=impression.get("combination"),
-                ),
-            )
-        else:
-            vwo_instance.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.USER_ALREADY_TRACKED.format(
-                    file=FILE,
-                    user_id=user_id,
-                    campaign_key=campaign_key,
-                    api_method=constants.API_METHODS.IS_FEATURE_ENABLED,
-                ),
-            )
-
         result = variation.get("isFeatureEnabled")
-        if result:
-            vwo_instance.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
-                    file=FILE, user_id=user_id, feature_key=campaign_key
-                ),
-            )
-        else:
-            vwo_instance.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
-                    file=FILE, user_id=user_id, feature_key=campaign_key
-                ),
-            )
-        return result
-    return True
+
+    if result:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.FEATURE_ENABLED_FOR_USER.format(
+                file=FILE, user_id=user_id, feature_key=campaign_key
+            ),
+        )
+    else:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.FEATURE_NOT_ENABLED_FOR_USER.format(
+                file=FILE, user_id=user_id, feature_key=campaign_key
+            ),
+        )
+    return result

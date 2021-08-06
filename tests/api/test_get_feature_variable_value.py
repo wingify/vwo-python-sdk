@@ -25,6 +25,17 @@ from ..data.settings_file_and_user_expectations import USER_EXPECTATIONS
 from ..config.config import TEST_LOG_LEVEL
 
 
+class ClientUserStorage:
+    def __init__(self):
+        self.storage = {}
+
+    def get(self, user_id, campaign_key):
+        return self.storage.get((user_id, campaign_key))
+
+    def set(self, user_data):
+        self.storage[(user_data.get("userId"), user_data.get("campaignKey"))] = user_data
+
+
 class GetFeatureVariableValueTest(unittest.TestCase):
     def set_up(self, config_variant="AB_T_50_W_50_50"):
         self.user_id = str(random.random())
@@ -463,3 +474,29 @@ class GetFeatureVariableValueTest(unittest.TestCase):
             else:
                 expectation = variables.get("Control").get("JSON_VARIABLE")
             self.assertEquals(result, expectation)
+
+    def test_get_feature_variable_value_fail_prior_campaign_activation_for_feature_rollout_campaign(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FR_T_75_W_100")),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            should_track_returning_user=False,
+            user_storage=ClientUserStorage(),
+        )
+
+        result = vwo_instance.get_feature_variable_value("FR_T_75_W_100", "FLOAT_VARIABLE", "Ashley")
+        self.assertIsNone(result)
+
+    def test_get_feature_variable_value_pass_after_campaign_activation_for_feature_rollout_campaign(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FR_T_75_W_100")),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            should_track_returning_user=False,
+            user_storage=ClientUserStorage(),
+        )
+
+        FLOAT_VARIABLE = USER_EXPECTATIONS["ROLLOUT_VARIABLES"]["DOUBLE_VARIABLE"]
+        vwo_instance.is_feature_enabled("FR_T_75_W_100", "Ashley")
+        result = vwo_instance.get_feature_variable_value("FR_T_75_W_100", "FLOAT_VARIABLE", "Ashley")
+        self.assertEquals(result, FLOAT_VARIABLE)

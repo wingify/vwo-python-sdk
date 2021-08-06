@@ -14,10 +14,10 @@
 
 
 class LogMessageEnum:
-    """ Classobj encapsulating various logging messages """
+    """Classobj encapsulating various logging messages"""
 
     class DEBUG_MESSAGES:
-        """ Classobj encapsulating various DEBUG messages """
+        """Classobj encapsulating various DEBUG messages"""
 
         LOG_LEVEL_SET = "({file}): [API_NAME] Log level set to {level}"
         SET_DEVELOPMENT_MODE = "({file}): [API_NAME] DEVELOPMENT mode is ON"
@@ -53,10 +53,10 @@ class LogMessageEnum:
         )
 
         BEFORE_FLUSHING = "({file}): Flushing events queue {manually} having {length} events. {timer}, queue summary: {queue_metadata}"
-        CAMPAIGN_NOT_ACTIVATED = "({file}): Campaign:{campaign_key} for User ID:{user_id} is not yet activated for API:{api_method}. Use activate API to activate A/B test or isFeatureEnabled API to activate Feature Test."
+        CAMPAIGN_NOT_ACTIVATED = "({file}): Campaign:{campaign_key} for User ID:{user_id} is not yet activated for API:{api_method}. Use activate API to activate A/B test or isFeatureEnabled API to activate Feature Test/Rollout"
 
     class INFO_MESSAGES:
-        """ Classobj encapsulating various INFO messages """
+        """Classobj encapsulating various INFO messages"""
 
         VARIATION_RANGE_ALLOCATION = "({file}): [API_NAME] campaign_key:{campaign_key} having variations:{variation_name} with weight:{variation_weight} got range as: ( {start} - {end} ))"
         VARIATION_ALLOCATED = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} type: {campaign_type} got variation: {variation_name}"
@@ -105,10 +105,10 @@ class LogMessageEnum:
         CAMPAIGN_NOT_ACTIVATED = "({file}): Activate the campaign:{campaign_key} for User ID:{user_id} to {reason}."
 
     class WARNING_MESSAGES:
-        """ Classobj encapsulating various WARNING messages """
+        """Classobj encapsulating various WARNING messages"""
 
     class ERROR_MESSAGES:
-        """ Classobj encapsulating various ERROR messages """
+        """Classobj encapsulating various ERROR messages"""
 
         LAUNCH_API_INVALID_PARAMS = (
             "({file}): [API_NAME] Params passed to the launch API are not correct. Please refer the docs.."

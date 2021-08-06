@@ -29,7 +29,7 @@ FILE = FileNameEnum.Core.VariationDecider
 
 
 class VariationDecider(object):
-    """ Class responsible for deciding the variation for a visitor """
+    """Class responsible for deciding the variation for a visitor"""
 
     def __init__(self, user_storage=None, account_id=None, integrations=None):
         """Initializes VariationDecider with settings_file,
@@ -132,12 +132,10 @@ class VariationDecider(object):
 
             return targeted_variation
 
-        campaign_type = campaign.get("type")
         is_user_tracked = self.identify_tracked_user_from_user_storage(user_id, campaign_key=campaign.get("key"))
         if (
             bool(self.user_storage) is True
             and is_user_tracked is False
-            and campaign_type != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
             and api_method not in [constants.API_METHODS.IS_FEATURE_ENABLED, constants.API_METHODS.ACTIVATE, None]
         ):
 
