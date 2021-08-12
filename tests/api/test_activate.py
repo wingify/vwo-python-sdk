@@ -24,6 +24,7 @@ from ..data.settings_file_and_user_expectations import USER_EXPECTATIONS
 
 from ..config.config import TEST_LOG_LEVEL
 
+
 class ClientUserStorage:
     def __init__(self):
         self.storage = {}
@@ -202,7 +203,7 @@ class ActivateTest(unittest.TestCase):
     def test_activate_invalid_should_track_returning_user_value_passed(self):
         self.set_up("AB_T_100_W_50_50")
         result = []
-        result.append(self.vwo.activate("AB_T_100_W_50_50", "user", should_track_returning_user='test'))
+        result.append(self.vwo.activate("AB_T_100_W_50_50", "user", should_track_returning_user="test"))
         result.append(self.vwo.activate("AB_T_100_W_50_50", "user", should_track_returning_user=100))
         result.append(self.vwo.activate("AB_T_100_W_50_50", "user", should_track_returning_user=[]))
         result.append(self.vwo.activate("AB_T_100_W_50_50", "user", should_track_returning_user=()))
@@ -213,24 +214,20 @@ class ActivateTest(unittest.TestCase):
         self.set_up("AB_T_100_W_50_50")
         for test in USER_EXPECTATIONS.get("AB_T_100_W_50_50"):
             self.assertEqual(
-                self.vwo.activate(
-                    "AB_T_100_W_50_50", 
-                    test["user"], 
-                    should_track_returning_user=True
-                    ), 
-                    test["variation"]
-                )
+                self.vwo.activate("AB_T_100_W_50_50", test["user"], should_track_returning_user=True), test["variation"]
+            )
 
-    
     def test_activate_check_dedup_no_user_storage_provided(self):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")),
             is_development_mode=True,
             log_level=40,
-            should_track_returning_user=True
+            should_track_returning_user=True,
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.activate("AB_T_100_W_50_50", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.activate("AB_T_100_W_50_50", "user")
@@ -248,10 +245,12 @@ class ActivateTest(unittest.TestCase):
             is_development_mode=True,
             log_level=40,
             should_track_returning_user=False,
-            user_storage=ClientUserStorage()
+            user_storage=ClientUserStorage(),
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.activate("AB_T_100_W_50_50", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.activate("AB_T_100_W_50_50", "user")

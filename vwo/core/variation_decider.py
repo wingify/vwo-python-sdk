@@ -31,7 +31,7 @@ FILE = FileNameEnum.Core.VariationDecider
 class VariationDecider(object):
     """Class responsible for deciding the variation for a visitor"""
 
-    def __init__(self, user_storage=None, account_id=None, integrations=None):
+    def __init__(self, user_storage=None, account_id=None, integrations=None, settings_file=None):
         """Initializes VariationDecider with settings_file,
             UserStorage and logger.
 
@@ -40,17 +40,31 @@ class VariationDecider(object):
                 get and set.
             account_id (string): Account ID of user
             integrations (dict|None): an integrations service instance for third party integrations
+            settings_file (dict|None): settings_file consisting all the campaign related data
         """
+
         self.logger = VWOLogger.getInstance()
         self.bucketer = Bucketer()
         self.segment_evaluator = SegmentEvaluator()
         self.user_storage = user_storage
         self.account_id = account_id
         self.hooks_manager = HooksManager(integrations) if integrations else None
+        self.settings_file = settings_file
 
-    def get_variation(self, user_id, campaign, **kwargs):
+    def get_variation(self, user_id, campaign, **kwargs):  # noqa: C901
         """Returns variation for the user for given campaign
-            This method achieves the variation assignment in the following way:
+        If campaign is part of any group, the winner is found in the following way:
+            1. Check whitelisting for called campaign, if passed return targeted variation.
+            2. Check user storage for called campaign, if passed return stored variation.
+            3. Check presegmentation and traffic allocation for called campaign, if passed then
+                check whitelisting and user storage for other campaigns of same group if any
+                campaign passes return None else find eligible campaigns
+            4. Find winner campaign from eligible campaigns and if winner campaign is same as
+                called campaign return bucketed variation and store variation in user storage,
+                however if winner campaign is not called campaign return None
+
+        However if campaign is not part of any group, then this method achieves the variation
+        assignment in the following way:
             1. First get variation from UserStorage, if variation is found in user_storage_data,
                 return from there
             2. Evaluates white listing users for each variation, and find a targeted variation.
@@ -77,6 +91,9 @@ class VariationDecider(object):
         variation_targeting_variables = kwargs.get("variation_targeting_variables")
         goal_data = kwargs.get("goal_data")
         api_method = kwargs.get("api_method")
+        is_campaign_part_of_group = self.settings_file and campaign_util.is_part_of_group(
+            self.settings_file, campaign.get("id")
+        )
 
         decision = {
             # campaign info
@@ -102,6 +119,16 @@ class VariationDecider(object):
             # VWO generated UUID based on passed UserId and Account ID
             "vwo_user_id": uuid_util.generate_for(user_id, self.account_id),
         }
+
+        if is_campaign_part_of_group:
+            group_id = self.settings_file.get("campaignGroups").get(str(campaign.get("id")))
+            decision.update(
+                {
+                    # Group info
+                    "group_id": group_id,
+                    "group_name": self.settings_file.get("groups").get(str(group_id)).get("name"),
+                }
+            )
 
         # Evaluate whitelisting at first
         targeted_variation = self.find_targeted_variation(user_id, campaign, variation_targeting_variables)
@@ -132,7 +159,9 @@ class VariationDecider(object):
 
             return targeted_variation
 
-        is_user_tracked = self.identify_tracked_user_from_user_storage(user_id, campaign_key=campaign.get("key"))
+        is_user_tracked = self.identify_tracked_user_from_user_storage(
+            user_id, campaign_key=campaign.get("key"), disable_logs=True
+        )
         if (
             bool(self.user_storage) is True
             and is_user_tracked is False
@@ -196,39 +225,99 @@ class VariationDecider(object):
 
                 return variation
 
-        # Evaluate pre-segmentation and percent-traffic
-        if self.evaluate_pre_segmentation(user_id, campaign, custom_variables) and self.is_user_part_of_campaign(
-            user_id, campaign
-        ):
-            variation = self.bucketer.bucket_user_to_variation(user_id, campaign)
-            new_user_storage_data = self._create_user_storage_data(
-                user_id, campaign.get("key"), variation.get("name"), goal_data=kwargs.get("goal_data")
+        is_presegmentation_and_traffic_passed = self.evaluate_pre_segmentation(
+            user_id, campaign, custom_variables
+        ) and self.is_user_part_of_campaign(user_id, campaign)
+
+        # Group check
+        if is_presegmentation_and_traffic_passed and is_campaign_part_of_group:
+
+            group_campaigns = campaign_util.get_group_campaigns(settings_file=self.settings_file, group_id=group_id)
+            is_any_campaign_whitelisted_or_stored = self._check_stored_or_whitelisted_campaigns(
+                user_id, campaign, group_id, group_campaigns, variation_targeting_variables
             )
-            self._set_user_storage_data(new_user_storage_data)
+
+            # Return None as other campaign(s) is/are whitelisted or stored
+            if is_any_campaign_whitelisted_or_stored:
+                self.logger.log(
+                    LogLevelEnum.INFO,
+                    LogMessageEnum.INFO_MESSAGES.CALLED_CAMPAIGN_NOT_WINNER.format(
+                        file=FILE,
+                        campaign_key=campaign.get("key"),
+                        group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                        user_id=user_id,
+                    ),
+                )
+                return None
+
+            # eligible campaigns cannot be empty as atleast called campaign will be present
+            eligible_campaigns = self._get_eligible_campaigns(user_id, custom_variables, campaign, group_campaigns)
+
+            non_eligible_campaigns_key = ",".join(
+                [
+                    group_campaign.get("key")
+                    for group_campaign in group_campaigns
+                    if group_campaign not in eligible_campaigns
+                ]
+            )
+
+            self.logger.log(
+                LogLevelEnum.DEBUG,
+                LogMessageEnum.DEBUG_MESSAGES.GOT_ELIGIBLE_CAMPAIGNS.format(
+                    file=FILE,
+                    eligible_campaigns_key=(
+                        ",".join([eligible_campaign.get("key") for eligible_campaign in eligible_campaigns])
+                    ),
+                    ineligible_campaigns_log_text=(
+                        "campaigns:{campaign_keys}".format(campaign_keys=non_eligible_campaigns_key)
+                        if non_eligible_campaigns_key
+                        else "no campaigns"
+                    ),
+                    group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                    user_id=user_id,
+                ),
+            )
             self.logger.log(
                 LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
+                LogMessageEnum.INFO_MESSAGES.GOT_ELIGIBLE_CAMPAIGNS.format(
                     file=FILE,
-                    variation_name=variation.get("name"),
+                    no_of_eligible_campaigns=len(eligible_campaigns),
+                    no_of_group_campaigns=len(group_campaigns),
+                    group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
                     user_id=user_id,
-                    campaign_key=campaign.get("key"),
-                    campaign_type=campaign.get("type"),
                 ),
             )
 
-            decision.update({"from_user_storage_service": False, "is_user_whitelisted": False})
-            if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
-                decision.update({"is_feature_enabled": True})
-            else:
-                if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_TEST:
-                    decision.update({"is_feature_enabled": variation.get("isFeatureEnabled")})
+            winner_campaign = self._get_winner_campaign(user_id, eligible_campaigns)
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.GOT_WINNER_CAMPAIGN.format(
+                    file=FILE,
+                    campaign_key=winner_campaign.get("key"),
+                    group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                    user_id=user_id,
+                ),
+            )
 
-                decision.update({"variation_id": variation.get("id"), "variation_name": variation.get("name")})
+            if winner_campaign and winner_campaign.get("id") == campaign.get("id"):
+                return self._get_bucketed_variation(user_id, campaign, decision, goal_data)
 
-            if self.hooks_manager is not None:
-                self.hooks_manager.execute(decision)
+            # No winner/variation
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.CALLED_CAMPAIGN_NOT_WINNER.format(
+                    file=FILE,
+                    campaign_key=campaign.get("key"),
+                    group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                    user_id=user_id,
+                ),
+            )
 
-            return variation
+            return None
+
+        # Evaluate pre-segmentation and percent-traffic
+        if is_presegmentation_and_traffic_passed:
+            return self._get_bucketed_variation(user_id, campaign, decision, goal_data)
 
         # No variation
         self.logger.log(
@@ -258,17 +347,18 @@ class VariationDecider(object):
             return True
         return False
 
-    def identify_tracked_user_from_user_storage(self, user_id, campaign_key):
+    def identify_tracked_user_from_user_storage(self, user_id, campaign_key, disable_logs=False):
         """Identifies whether a user has been already tracked or not.
 
         Args:
             user_id (string): the unique ID assigned to User
             campaign_key (string): Unique campaign identifier
+            disable_logs (bool): disable logs if True
 
         Returns:
             bool: True if user has already been tracked else False
         """
-        user_storage_data = self._get_user_storage_data(user_id, campaign_key)
+        user_storage_data = self._get_user_storage_data(user_id, campaign_key, disable_logs=disable_logs)
         return bool(user_storage_data)
 
     def update_goals_tracked_in_user_storage(self, goal_data, user_storage_data):
@@ -321,7 +411,7 @@ class VariationDecider(object):
         )
         return None
 
-    def find_targeted_variation(self, user_id, campaign, variation_targeting_variables):
+    def find_targeted_variation(self, user_id, campaign, variation_targeting_variables, disable_logs=False):
         """Identifies and retrives if there exists any targeted variation in the given campaign
         for given user_id
 
@@ -329,6 +419,7 @@ class VariationDecider(object):
             user_id(string): unique user identifier
             campaign(dict): campaign for which the variation is to be retrieved
             variation_targeting_variables(dict): variables for finding targeted variation
+            disable_logs (bool): disable logs if True
 
         Returns:
             targeted_variation (dict|None): Dict object containing the information regarding forced
@@ -340,11 +431,12 @@ class VariationDecider(object):
                 LogMessageEnum.DEBUG_MESSAGES.WHITELISTING_SKIPPED.format(
                     file=FILE, user_id=user_id, campaign_key=campaign.get("key")
                 ),
+                disable_logs,
             )
             return None
         else:
             white_listed_variations_list = self._get_white_listed_variations_list(
-                user_id, campaign, variation_targeting_variables
+                user_id, campaign, variation_targeting_variables, disable_logs
             )
             white_listed_variations_len = len(white_listed_variations_list)
             if white_listed_variations_len == 0:
@@ -355,11 +447,10 @@ class VariationDecider(object):
                 # Scale the traffic percent of each variation
                 campaign_util.scale_variations(white_listed_variations_list)
                 # Allocate new range
-                variation_allocations = campaign_util.get_variation_allocation_ranges(white_listed_variations_list)
-                campaign_util.set_variation_allocation_from_ranges(white_listed_variations_list, variation_allocations)
+                campaign_util.set_allocation_ranges(white_listed_variations_list)
                 # Now retrieve the variation from the modified_campaign_for_whitelisting
                 bucket_value = self.bucketer.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE)
-                targeted_variation = self.bucketer.get_variation(white_listed_variations_list, bucket_value)
+                targeted_variation = self.bucketer.get_allocated_item(white_listed_variations_list, bucket_value)
             variation_status = "and variation {variation_name} is assigned"
             self.logger.log(
                 LogLevelEnum.INFO,
@@ -374,10 +465,11 @@ class VariationDecider(object):
                     segmentation_type="whitelisting",
                     status=ResultStatus.PASSED if targeted_variation is not None else ResultStatus.FAILED,
                 ),
+                disable_logs,
             )
             return targeted_variation
 
-    def evaluate_pre_segmentation(self, user_id, campaign, custom_variables):
+    def evaluate_pre_segmentation(self, user_id, campaign, custom_variables, disable_logs=False):
         """Evaluates segmentation for the user_id against the segments found inside
         the campaign.
 
@@ -385,6 +477,7 @@ class VariationDecider(object):
             user_id(string): unique user identifier
             campaign(dict): running campaign for which the segments is to be evaluated
             custom_variables(dict): variables for segmentation
+            disable_logs (bool): disable logs if True
 
         Returns:
             bool: True if user passes segmentation, else False
@@ -401,6 +494,7 @@ class VariationDecider(object):
                     variables=custom_variables,
                     variation_status="",
                 ),
+                disable_logs,
             )
         else:
             if not validate_util.is_valid_value(custom_variables):
@@ -412,6 +506,7 @@ class VariationDecider(object):
                         campaign_key=campaign.get("key"),
                         segmentation_type="pre_segmentation",
                     ),
+                    disable_logs,
                 )
                 custom_variables = {}
             try:
@@ -427,6 +522,7 @@ class VariationDecider(object):
                         segmentation_type="pre_segmentation",
                         status=ResultStatus.PASSED if result else ResultStatus.FAILED,
                     ),
+                    disable_logs,
                 )
             except Exception as e:
                 result = False
@@ -443,19 +539,20 @@ class VariationDecider(object):
                 )
         return result
 
-    def is_user_part_of_campaign(self, user_id, campaign):
+    def is_user_part_of_campaign(self, user_id, campaign, disable_logs=False):
         """Evaluates whether the user should become part of campaign
         or not
 
         Args:
             user_id (string): the unique ID assigned to User
             campaign (dict): campaign in which user is participating
+            disable_logs (bool): disable logs if True
 
         Returns:
             bool: True if user should become part of campaign, else False
         """
 
-        if self.bucketer.is_user_part_of_campaign(user_id, campaign):
+        if self.bucketer.is_user_part_of_campaign(user_id, campaign, disable_logs):
             return True
         else:
             # not part of campaign
@@ -468,18 +565,20 @@ class VariationDecider(object):
                     method="is_user_part_of_campaign",
                     campaign_type=campaign.get("type"),
                 ),
+                disable_logs,
             )
             return False
 
     # Private helper methods
 
-    def _get_white_listed_variations_list(self, user_id, campaign, variation_targeting_variables):
+    def _get_white_listed_variations_list(self, user_id, campaign, variation_targeting_variables, disable_logs=False):
         """Identifies all forced variations which are targeted by variation_targeting_variables
 
         Args:
             user_id(string): unique user identifier
             campaign(dict): campaign for which the targeted variation(s) is to be retrieved
             variation_targeting_variables(dict): variables for variation targeting
+            disable_logs (bool): disable logs if True
 
         Returns:
             targeted_variation (list): List of targeted variation objects
@@ -490,6 +589,7 @@ class VariationDecider(object):
                 LogMessageEnum.DEBUG_MESSAGES.NO_VARIABLES.format(
                     file=FILE, user_id=user_id, campaign_key=campaign.get("key"), segmentation_type="whitelisting"
                 ),
+                disable_logs,
             )
             variation_targeting_variables = {}
 
@@ -508,6 +608,7 @@ class VariationDecider(object):
                         campaign_key=campaign.get("key"),
                         variation_status="for variation %s" % variation.get("name"),
                     ),
+                    disable_logs,
                 )
             else:
                 try:
@@ -523,6 +624,7 @@ class VariationDecider(object):
                             campaign_key=campaign.get("key"),
                             segmentation_type="white_listing",
                         ),
+                        disable_logs,
                     )
                 except Exception as e:
                     result = False
@@ -561,25 +663,30 @@ class VariationDecider(object):
             new_user_storage_data["goalIdentifiers"] = kwargs.get("goal_data").get("identifier")
         return new_user_storage_data
 
-    def _get_user_storage_data(self, user_id, campaign_key):
+    def _get_user_storage_data(self, user_id, campaign_key, disable_logs=False):
         """Get the UserStorageData after looking up into get method
         being provided via UserStorage service
 
         Args:
             user_id (string): Unique user identifier
             campaign_key (string): Unique campaign identifier
+            disable_logs (bool): disable logs if True
+
         Returns:
             dict: user_storage_data data
         """
 
         if not self.user_storage:
-            self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(file=FILE))
+            self.logger.log(
+                LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.NO_USER_STORAGE_GET.format(file=FILE), disable_logs
+            )
             return False
         try:
             user_storage_data = self.user_storage.get(user_id, campaign_key)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.LOOKING_UP_USER_STORAGE.format(file=FILE, user_id=user_id),
+                disable_logs,
             )
             return copy.deepcopy(user_storage_data)
         except Exception:
@@ -624,3 +731,150 @@ class VariationDecider(object):
                 ),
             )
             return False
+
+    def _get_bucketed_variation(self, user_id, campaign, decision, goal_data):
+        """Returns variation for the user for given campaign, if user becomes
+        part of campaign and store the variation found in the user_storage.
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            campaign (dict): campaign in which user is participating
+            decision (dict): data containing campaign info passed to hooks manager
+            goal_data (dict): the goal related data
+
+        Returns:
+            variation (dict|None): Dict object containing the information regarding variation
+            assigned else None
+        """
+
+        variation = self.bucketer.bucket_user_to_variation(user_id, campaign)
+        new_user_storage_data = self._create_user_storage_data(
+            user_id, campaign.get("key"), variation.get("name"), goal_data=goal_data
+        )
+        self._set_user_storage_data(new_user_storage_data)
+        self.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
+                file=FILE,
+                variation_name=variation.get("name"),
+                user_id=user_id,
+                campaign_key=campaign.get("key"),
+                campaign_type=campaign.get("type"),
+            ),
+        )
+
+        decision.update({"from_user_storage_service": False, "is_user_whitelisted": False})
+        if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
+            decision.update({"is_feature_enabled": True})
+        else:
+            if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_TEST:
+                decision.update({"is_feature_enabled": variation.get("isFeatureEnabled")})
+
+            decision.update({"variation_id": variation.get("id"), "variation_name": variation.get("name")})
+
+        if self.hooks_manager is not None:
+            self.hooks_manager.execute(decision)
+
+        return variation
+
+    def _check_stored_or_whitelisted_campaigns(
+        self, user_id, called_campaign, group_id, group_campaigns, variation_targeting_variables
+    ):
+        """Checks if any other campaign in group_campaigns satisfies whitelisting
+        or is in user storage.
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            called_campaign (dict): campaign for which api is called
+            group_id (int): group id of which called campaign is part of
+            group_campaigns (list): campaigns part of group
+            variation_targeting_variables (dict): variables for variation targeting
+
+        Returns:
+            bool: True if any other campaign in group satisfes whitelisting or
+                found in user storage
+        """
+        for campaign in group_campaigns:
+            if called_campaign.get("id") != campaign.get("id"):
+                targeted_variation = self.find_targeted_variation(
+                    user_id, campaign, variation_targeting_variables, disable_logs=True
+                )
+                if targeted_variation:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.OTHER_CAMPAIGN_SATIFIES_WHITELISTING_OR_STORAGE.format(
+                            file=FILE,
+                            campaign_key=campaign.get("key"),
+                            group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                            user_id=user_id,
+                            type="whitelisting",
+                        ),
+                    )
+                    return True
+
+        for campaign in group_campaigns:
+            if called_campaign.get("id") != campaign.get("id"):
+                user_storage_data = self._get_user_storage_data(user_id, campaign.get("key"), disable_logs=True)
+                if user_storage_data:
+                    self.logger.log(
+                        LogLevelEnum.INFO,
+                        LogMessageEnum.INFO_MESSAGES.OTHER_CAMPAIGN_SATIFIES_WHITELISTING_OR_STORAGE.format(
+                            file=FILE,
+                            campaign_key=campaign.get("key"),
+                            group_name=self.settings_file.get("groups").get(str(group_id)).get("name"),
+                            user_id=user_id,
+                            type="user storage",
+                        ),
+                    )
+                    return True
+
+        return False
+
+    def _get_eligible_campaigns(self, user_id, custom_variables, called_campaign, group_campaigns):
+        """Finds and returns eligible campaigns from group_campaigns.
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            custom_variables(dict): variables for segmentation
+            called_campaign (dict): campaign for which api is called
+            group_campaigns (list): campaigns part of group
+
+        Returns:
+            eligible_campaigns (list): eligible campaigns from which winner
+                campaign is to be selected
+        """
+        eligible_campaigns = []
+
+        for campaign in group_campaigns:
+            if called_campaign.get("id") == campaign.get("id") or (
+                self.evaluate_pre_segmentation(user_id, campaign, custom_variables, disable_logs=True)
+                and self.is_user_part_of_campaign(user_id, campaign, disable_logs=True)
+            ):
+                eligible_campaigns.append(campaign)
+
+        return eligible_campaigns
+
+    def _get_winner_campaign(self, user_id, eligible_campaigns):
+        """Finds and returns the winner campaign from eligible_campaigns list.
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            eligible_campaigns (list): campaigns part of group which were
+                eligible to be winner
+
+        Returns:
+            winner_campaign (dict): winner campaign from eligible_campaigns
+        """
+
+        if len(eligible_campaigns) == 1:
+            return eligible_campaigns[0]
+
+        # Scale the traffic percent of each campaign
+        campaign_util.scale_campaigns(eligible_campaigns)
+        # Allocate new range for campaigns
+        campaign_util.set_allocation_ranges(eligible_campaigns)
+        # Now retrieve the campaign from the modified_campaign_for_whitelisting
+        bucket_value = self.bucketer.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE, disable_logs=True)
+        winner_campaign = self.bucketer.get_allocated_item(eligible_campaigns, bucket_value)
+
+        return winner_campaign

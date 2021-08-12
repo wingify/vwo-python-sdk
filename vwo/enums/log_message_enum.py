@@ -54,6 +54,7 @@ class LogMessageEnum:
 
         BEFORE_FLUSHING = "({file}): Flushing events queue {manually} having {length} events. {timer}, queue summary: {queue_metadata}"
         CAMPAIGN_NOT_ACTIVATED = "({file}): Campaign:{campaign_key} for User ID:{user_id} is not yet activated for API:{api_method}. Use activate API to activate A/B test or isFeatureEnabled API to activate Feature Test/Rollout"
+        GOT_ELIGIBLE_CAMPAIGNS = "({file}): Campaigns:{eligible_campaigns_key} are eligible, {ineligible_campaigns_log_text} are ineligible from the Group:{group_name} for the User ID:{user_id}"
 
     class INFO_MESSAGES:
         """Classobj encapsulating various INFO messages"""
@@ -102,7 +103,13 @@ class LogMessageEnum:
         AFTER_FLUSHING = (
             "({file}): Events queue having {length} events has been flushed {manually}, queue summary: {queue_metadata}"
         )
-        CAMPAIGN_NOT_ACTIVATED = "({file}): Activate the campaign:{campaign_key} for User ID:{user_id} to {reason}."
+        CAMPAIGN_NOT_ACTIVATED = "({file}): Activate the campaign:{campaign_key} for User ID:{user_id} to {reason}"
+        GOT_WINNER_CAMPAIGN = "({file}): Campaign:{campaign_key} is selected from the mutually exclusive group:{group_name} for the User ID:{user_id}"
+        GOT_ELIGIBLE_CAMPAIGNS = "({file}): Got {no_of_eligible_campaigns} eligible winners out of {no_of_group_campaigns} from the Group:{group_name} and for User ID:{user_id}"
+        CALLED_CAMPAIGN_NOT_WINNER = "({file}): Campaign:{campaign_key} does not qualify from the mutually exclusive group:{group_name} for User ID:{user_id}"
+        OTHER_CAMPAIGN_SATIFIES_WHITELISTING_OR_STORAGE = (
+            "({file}): Campaign:{campaign_key} of Group:{group_name} satisfies {type} for User ID:{user_id}"
+        )
 
     class WARNING_MESSAGES:
         """Classobj encapsulating various WARNING messages"""

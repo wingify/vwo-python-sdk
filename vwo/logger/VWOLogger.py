@@ -32,7 +32,7 @@ def clearExistingLoggerInstance():
 
 
 def getInstance(**kwargs):
-    """ Always use this method to get an instance of VWOLogger. Pass a valid log_level
+    """Always use this method to get an instance of VWOLogger. Pass a valid log_level
     or logger object when calling for first time to instantiate a VWOLogger object.
     If logger is passed, log_level is neglected.
     It throws exception when called with kwargs 2nd time.
@@ -55,7 +55,7 @@ def getInstance(**kwargs):
 
 
 def create_console_logger(name=__name__, level=None):
-    """ Creates a console logger with given name and level using python's standard logging module.
+    """Creates a console logger with given name and level using python's standard logging module.
 
     Args:
         name (str): Name of the logger
@@ -83,7 +83,7 @@ class VWOLogger:
     log method in it or a log level to create default console logger"""
 
     def __init__(self, logger=None, log_level=None):
-        """ Initializes VWOLogger with provided logger object or creates a console logger object
+        """Initializes VWOLogger with provided logger object or creates a console logger object
         with provided level.
 
         Args:
@@ -125,17 +125,19 @@ class VWOLogger:
         """ It sets the api_name to the API currently being used, for logging purpose. """
         self.api_name = api_name
 
-    def log(self, level, message):
-        """ Log method which takes two parameters and logs the message according to
+    def log(self, level, message, disable_logs=False):
+        """Log method which takes two parameters and logs the message according to
         handler of logger provided while instantiating this class.
 
         Args:
             level (int): Level of log
             message (string): Message to log
+            disable_logs (bool): disable logs if True
         """
 
         try:
-            self.logger.log(level, message.replace("API_NAME", self.api_name, 1))
+            if not disable_logs:
+                self.logger.log(level, message.replace("API_NAME", self.api_name, 1))
         except Exception:
             # Even logging.Logger is broken somehow, simply print to console
             print(level, message)

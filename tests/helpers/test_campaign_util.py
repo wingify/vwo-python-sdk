@@ -14,9 +14,13 @@
 
 import unittest
 import random
+import json
 
 from vwo.helpers import campaign_util
 from ..data.settings_files import SETTINGS_FILES
+
+with open("tests/data/mutually_exclusive_test_cases.json") as mutually_exclusive_test_cases_json:
+    mutually_exclusive_test_cases = json.load(mutually_exclusive_test_cases_json)
 
 
 class CampaignUtilTest(unittest.TestCase):
@@ -113,7 +117,7 @@ class CampaignUtilTest(unittest.TestCase):
         self.assertEquals(variations[3]["weight"], 40)
         self.assertAlmostEqual(100, sum(variation["weight"] for variation in variations))
 
-    def test_get_variation_allocation_ranges_33_33_33(self):
+    def test_get_allocation_ranges_33_33_33(self):
         variations = [
             {
                 "id": 1,
@@ -137,93 +141,93 @@ class CampaignUtilTest(unittest.TestCase):
                 "segments": {"or": [{"custom_variable": {"chrome": "false"}}]},
             },
         ]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(variations)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 3334))
         self.assertEquals(variation_allocations_ranges_list[1], (3335, 6668))
         self.assertEquals(variation_allocations_ranges_list[2], (6669, 10002))
 
-    def test_get_variation_allocation_ranges_10_20_30_40(self):
-        variations = [{"weight": 10}, {"weight": 20}, {"weight": 30}, {"weight": 40}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_10_20_30_40(self):
+        items = [{"weight": 10}, {"weight": 20}, {"weight": 30}, {"weight": 40}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1000))
         self.assertEquals(variation_allocations_ranges_list[1], (1001, 3000))
         self.assertEquals(variation_allocations_ranges_list[2], (3001, 6000))
         self.assertEquals(variation_allocations_ranges_list[3], (6001, 10000))
 
-    def test_get_variation_allocation_ranges_13_87(self):
-        variations = [{"weight": 13}, {"weight": 87}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_13_87(self):
+        items = [{"weight": 13}, {"weight": 87}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1300))
         self.assertEquals(variation_allocations_ranges_list[1], (1301, 10000))
 
-    def test_get_variation_allocation_ranges_1_99(self):
-        variations = [{"weight": 1}, {"weight": 99}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_1_99(self):
+        items = [{"weight": 1}, {"weight": 99}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 100))
         self.assertEquals(variation_allocations_ranges_list[1], (101, 10000))
 
-    def test_get_variation_allocation_ranges_99_1(self):
-        variations = [{"weight": 99}, {"weight": 1}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_99_1(self):
+        items = [{"weight": 99}, {"weight": 1}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 9900))
         self.assertEquals(variation_allocations_ranges_list[1], (9901, 10000))
 
-    def test_get_variation_allocation_ranges_0pt1_99pt9(self):
-        variations = [{"weight": 0.1}, {"weight": 99.9}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_0pt1_99pt9(self):
+        items = [{"weight": 0.1}, {"weight": 99.9}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 10))
         self.assertEquals(variation_allocations_ranges_list[1], (11, 10000))
 
-    def test_get_variation_allocation_ranges_0pt01_99pt99(self):
-        variations = [{"weight": 0.01}, {"weight": 99.99}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_0pt01_99pt99(self):
+        items = [{"weight": 0.01}, {"weight": 99.99}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1))
         self.assertEquals(variation_allocations_ranges_list[1], (2, 10000))
 
-    def test_get_variation_allocation_ranges_0pt001_99pt999(self):
-        variations = [{"weight": 0.001}, {"weight": 99.999}]
-        variation_allocations_ranges_list = campaign_util.get_variation_allocation_ranges(variations)
+    def test_get_allocation_ranges_0pt001_99pt999(self):
+        items = [{"weight": 0.001}, {"weight": 99.999}]
+        variation_allocations_ranges_list = campaign_util.get_allocation_ranges(items)
         self.assertEquals(variation_allocations_ranges_list[0], (1, 1))
         self.assertEquals(variation_allocations_ranges_list[1], (2, 10001))
 
-    def test_get_variation_bucketing_range_10(self):
-        result = campaign_util._get_variation_bucketing_range(10)
+    def test_get_bucketing_range_10(self):
+        result = campaign_util._get_bucketing_range(10)
         self.assertEquals(result, 1000)
 
-    def test_get_variation_bucketing_range_1(self):
-        result = campaign_util._get_variation_bucketing_range(1)
+    def test_get_bucketing_range_1(self):
+        result = campaign_util._get_bucketing_range(1)
         self.assertEquals(result, 100)
 
-    def test_get_variation_bucketing_range_1pt_11(self):
-        result = campaign_util._get_variation_bucketing_range(1.11)
+    def test_get_bucketing_range_1pt_11(self):
+        result = campaign_util._get_bucketing_range(1.11)
         self.assertEquals(result, 112)
 
-    def test_get_variation_bucketing_range_99pt99(self):
-        result = campaign_util._get_variation_bucketing_range(99.99)
+    def test_get_bucketing_range_99pt99(self):
+        result = campaign_util._get_bucketing_range(99.99)
         self.assertEquals(result, 9999)
 
-    def test_get_variation_bucketing_range_205pont9999(self):
-        result = campaign_util._get_variation_bucketing_range(205.9999)
+    def test_get_bucketing_range_205pont9999(self):
+        result = campaign_util._get_bucketing_range(205.9999)
         self.assertEquals(result, 10000)
 
-    def test_get_variation_bucketing_range_0(self):
-        result = campaign_util._get_variation_bucketing_range(0)
+    def test_get_bucketing_range_0(self):
+        result = campaign_util._get_bucketing_range(0)
         self.assertEquals(result, 0)
 
-    def test_get_variation_bucketing_range_0pt1(self):
-        result = campaign_util._get_variation_bucketing_range(0.1)
+    def test_get_bucketing_range_0pt1(self):
+        result = campaign_util._get_bucketing_range(0.1)
         self.assertEquals(result, 10)
 
-    def test_get_variation_bucketing_range_0pt11(self):
-        result = campaign_util._get_variation_bucketing_range(0.11)
+    def test_get_bucketing_range_0pt11(self):
+        result = campaign_util._get_bucketing_range(0.11)
         self.assertEquals(result, 11)
 
-    def test_get_variation_bucketing_range_0pt111(self):
-        result = campaign_util._get_variation_bucketing_range(0.111)
+    def test_get_bucketing_range_0pt111(self):
+        result = campaign_util._get_bucketing_range(0.111)
         self.assertEquals(result, 12)
 
-    def test_get_variation_bucketing_range_0pt1111(self):
-        result = campaign_util._get_variation_bucketing_range(0.1111)
+    def test_get_bucketing_range_0pt1111(self):
+        result = campaign_util._get_bucketing_range(0.1111)
         self.assertEquals(result, 12)
 
     def test_scale_variations_0_weight(self):
@@ -318,7 +322,22 @@ class CampaignUtilTest(unittest.TestCase):
     def test_set_variation_allocation(self):
         campaign = SETTINGS_FILES.get("FT_T_0_W_10_20_30_40")["campaigns"][0]
         campaign_util.set_variation_allocation(campaign)
-        variation_allocation_ranges_list = campaign_util.get_variation_allocation_ranges(campaign.get("variations"))
+        variation_allocation_ranges_list = campaign_util.get_allocation_ranges(campaign.get("variations"))
         for i, variation in enumerate(campaign.get("variations")):
-            self.assertEquals(variation.get("start_variation_allocation"), variation_allocation_ranges_list[i][0])
-            self.assertEquals(variation.get("end_variation_allocation"), variation_allocation_ranges_list[i][1])
+            self.assertEquals(variation.get("allocation_range_start"), variation_allocation_ranges_list[i][0])
+            self.assertEquals(variation.get("allocation_range_end"), variation_allocation_ranges_list[i][1])
+
+    def test_is_part_of_group(self):
+        settings_file = mutually_exclusive_test_cases.get("commonSettingsFile")
+        self.assertEqual(campaign_util.is_part_of_group(settings_file, 1), True)
+        self.assertEqual(campaign_util.is_part_of_group(settings_file, 5), False)
+
+    def test_get_group_campaigns(self):
+        settings_file = mutually_exclusive_test_cases.get("commonSettingsFile")
+
+        campaigns = [settings_file["campaigns"][0], settings_file["campaigns"][1], settings_file["campaigns"][2]]
+        self.assertListEqual(campaign_util.get_group_campaigns(settings_file, 1), campaigns)
+
+    def test_get_group_campaigns_invalid_group_id(self):
+        settings_file = mutually_exclusive_test_cases.get("commonSettingsFile")
+        self.assertListEqual(campaign_util.get_group_campaigns(settings_file, -1), [])
