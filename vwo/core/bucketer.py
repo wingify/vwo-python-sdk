@@ -30,36 +30,38 @@ FILE = FileNameEnum.Core.Bucketer
 
 
 class Bucketer(object):
-    """ Class consisting the core bucketing/distribution logic for
-    the visitors """
+    """Class consisting the core bucketing/distribution logic for
+    the visitors"""
 
     def __init__(self):
         """ Initializes bucketer with vwo common logger """
         self.logger = VWOLogger.getInstance()
 
-    def get_variation(self, variations, bucket_value):
-        """ Returns the Variation by checking the Start and End
-        Bucket Allocations of each Variation
+    def get_allocated_item(self, items, bucket_value):
+        """Returns an allocation item(variation/campaign) by checking the Start and End
+        Bucket Allocations of each item
 
         Args:
-            variations (list): list of variations
+            items (list): list of item(variation/campaign)
             bucket_value (int): the bucket value of the user
 
         Returns:
-            (dict|None): variation data allotted to the user or None if not
+            (dict|None): item(variation/campaign) allotted to the user or None if not
         """
-        for variation in variations:
-            if variation.get("start_variation_allocation") <= bucket_value <= variation.get("end_variation_allocation"):
-                return variation
+        for item in items:
+            if item.get("allocation_range_start") <= bucket_value <= item.get("allocation_range_end"):
+                return item
         return None
 
-    def get_bucket_value_for_user(self, user_id, max_value, multiplier=1):
-        """ Returns Bucket Value of the user by hashing the userId with murmur hash and scaling it down.
+    def get_bucket_value_for_user(self, user_id, max_value, multiplier=1, disable_logs=False):
+        """Returns Bucket Value of the user by hashing the userId with murmur hash and scaling it down.
 
         Args:
             user_id (string): the unique ID assigned to User
             max_value(int): maximum value that can be alloted to the bucket value
             multiplier(int): value for distributing ranges slightly
+            disable_logs (bool): disable logs if True
+
         Returns:
             int: the bucket value allotted to User
             (between 1 to MAX_TRAFFIC_PERCENT)
@@ -75,15 +77,17 @@ class Bucketer(object):
             LogMessageEnum.DEBUG_MESSAGES.USER_HASH_BUCKET_VALUE.format(
                 file=FILE, hash_value=hash_value, bucket_value=bucket_value, user_id=user_id
             ),
+            disable_logs,
         )
         return bucket_value
 
-    def is_user_part_of_campaign(self, user_id, campaign):
-        """ Calculates if the provided user_id should become part of the campaign or not
+    def is_user_part_of_campaign(self, user_id, campaign, disable_logs=False):
+        """Calculates if the provided user_id should become part of the campaign or not
 
         Args:
             user_id (strings): the unique ID assigned to a user
             campaign (dict): for getting traffic allotted to the campaign
+            disable_logs (bool): disable logs if True
 
         Returns:
             bool: if User is a part of Campaign or not
@@ -107,18 +111,21 @@ class Bucketer(object):
 
         traffic_allocation = campaign.get("percentTraffic")
 
-        value_assigned_to_user = self.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_PERCENT)
+        value_assigned_to_user = self.get_bucket_value_for_user(
+            user_id, constants.MAX_TRAFFIC_PERCENT, disable_logs=disable_logs
+        )
         is_user_part = value_assigned_to_user != 0 and value_assigned_to_user <= traffic_allocation
         self.logger.log(
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.USER_ELIGIBILITY_FOR_CAMPAIGN.format(
                 file=FILE, user_id=user_id, is_user_part=is_user_part
             ),
+            disable_logs,
         )
         return is_user_part
 
     def bucket_user_to_variation(self, user_id, campaign):
-        """ Validates the User ID and
+        """Validates the User ID and
             returns Variation into which the User is bucketed in.
 
         Args:
@@ -160,4 +167,4 @@ class Bucketer(object):
                 bucket_value=bucket_value,
             ),
         )
-        return self.get_variation(campaign.get("variations"), bucket_value)
+        return self.get_allocated_item(campaign.get("variations"), bucket_value)

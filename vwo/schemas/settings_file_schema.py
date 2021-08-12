@@ -18,6 +18,8 @@
 
 from .campaign_schema import CAMPAIGN
 from .empty_object_schema import EMPTY_OBJECT
+from .group_schema import GROUP_SCHEMA
+from .campaign_group_schema import CAMPAIGN_GROUP_SCHEMA
 
 
 SETTINGS_FILE_SCHEMA = {
@@ -26,6 +28,8 @@ SETTINGS_FILE_SCHEMA = {
         "version": {"type": ["number", "string"]},
         "accountId": {"type": ["number", "string"]},
         "campaigns": {"if": {"type": "array"}, "then": {"items": CAMPAIGN}, "else": EMPTY_OBJECT},
+        "campaignGroups": CAMPAIGN_GROUP_SCHEMA,
+        "groups": GROUP_SCHEMA,
     },
     "required": ["version", "accountId", "campaigns"],
 }

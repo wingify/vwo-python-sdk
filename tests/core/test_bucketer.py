@@ -40,8 +40,7 @@ class BucketerTest(unittest.TestCase):
         campaign_util.set_variation_allocation(self.dummy_campaign)
         self.bucketer = bucketer.Bucketer()
         self.variations = copy.deepcopy(SETTINGS_FILES["FT_T_0_W_10_20_30_40"].get("campaigns")[0]["variations"])
-        variation_allocations = campaign_util.get_variation_allocation_ranges(self.variations)
-        campaign_util.set_variation_allocation_from_ranges(self.variations, variation_allocations)
+        campaign_util.set_allocation_ranges(self.variations)
 
     def test_user_part_of_campaign_none_campaign_passed(self):
         result = self.bucketer.is_user_part_of_campaign(self.user_id, None)
@@ -146,32 +145,32 @@ class BucketerTest(unittest.TestCase):
         variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("name"), "Variation-1")
 
-    def test_get_variation_return_control_below_border(self):
-        variation = self.bucketer.get_variation(self.variations, 999)
+    def test_get_allocated_item_return_control_below_border(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 999)
         self.assertEquals(variation.get("name"), "Control")
 
-    def test_get_variation_return_control_border(self):
-        variation = self.bucketer.get_variation(self.variations, 1000)
+    def test_get_allocated_item_return_control_border(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 1000)
         self.assertEquals(variation.get("name"), "Control")
 
-    def test_get_variation_return_variation_1_above_border(self):
-        variation = self.bucketer.get_variation(self.variations, 1001)
+    def test_get_allocated_item_return_variation_1_above_border(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 1001)
         self.assertEquals(variation.get("name"), "Variation-1")
 
-    def test_get_variation_return_variation_1(self):
-        variation = self.bucketer.get_variation(self.variations, 3000)
+    def test_get_allocated_item_return_variation_1(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 3000)
         self.assertEquals(variation.get("name"), "Variation-1")
 
-    def test_get_variation_return_variation_2(self):
-        variation = self.bucketer.get_variation(self.variations, 6000)
+    def test_get_allocated_item_return_variation_2(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 6000)
         self.assertEquals(variation.get("name"), "Variation-2")
 
-    def test_get_variation_return_variation_3(self):
-        variation = self.bucketer.get_variation(self.variations, 10000)
+    def test_get_allocated_item_return_variation_3(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 10000)
         self.assertEquals(variation.get("name"), "Variation-3")
 
-    def test_get_variation_return_none(self):
-        variation = self.bucketer.get_variation(self.variations, 10001)
+    def test_get_allocated_item_return_none(self):
+        variation = self.bucketer.get_allocated_item(self.variations, 10001)
         self.assertIsNone(variation)
 
     def test_get_bucket_value_for_multiple_user_ids(self):

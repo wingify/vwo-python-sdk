@@ -1,0 +1,1427 @@
+{
+    "commonSettingsFile": {
+        "sdkKey": "random",
+        "campaignGroups": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+        },
+        "groups": {
+            "1": {
+                "name": "Group 1",
+                "campaigns": [
+                    1,
+                    2,
+                    3
+                ]
+            }
+        },
+        "campaigns": [
+            {
+                "id": 1,
+                "name": "Campaign-1",
+                "segments": {
+                    "or": [
+                        {
+                            "custom_variable": {
+                                "c1": "regex(1)"
+                            }
+                        }
+                    ]
+                },
+                "status": "RUNNING",
+                "percentTraffic": 100,
+                "goals": [
+                    {
+                        "identifier": "a",
+                        "id": 1,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "isForcedVariationEnabled": true,
+                "key": "c1",
+                "variations": [
+                    {
+                        "changes": {},
+                        "id": 1,
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "1"
+                                    }
+                                }
+                            ]
+                        },
+                        "name": "Control",
+                        "weight": 50
+                    },
+                    {
+                        "changes": {},
+                        "id": 2,
+                        "segments": {},
+                        "name": "Variation-1",
+                        "weight": 50
+                    }
+                ],
+                "type": "VISUAL_AB"
+            },
+            {
+                "id": 2,
+                "name": "Campaign-2",
+                "segments": {
+                    "or": [
+                        {
+                            "custom_variable": {
+                                "c2": "regex(1)"
+                            }
+                        }
+                    ]
+                },
+                "status": "RUNNING",
+                "percentTraffic": 100,
+                "goals": [
+                    {
+                        "identifier": "dscsdc",
+                        "id": 2,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "isForcedVariationEnabled": true,
+                "key": "c2",
+                "variations": [
+                    {
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c2": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "changes": {},
+                        "id": 1,
+                        "variables": {},
+                        "isFeatureEnabled": false,
+                        "weight": 50,
+                        "name": "Control"
+                    },
+                    {
+                        "segments": {},
+                        "changes": {},
+                        "id": 2,
+                        "variables": {},
+                        "isFeatureEnabled": true,
+                        "weight": 50,
+                        "name": "Variation-1"
+                    }
+                ],
+                "type": "FEATURE_TEST"
+            },
+            {
+                "id": 3,
+                "name": "Campaign-3",
+                "segments": {
+                    "or": [
+                        {
+                            "custom_variable": {
+                                "c3": "regex(1)"
+                            }
+                        }
+                    ]
+                },
+                "status": "RUNNING",
+                "percentTraffic": 0,
+                "goals": [
+                    {
+                        "identifier": "a",
+                        "id": 1,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "isForcedVariationEnabled": true,
+                "key": "c3",
+                "variations": [
+                    {
+                        "changes": {},
+                        "id": 1,
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "name": "Control",
+                        "weight": 50
+                    },
+                    {
+                        "changes": {},
+                        "id": 2,
+                        "segments": {},
+                        "name": "Variation-1",
+                        "weight": 50
+                    }
+                ],
+                "type": "VISUAL_AB"
+            }
+        ],
+        "accountId": -1,
+        "version": 1
+    },
+    "1": {
+        "description": "variation should be allocated as whitelisting conditions satisfy for called campaign",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true
+        },
+        "campaignKey": "c1",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": "Control"
+    },
+    "2": {
+        "description": "variation shouldn't be allocated as whitelisting conditions don't satisfy for called campaign, but do for other campaigns",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true
+        },
+        "campaignKey": "c1",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 1,
+                "c3": 1
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": null
+    },
+    "3": {
+        "description": "variation shouldn't be assigned as whitelisting, user storage and pre-segment fails for called campaign thus not a part of eligible campaigns",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true
+        },
+        "campaignKey": "c1",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 0,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": null
+    },
+    "4": {
+        "description": "variation shouldn't be assigned as percentage traffic of called campaign is 0 thus not a part of eligible campaigns",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true
+        },
+        "campaignKey": "c3",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": null
+    },
+    "5": {
+        "description": "variation should be assigned as pre-segment satisfies only for this campaign and then get variation should be stored in userStorage",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c1",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 0,
+                "c3": 0
+            }
+        },
+        "expectation": "Control"
+    },
+    "6": {
+        "description": "variation should be allocated as murmur logic will decide current campaign and called campaign is part and winner of eligible campaigns",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c1",
+        "userId": "Bill",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": "Control"
+    },
+    "7": {
+        "description": "feature should be enabled and variation should be allocated as murmur logic will decide current campaign and only called campaign is part of eligible campaigns",
+        "vwoParameters": {
+            "settingsFile": null,
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c2",
+        "userId": "Bill",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 0,
+                "c2": 1,
+                "c3": 0
+            }
+        },
+        "expectation": [false, "Control"]
+    },
+    "8": {
+        "description": "feature should enabled and variation should be allocated as murmur logic will decide current campaign and called campaign part of eligible groups after traffic normalization",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1,
+                    "3": 1
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2,
+                            3
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 25,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c1",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c1": "1"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c2": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 50,
+                        "goals": [
+                            {
+                                "identifier": "dscsdc",
+                                "id": 2,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c2",
+                        "variations": [
+                            {
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c2": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "changes": {},
+                                "id": 1,
+                                "variables": {},
+                                "isFeatureEnabled": false,
+                                "weight": 50,
+                                "name": "Control"
+                            },
+                            {
+                                "segments": {},
+                                "changes": {},
+                                "id": 2,
+                                "variables": {},
+                                "isFeatureEnabled": true,
+                                "weight": 50,
+                                "name": "Variation-1"
+                            }
+                        ],
+                        "type": "FEATURE_TEST"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Campaign-3",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 25,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c3",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c3": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c2",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": [true, "Variation-1"]
+    },
+    "9": {
+        "description": "feature should not enabled and variation not should be allocated as murmur logic will decide current campaign and called campaign not part of eligible campaigns after traffic normalization",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1,
+                    "3": 1
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2,
+                            3
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 45,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c1",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c1": "1"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c2": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 10,
+                        "goals": [
+                            {
+                                "identifier": "dscsdc",
+                                "id": 2,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c2",
+                        "variations": [
+                            {
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c2": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "changes": {},
+                                "id": 1,
+                                "variables": {},
+                                "isFeatureEnabled": false,
+                                "weight": 50,
+                                "name": "Control"
+                            },
+                            {
+                                "segments": {},
+                                "changes": {},
+                                "id": 2,
+                                "variables": {},
+                                "isFeatureEnabled": true,
+                                "weight": 50,
+                                "name": "Variation-1"
+                            }
+                        ],
+                        "type": "FEATURE_TEST"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Campaign-3",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 45,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c3",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c3": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c2",
+        "userId": "Bill",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": [false, null]
+    },
+    "10": {
+        "description": "changing group should change winner campaign from eligible campaigns",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1,
+                    "3": 1,
+                    "4": 2,
+                    "5": 2
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    "2": {
+                        "name": "Group 2",
+                        "campaigns": [
+                            4,
+                            5
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 100,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c1",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c1": "1"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c2": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 100,
+                        "goals": [
+                            {
+                                "identifier": "dscsdc",
+                                "id": 2,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c2",
+                        "variations": [
+                            {
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c2": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "changes": {},
+                                "id": 1,
+                                "variables": {},
+                                "isFeatureEnabled": false,
+                                "weight": 50,
+                                "name": "Control"
+                            },
+                            {
+                                "segments": {},
+                                "changes": {},
+                                "id": 2,
+                                "variables": {},
+                                "isFeatureEnabled": true,
+                                "weight": 50,
+                                "name": "Variation-1"
+                            }
+                        ],
+                        "type": "FEATURE_TEST"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Campaign-3",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 0,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c3",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c3": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "goals": [
+                            {
+                                "identifier": "abcd",
+                                "id": 1,
+                                "type": "REVENUE_TRACKING"
+                            },
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 214,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 50
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 50
+                            }
+                        ],
+                        "id": 4,
+                        "name": "Campaign-4",
+                        "percentTraffic": 100,
+                        "key": "c4",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "goals": [
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 215,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 20
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 80
+                            }
+                        ],
+                        "id": 5,
+                        "name": "Campaign-5",
+                        "percentTraffic": 100,
+                        "key": "c5",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true
+        },
+        "campaignKey": "c2",
+        "userId": "Dominic",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0,
+                "c3": 0,
+                "c4": 0,
+                "c5": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1,
+                "c4": 1,
+                "c5": 1
+            }
+        },
+        "expectation": [true, "Variation-1"]
+    },
+    "11": {
+        "description": "variation should be allocated as earlier campaign was not part of meg but stored in user storage and later was made part of meg and other campaigns satisfies whitelisting",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 100,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c1",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c1": "1"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c2": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 100,
+                        "goals": [
+                            {
+                                "identifier": "dscsdc",
+                                "id": 2,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c2",
+                        "variations": [
+                            {
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c2": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "changes": {},
+                                "id": 1,
+                                "variables": {},
+                                "isFeatureEnabled": false,
+                                "weight": 50,
+                                "name": "Control"
+                            },
+                            {
+                                "segments": {},
+                                "changes": {},
+                                "id": 2,
+                                "variables": {},
+                                "isFeatureEnabled": true,
+                                "weight": 50,
+                                "name": "Variation-1"
+                            }
+                        ],
+                        "type": "FEATURE_TEST"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Campaign-3",
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c3": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "status": "RUNNING",
+                        "percentTraffic": 100,
+                        "goals": [
+                            {
+                                "identifier": "a",
+                                "id": 1,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "isForcedVariationEnabled": true,
+                        "key": "c3",
+                        "variations": [
+                            {
+                                "changes": {},
+                                "id": 1,
+                                "segments": {
+                                    "or": [
+                                        {
+                                            "custom_variable": {
+                                                "c3": "regex(1)"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "name": "Control",
+                                "weight": 50
+                            },
+                            {
+                                "changes": {},
+                                "id": 2,
+                                "segments": {},
+                                "name": "Variation-1",
+                                "weight": 50
+                            }
+                        ],
+                        "type": "VISUAL_AB"
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c3",
+        "userId": "Dominic",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 0
+            },
+            "customVariables": {
+                "c1": 1,
+                "c2": 1,
+                "c3": 1
+            }
+        },
+        "expectation": "Variation-1"
+    },
+    "12": {
+        "description": "variation should not be allocated as other campaign found in user storage",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "goals": [
+                            {
+                                "identifier": "abcd",
+                                "id": 1,
+                                "type": "REVENUE_TRACKING"
+                            },
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 214,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 50
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 50
+                            }
+                        ],
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "percentTraffic": 100,
+                        "key": "c1",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "goals": [
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 215,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 20
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 80
+                            }
+                        ],
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "percentTraffic": 100,
+                        "key": "c2",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB"
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c2",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0
+            },
+            "customVariables": {
+                "c1": 0,
+                "c2": 0
+            }
+        },
+        "expectation": null
+    },
+    "13": {
+        "description": "variation should not be allocated as no campaign of group is eligible",
+        "vwoParameters": {
+            "settingsFile": {
+                "sdkKey": "random",
+                "campaignGroups": {
+                    "1": 1,
+                    "2": 1
+                },
+                "groups": {
+                    "1": {
+                        "name": "Group 1",
+                        "campaigns": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                "campaigns": [
+                    {
+                        "goals": [
+                            {
+                                "identifier": "abcd",
+                                "id": 1,
+                                "type": "REVENUE_TRACKING"
+                            },
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 214,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 50
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 50
+                            }
+                        ],
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "id": 1,
+                        "name": "Campaign-1",
+                        "percentTraffic": 100,
+                        "key": "c1",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB"
+                    },
+                    {
+                        "goals": [
+                            {
+                                "identifier": "CUSTOM",
+                                "id": 215,
+                                "type": "CUSTOM_GOAL"
+                            }
+                        ],
+                        "variations": [
+                            {
+                                "id": 1,
+                                "name": "Control",
+                                "changes": {},
+                                "weight": 20
+                            },
+                            {
+                                "id": 2,
+                                "name": "Variation-1",
+                                "changes": {},
+                                "weight": 80
+                            }
+                        ],
+                        "segments": {
+                            "or": [
+                                {
+                                    "custom_variable": {
+                                        "c1": "regex(1)"
+                                    }
+                                }
+                            ]
+                        },
+                        "id": 2,
+                        "name": "Campaign-2",
+                        "percentTraffic": 100,
+                        "key": "c2",
+                        "status": "RUNNING",
+                        "type": "VISUAL_AB"
+                    }
+                ],
+                "accountId": -1,
+                "version": 1
+            },
+            "isDevelopmentMode": true,
+            "userStorageService": true
+        },
+        "campaignKey": "c1",
+        "userId": "Ashley",
+        "options": {
+            "variationTargetingVariables": {
+                "c1": 0,
+                "c2": 0
+            },
+            "customVariables": {
+                "c1": 0,
+                "c2": 0
+            }
+        },
+        "expectation": null
+    }
+}

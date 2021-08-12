@@ -16,6 +16,7 @@
 
 from __future__ import division
 import math
+import copy
 from ..constants import constants
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
@@ -26,7 +27,7 @@ FILE = FileNameEnum.Helpers.CampaignUtil
 
 
 def get_campaign(settings_file, campaign_key):
-    """ Finds and Returns campaign from given campaign_key.
+    """Finds and Returns campaign from given campaign_key.
 
     Args:
         settings_file (dict): Settings file for the project
@@ -47,7 +48,7 @@ def get_campaign(settings_file, campaign_key):
 
 
 def get_campaigns(settings_file, campaign_keys):
-    """ Finds and Returns campaign from given campaign_keys.
+    """Finds and Returns campaign from given campaign_keys.
 
     Args:
         settings_file (dict): Settings file for the project
@@ -75,13 +76,12 @@ def get_campaigns(settings_file, campaign_keys):
 
 
 def set_variation_allocation(campaign):
-    """ Sets variation allocation range in the provided campaign.
+    """Sets variation allocation range in the provided campaign.
 
     Args:
         campaign (dict): Campaign object
     """
-    variation_allocations_ranges = get_variation_allocation_ranges(campaign.get("variations"))
-    set_variation_allocation_from_ranges(campaign.get("variations"), variation_allocations_ranges)
+    set_allocation_ranges(campaign.get("variations"))
     for variation in campaign.get("variations"):
         VWOLogger.getInstance().log(
             LogLevelEnum.INFO,
@@ -90,54 +90,53 @@ def set_variation_allocation(campaign):
                 campaign_key=campaign.get("key"),
                 variation_name=variation.get("name"),
                 variation_weight=variation.get("weight"),
-                start=variation.get("start_variation_allocation"),
-                end=variation.get("end_variation_allocation"),
+                start=variation.get("allocation_range_start"),
+                end=variation.get("allocation_range_end"),
             ),
         )
 
 
-def set_variation_allocation_from_ranges(variations, variation_allocations_ranges):
-    """Sets variations allocation ranges on each variation as start_variation_allocation and
-    end_variation_allocation.
+def set_allocation_ranges(items):
+    """Sets allocation range on each item(variation/campaign) as allocation_range_start
+    and allocation_range_end.
 
     Args:
-        variations(list): List of variation objects
-        variation_allocation_ranges(list): List of tuples having starting and ending variation
-        allocation range for each variation
+        items (list): List of item(variation/campaign) objects
     """
-    for i, variation in enumerate(variations):
-        variation.update(
-            start_variation_allocation=variation_allocations_ranges[i][0],
-            end_variation_allocation=variation_allocations_ranges[i][1],
-        )
+
+    allocation_ranges = get_allocation_ranges(items)
+    for i, item in enumerate(items):
+        item.update(allocation_range_start=allocation_ranges[i][0], allocation_range_end=allocation_ranges[i][1])
 
 
-def get_variation_allocation_ranges(variations):
-    """ Returns a list of variation allocation ranges.
+def get_allocation_ranges(items):
+    """Returns a list of allocation ranges from the weights of corresponding items.
 
     Args:
-        variations (list): List of variation(dict object)
+        items (list): List of item(variation/campaign) objects
 
     Returns:
         list(tuple): list of tuple(start_range, end_range) for each
         variation
     """
+
+    weights = [item.get("weight") for item in items]
     current_allocation = 0
-    variation_allocation_ranges = []
-    for variation in variations:
-        step_factor = _get_variation_bucketing_range(variation.get("weight"))
+    allocation_ranges = []
+    for weight in weights:
+        step_factor = _get_bucketing_range(weight)
         if step_factor:
             start_range = current_allocation + 1
             end_range = current_allocation + step_factor
-            variation_allocation_ranges.append((start_range, end_range))
+            allocation_ranges.append((start_range, end_range))
             current_allocation += step_factor
         else:
-            variation_allocation_ranges.append((-1, -1))
-    return variation_allocation_ranges
+            allocation_ranges.append((-1, -1))
+    return allocation_ranges
 
 
-def _get_variation_bucketing_range(weight):
-    """ Returns the bucket size of variation.
+def _get_bucketing_range(weight):
+    """Returns the bucket size of variation.
 
     Args:
         weight (int|float): weight of variation
@@ -153,7 +152,7 @@ def _get_variation_bucketing_range(weight):
 
 
 def get_campaigns_with_goal_id(campaigns, goal_identifer):
-    """ Returns campaigns having the same goal_identifier passed in the args
+    """Returns campaigns having the same goal_identifier passed in the args
     from the campaigns list
 
     Args:
@@ -176,7 +175,7 @@ def get_campaigns_with_goal_id(campaigns, goal_identifer):
 
 
 def get_campaign_goal(campaign, goal_identifier):
-    """ Returns goal from given campaign and Goal_identifier.
+    """Returns goal from given campaign and Goal_identifier.
 
     Args:
         campaign (dict): The running campaign
@@ -195,7 +194,7 @@ def get_campaign_goal(campaign, goal_identifier):
 
 
 def get_campaign_variation(campaign, variation_name):
-    """ Returns variation from given campaign and variation_name.
+    """Returns variation from given campaign and variation_name.
 
     Args:
         campaign (dict): The running campaign
@@ -214,7 +213,7 @@ def get_campaign_variation(campaign, variation_name):
 
 
 def get_variable(variables, variable_key):
-    """ Returns variable from given variables list.
+    """Returns variable from given variables list.
 
     Args:
         variables (list): List of variables, whether in campaigns or
@@ -231,7 +230,7 @@ def get_variable(variables, variable_key):
 
 
 def get_control_variation(campaign):
-    """ Returns control variation from a given campaign
+    """Returns control variation from a given campaign
 
     Args:
         campaign (dict): Running campaign
@@ -246,7 +245,7 @@ def get_control_variation(campaign):
 
 
 def scale_variations(variations):
-    """ It extracts the weights from all the variations inside the campaign
+    """It extracts the weights from all the variations inside the campaign
     and scales them so that the total sum of eligible variations' weights become 100%
 
     Args:
@@ -260,3 +259,58 @@ def scale_variations(variations):
     else:
         for variation in variations:
             variation["weight"] = (variation["weight"] / weight_sum) * 100
+
+
+def scale_campaigns(campaigns):
+    """It extracts the weights from all the campaigns and scales them so that
+    the total sum of eligible campaigns' weights become 100%.
+
+    Args:
+        campaigns(list): list of campaigns(dict object) having weight as a property
+    """
+
+    normalized_weight = 100 / len(campaigns)
+    for campaign in campaigns:
+        campaign["weight"] = normalized_weight
+
+
+def is_part_of_group(settings_file, campaign_id):
+    """Checks whether a campaign is part of a group.
+
+    Args:
+        settings_file (dict): Settings file for the project
+        campaign_id (int): Id of campaign which is to be checked
+
+    Returns:
+        bool: True if campaign part of any group else False
+    """
+    campaignGroups = settings_file.get("campaignGroups")
+    if campaignGroups and str(campaign_id) in campaignGroups:
+        return True
+    return False
+
+
+def get_group_campaigns(settings_file, group_id):
+    """Returns campaigns which are part of given group using group_id.
+
+    Args:
+        settings_file (dict): Settings file for the project
+        group_id (int): id of group whose campaigns are to be return
+
+    Returns:
+        group_campaigns (list): campaigns part of given group
+    """
+    group_campaign_ids = []
+    group_campaigns = []
+
+    groups = settings_file.get("groups")
+    if groups and str(group_id) in groups:
+        group_campaign_ids = groups.get(str(group_id)).get("campaigns")
+
+    if group_campaign_ids:
+        for campaign_id in group_campaign_ids:
+            for campaign in settings_file.get("campaigns"):
+                if campaign.get("id") == campaign_id and campaign.get("status") == constants.STATUS_RUNNING:
+                    group_campaigns.append(copy.copy(campaign))
+
+    return group_campaigns
