@@ -1,8 +1,8 @@
 # VWO Python SDK
 
 [![PyPI version](https://badge.fury.io/py/vwo-python-sdk.svg)](https://pypi.org/project/vwo-python-sdk)
-[![Build Status](http://img.shields.io/travis/wingify/vwo-python-sdk/master.svg?style=flat)](http://travis-ci.org/wingify/vwo-python-sdk)
-[![Coverage Status](https://coveralls.io/repos/github/wingify/vwo-python-sdk/badge.svg?branch=master)](https://coveralls.io/github/wingify/vwo-python-sdk?branch=master)
+[![CI](https://github.com/wingify/vwo-python-sdk/workflows/CI/badge.svg?branch=master)](https://github.com/wingify/vwo-python-sdk/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/wingify/vwo-python-sdk/branch/master/graph/badge.svg?token=813UYYMWGM)](https://codecov.io/gh/wingify/vwo-python-sdk)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 This open source library allows you to A/B Test your Website at server-side.

@@ -29,17 +29,15 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, **/requirements-travis.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt, **/requirements-ci.txt') }}
 
     - name: Install packages
       run: |
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        if [ -f requirements-travis.txt ]; then pip install -r requirements-travis.txt; fi
-        coverage run --source=vwo setup.py test 
+        if [ -f requirements-ci.txt ]; then pip install -r requirements-ci.txt; fi
 
     - name: Run tests
       run: coverage run --source=vwo setup.py test 
-
 
     - name: "Upload coverage to Codecov"
       uses: codecov/codecov-action@v1
