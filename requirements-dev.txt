@@ -1,5 +1,5 @@
 bumpversion==0.5.3
-coveralls==1.8.2
+coverage==4.5.4
 mock==3.0.5
 pre-commit==1.17.0
 apache-license-check==0.1.3
