@@ -42,8 +42,6 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         Default value is vwo.LOG_LEVELS.ERROR
         goal_type_to_track (vwo.GOAL_TYPES): which goal type to track when using track
         api. Default value is vwo.GOAL_TYPES.ALL
-        should_track_returning_user (bool): should returning user be tracked again.
-        Default value is False
         batch_events (dict): settings for configuring and enabling event batching
         integrations (object): an integrations service instance for third party integrations
 
@@ -56,7 +54,6 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
 
     log_level = kwargs.get("log_level")
     goal_type_to_track = kwargs.get("goal_type_to_track")
-    should_track_returning_user = kwargs.get("should_track_returning_user")
     batch_event_settings = kwargs.get("batch_events")
     integrations = kwargs.get("integrations")
 
@@ -78,7 +75,6 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
         or not validate_util.is_valid_settings_file(settings_file)
         or (is_development_mode and type(is_development_mode) is not bool)
         or (goal_type_to_track and not validate_util.is_valid_goal_type(goal_type_to_track))
-        or (should_track_returning_user and type(should_track_returning_user) is not bool)
         or (
             batch_event_settings
             and not validate_util.is_valid_batch_event_settings(val=batch_event_settings, file=FILE)
@@ -96,15 +92,8 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
                 storage_service=user_storage,
                 logger=logger,
                 log_level=log_level,
-                should_track_returning_user=should_track_returning_user,
                 goal_type_to_track=goal_type_to_track,
             )
         return VWO(
-            settings_file,
-            user_storage,
-            is_development_mode,
-            goal_type_to_track,
-            should_track_returning_user,
-            batch_event_settings,
-            integrations,
+            settings_file, user_storage, is_development_mode, goal_type_to_track, batch_event_settings, integrations
         )

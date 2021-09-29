@@ -339,11 +339,7 @@ class VariationDecider(object):
             bool: True if goal already tracked else False
         """
         goals_tracked = user_storage_data.get("goalIdentifiers")
-        if (
-            goals_tracked
-            and (goal_data.get("identifier") in goals_tracked.split("_vwo_"))
-            and not goal_data.get("should_track_returning_user")
-        ):
+        if goals_tracked and (goal_data.get("identifier") in goals_tracked.split("_vwo_")):
             return True
         return False
 

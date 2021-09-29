@@ -83,11 +83,3 @@ class LaunchTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), goal_type_to_track=vwo.GOAL_TYPES.ALL
         )
         self.assertIsInstance(vwo_instance, vwo.vwo.VWO)
-
-    def test_launch_invalid_should_track_returning_user_passed(self):
-        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), should_track_returning_user="abcd")
-        self.assertIsNone(vwo_instance)
-
-    def test_launch_valid_should_track_returning_user_passed(self):
-        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_50_W_50_50")), should_track_returning_user=True)
-        self.assertIsInstance(vwo_instance, vwo.vwo.VWO)

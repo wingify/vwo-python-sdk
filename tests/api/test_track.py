@@ -295,27 +295,6 @@ class TrackTest(unittest.TestCase):
     def track_test(self, expected, actual):
         self.assertDictEqual(expected, {self.campaign_key: actual})
 
-    def test_should_track_returning_user_false(self):
-        self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
-        for test in USER_EXPECTATIONS[self.campaign_key]:
-            self.vwo.activate(self.campaign_key, test["user"])
-            self.track_test(
-                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None
-            )
-            self.track_test(self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), False)
-
-    def test_should_track_returning_user_true(self):
-        self.set_up("AB_T_100_W_33_33_33", user_storage=ClientUserStorage())
-        for test in USER_EXPECTATIONS[self.campaign_key]:
-            self.vwo.activate(self.campaign_key, test["user"])
-            self.track_test(
-                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier), test["variation"] is not None
-            )
-            self.track_test(
-                self.vwo.track(self.campaign_key, test["user"], self.goal_identifier, should_track_returning_user=True),
-                test["variation"] is not None,
-            )
-
     def test_multi_track_none(self):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")),
@@ -553,15 +532,6 @@ class TrackTest(unittest.TestCase):
         result = vwo_instance.track(None, "user", "track2", goal_type_to_track="vwo.GOAL_TYPES.CUSTOM")
         self.assertIsNone(result)
 
-    def test_invalid_should_track_returning_user_passed_should_return_None(self):
-        vwo_instance = vwo.launch(
-            json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True
-        )
-        vwo_instance.activate("global_test_1", "user")
-        vwo_instance.is_feature_enabled("feature_test_1", "user")
-        result = vwo_instance.track(None, "user", "track2", should_track_returning_user="True")
-        self.assertIsNone(result)
-
     def test_no_global_goal_found(self):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("GLOBAL_TRACK_SETTINGS_FILE")), is_development_mode=True
@@ -587,13 +557,12 @@ class TrackTest(unittest.TestCase):
         vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
         self.assertEquals(user_storage.get("user", "AB_T_100_W_50_50").get("goalIdentifiers"), "CUSTOM")
 
-
     def test_track_should_work_when_called_before_is_feature_enabled_when_no_user_storage_provided(self):
-        vwo_instance = vwo.launch(
-            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True
-        )
+        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True)
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.track("FT_T_100_W_10_20_30_40", "user", "FEATURE_TEST_GOAL")
             self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
@@ -601,11 +570,11 @@ class TrackTest(unittest.TestCase):
             mock_event_dispatcher_dispatch.reset_mock()
 
     def test_track_should_work_when_called_before_activate_when_no_user_storage_provided(self):
-        vwo_instance = vwo.launch(
-            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True
-        )
+        vwo_instance = vwo.launch(json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True)
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
             self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.activate("AB_T_100_W_50_50", "user")
@@ -615,10 +584,14 @@ class TrackTest(unittest.TestCase):
     def test_track_should_fail_when_called_before_is_feature_enabled_when_user_storage_provided(self):
         user_storage = ClientUserStorage()
         vwo_instance = vwo.launch(
-            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, user_storage=user_storage
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")),
+            is_development_mode=True,
+            user_storage=user_storage,
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.track("FT_T_100_W_10_20_30_40", "user", "FEATURE_TEST_GOAL")
             self.assertEqual(mock_event_dispatcher_dispatch.call_count, 0)
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
@@ -631,7 +604,9 @@ class TrackTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True, user_storage=user_storage
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
             self.assertEqual(mock_event_dispatcher_dispatch.call_count, 0)
             vwo_instance.activate("AB_T_100_W_50_50", "user")

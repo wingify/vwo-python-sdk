@@ -28,7 +28,6 @@ class UsageStats:
             integrations (object): an integrations service instance for third party integrations
             storage_service (object): a storage service object capable of doing get and set on
                 SDK provide data
-            should_track_returning_user (bool): should returning user be tracked again.
             goal_type_to_track (vwo.GOAL_TYPES): which goal type to track when using track api.
             logger (object): an object capable of logging events happening inside the SDK
             log_level (vwo.LOG_LEVELS): a log_level with which SDK should be initialized.
@@ -37,7 +36,6 @@ class UsageStats:
         batch_event_settings = kwargs.get("batch_event_settings")
         integrations = kwargs.get("integrations")
         storage_service = kwargs.get("storage_service")
-        should_track_returning_user = kwargs.get("should_track_returning_user")
         goal_type_to_track = kwargs.get("goal_type_to_track")
         logger = kwargs.get("logger")
         log_level = kwargs.get("log_level")
@@ -48,7 +46,6 @@ class UsageStats:
             "ss": int(bool(storage_service)),
             "cl": int(bool(logger)),
             "ll": int(bool(log_level)),
-            "tr": int(bool(should_track_returning_user)),
             "gt": int(bool(goal_type_to_track)),
         }
 

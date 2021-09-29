@@ -32,14 +32,7 @@ class VWO(object):
     """ Core class of the SDK, consisting all the APIs featured in VWO Full Stack Server Side Testing """
 
     def __init__(
-        self,
-        settings_file,
-        user_storage,
-        is_development_mode,
-        goal_type_to_track,
-        should_track_returning_user,
-        batch_event_settings,
-        integrations,
+        self, settings_file, user_storage, is_development_mode, goal_type_to_track, batch_event_settings, integrations
     ):
         """__init__ method to initialize the VWO object, all the argument types should be pre-checked.
         Else object initialization fails.
@@ -53,8 +46,6 @@ class VWO(object):
             it toggles the event_dispatcher to off
             goal_type_to_track (vwo.GOAL_TYPES): which goal type to track when using track
             api. Default value is vwo.GOAL_TYPES.ALL
-            should_track_returning_user (bool): should returning user be tracked again.
-            Default value is False
             batch_events_settings (dict): settings for configuring and enabling event batching
             integrations (dict): an integrations service instance for third party integrations
         """
@@ -75,7 +66,6 @@ class VWO(object):
             sdk_key=self.settings_file.get("sdkKey"),
         )
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
-        self.should_track_returning_user = should_track_returning_user or False
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
 
     # PUBLIC METHODS

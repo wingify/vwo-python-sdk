@@ -91,7 +91,7 @@ class LogMessageEnum:
 
         SEGMENTATION_STATUS = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} with variables: {variables} {status} {segmentation_type} {variation_status}"
 
-        GOAL_ALREADY_TRACKED = "({file}): [API_NAME] Goal:{goal_identifier} of Campaign:{campaign_key} for User ID:{user_id} has already been tracked earlier. Skipping now. Check docs on how to force tracking for returning visitors."
+        GOAL_ALREADY_TRACKED = "({file}): [API_NAME] Goal:{goal_identifier} of Campaign:{campaign_key} for User ID:{user_id} has already been tracked earlier. Skipping now."
         USER_ALREADY_TRACKED = "({file}): [API_NAME] User ID:{user_id} for Campaign:{campaign_key} has already been tracked earlier for '{api_method}' API. Skipping now"
         SETTINGS_FILE_UPDATED = "({file}): [API_NAME] vwo_sdk_instance is updated with the latest settings_file"
         SETTINGS_FILE_NOT_UPDATED = "({file}): [API_NAME] settings_file fetched are same as earlier fetched settings"
@@ -120,7 +120,7 @@ class LogMessageEnum:
         LAUNCH_API_INVALID_PARAMS = (
             "({file}): [API_NAME] Params passed to the launch API are not correct. Please refer the docs.."
         )
-        ACTIVATE_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument, custom_variables(dict) for pre-segmentation, variation_targeting_variables(dict) for white-listing and should_track_returning_user(bool) for tracking returning users can be passed via kwargs"
+        ACTIVATE_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument, custom_variables(dict) for pre-segmentation and variation_targeting_variables(dict) for white-listing can be passed via kwargs"
         API_CONFIG_CORRUPTED = "({file}): [API_NAME] API has corrupted configuration"
         GET_VARIATION_NAME_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument, custom_variables(dict) for pre-segmentation and variation_targeting_variables(dict) for white-listing can be passed via kwargs"
         TRACK_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String or Array of Strings or None) as first user_id(String) as second and goal_identifier(String/Number) as third argument. revenue_value(Float/Number/String) can be passed through kwargs and is required for revenue goal only. custom_variables(dict) for pre-segmentation and variation_targeting_variables(dict) for white-listing can be passed via kwargs"
@@ -141,7 +141,7 @@ class LogMessageEnum:
         CUSTOM_LOGGER_MISCONFIGURED = "({file}): [API_NAME] Custom logger is provided but seems to have misconfigured. {extra_info} Please check the API Docs. Using default logger."
 
         INVALID_API = "({file}): [API_NAME] API is not valid for user ID: {user_id} in campaign ID: {campaign_key} having campaign type: {campaign_type}."
-        IS_FEATURE_ENABLED_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument, custom_variables(dict) for pre-segmentation, variation_targeting_variables(dict) for white-listing and should_track_returning_user(bool) for tracking returning users can be passed via kwargs"
+        IS_FEATURE_ENABLED_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first and user_id(String) as second argument, custom_variables(dict) for pre-segmentation and variation_targeting_variables(dict) for white-listing can be passed via kwargs"
         GET_FEATURE_VARIABLE_VALUE_API_INVALID_PARAMS = "({file}): [API_NAME] API got bad parameters. It expects campaign_key(String) as first, variable_key(string) as second and user_id(String) as third argument, custom_variables(dict) for pre-segmentation and variation_targeting_variables(dict) for white-listing can be passed via kwargs"
 
         VARIABLE_NOT_FOUND = "({file}): [API_NAME] Variable {variable_key} not found for campaign {campaign_key} and type {campaign_type} for user ID {user_id}"

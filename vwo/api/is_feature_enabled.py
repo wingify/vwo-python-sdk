@@ -42,7 +42,6 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     Keywork Args:
         custom_variables (dict): Custom variables required for segmentation
         variation_targeting_variables (dict): Whitelisting variables to target users
-        should_track_returning_user (bool): should returning user be tracked again.
 
     Returns:
         bool: True if user becomes part of feature test/rollout,
@@ -53,15 +52,10 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
-    should_track_returning_user = kwargs.get("should_track_returning_user")
-
-    if should_track_returning_user is None:
-        should_track_returning_user = vwo_instance.should_track_returning_user or False
 
     if (
         not validate_util.is_valid_string(campaign_key)
         or not validate_util.is_valid_string(user_id)
-        or not validate_util.is_valid_bool(should_track_returning_user)
         or (custom_variables is not None and not validate_util.is_valid_dict(custom_variables))
         or (
             variation_targeting_variables is not None and not validate_util.is_valid_dict(variation_targeting_variables)
@@ -109,7 +103,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
         return False
 
     # track user if user has not already been tracked
-    if is_user_tracked is False or should_track_returning_user:
+    if is_user_tracked is False:
         impression = impression_util.create_impression(
             vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
         )

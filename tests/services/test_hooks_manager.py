@@ -105,7 +105,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 
@@ -139,7 +138,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 
@@ -171,7 +169,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("FR_T_100_W_100")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 
@@ -202,7 +199,6 @@ class HooksManagerTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("FR_T_100_W_100")),
             is_development_mode=True,
             log_level=40,
-            should_track_returning_user=False,
             user_storage=ClientUserStorage(),
             integrations=Integrations(),
         )
@@ -239,7 +235,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("T_100_W_50_50_WS")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 
@@ -272,7 +267,6 @@ class HooksManagerTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")),
             is_development_mode=True,
             log_level=40,
-            should_track_returning_user=False,
             user_storage=ClientUserStorage(),
             integrations=Integrations(),
         )
@@ -310,7 +304,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 
@@ -346,7 +339,6 @@ class HooksManagerTest(unittest.TestCase):
                 json.dumps(SETTINGS_FILES.get("T_100_W_50_50_WS")),
                 is_development_mode=True,
                 log_level=40,
-                should_track_returning_user=False,
                 integrations=Integrations(),
             )
 

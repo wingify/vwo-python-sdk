@@ -43,7 +43,6 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         It is the revenue generated on triggering the goal
         custom_variables (dict): Custom variables required for segmentation
         variation_targeting_variables (dict): Whitelisting variables to target users
-        should_track_returning_user (bool): should returning user be tracked again.
 
     Returns:
         dict|None: None if called for single campaign and no goal tracked or
@@ -74,11 +73,6 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     if goal_type_to_track is None:
         goal_type_to_track = vwo_instance.goal_type_to_track
     elif not validate_util.is_valid_goal_type(goal_type_to_track):
-        valid_params = False
-    should_track_returning_user = kwargs.get("should_track_returning_user")
-    if should_track_returning_user is None:
-        should_track_returning_user = vwo_instance.should_track_returning_user
-    elif type(should_track_returning_user) is not bool:
         valid_params = False
 
     if not valid_params:
@@ -139,7 +133,6 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             custom_variables,
             variation_targeting_variables,
             goal_type_to_track,
-            should_track_returning_user,
         )
         ret_value[campaign.get("key")] = result
     for campaign in campaigns_without_goal:
@@ -156,7 +149,6 @@ def track_campaign_goal(
     custom_variables,
     variation_targeting_variables,
     goal_type_to_track,
-    should_track_returning_user,
 ):
     """
     It marks the conversion of given goal for the given campaign
@@ -175,8 +167,6 @@ def track_campaign_goal(
         variation_targeting_variables (dict): Whitelisting variables to target users
         goal_type_to_track (vwo.GOAL_TYPES): Goal type that should be tracked in case of mixed
         global goal identifier
-        should_track_returning_user (bool): Should a returning user be tracked or not, user_storage
-        is required for this to work
 
     Returns:
         bool: True if goal successfully tracked else False
@@ -217,7 +207,7 @@ def track_campaign_goal(
         campaign,
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
-        goal_data={"identifier": goal.get("identifier"), "should_track_returning_user": should_track_returning_user},
+        goal_data={"identifier": goal.get("identifier")},
         api_method=constants.API_METHODS.TRACK,
     )
 

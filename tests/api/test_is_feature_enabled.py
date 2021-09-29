@@ -24,6 +24,7 @@ from ..data.settings_file_and_user_expectations import USER_EXPECTATIONS
 
 from ..config.config import TEST_LOG_LEVEL
 
+
 class ClientUserStorage:
     def __init__(self):
         self.storage = {}
@@ -199,40 +200,20 @@ class IsFeatureEnabledTest(unittest.TestCase):
                 test["variation"] is not None and test["variation"] not in feature_not_enabled_variations,
             )
 
-    def test_is_feature_enabled_invalid_should_track_returning_user_value_passed(self):
-        self.set_up("FT_T_100_W_10_20_30_40")
-        result = []
-        result.append(self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user='test'))
-        result.append(self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=100))
-        result.append(self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=[]))
-        result.append(self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=()))
-        result.append(self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user={}))
-        self.assertListEqual(result, [False, False, False, False, False])
-
-    def test_is_feature_enabled_valid_should_track_returning_user_value_passed(self):
-        self.set_up("FT_T_100_W_10_20_30_40")
-        result = self.vwo.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=True)
-        self.assertIs(result, True)
-
     def test_is_feature_enabled_check_dedup_no_user_storage_provided(self):
         vwo_instance = vwo.launch(
-            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")),
-            is_development_mode=True,
-            log_level=40,
-            should_track_returning_user=True
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, log_level=40
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
-
-            # Override global should_track_returning_user True value with False
-            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=False)
+            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 3)
-            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=False)
-            self.assertIs(mock_event_dispatcher_dispatch.call_count, 4)
             mock_event_dispatcher_dispatch.reset_mock()
 
     def test_is_feature_enabled_check_dedup_user_storage_provided(self):
@@ -240,20 +221,16 @@ class IsFeatureEnabledTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")),
             is_development_mode=True,
             log_level=40,
-            should_track_returning_user=False,
-            user_storage=ClientUserStorage()
+            user_storage=ClientUserStorage(),
         )
 
-        with mock.patch("vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None) as mock_event_dispatcher_dispatch:
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
-
-            # Override global should_track_returning_user False value with True
-            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=True)
-            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
-            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user", should_track_returning_user=True)
-            self.assertIs(mock_event_dispatcher_dispatch.call_count, 3)
+            vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             mock_event_dispatcher_dispatch.reset_mock()
-
