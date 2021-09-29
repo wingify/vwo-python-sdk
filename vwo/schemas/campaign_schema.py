@@ -31,6 +31,7 @@ CAMPAIGN = {
         "goals": {"if": {"type": "array"}, "then": {"items": GOAL}, "else": EMPTY_OBJECT},
         "variables": {"if": {"type": "array"}, "then": {"items": VARIABLE}, "else": EMPTY_OBJECT},
         "segments": {"type": "object"},
+        "isBucketingSeedEnabled": {"type": "boolean"},
     },
     "required": ["id", "name", "key", "status", "percentTraffic", "variations", "goals"],
 }

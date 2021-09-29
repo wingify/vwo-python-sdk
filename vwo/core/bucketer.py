@@ -15,7 +15,7 @@
 from __future__ import division
 import mmh3 as Hasher
 from ..constants import constants
-from ..helpers import validate_util
+from ..helpers import validate_util, campaign_util
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
@@ -34,7 +34,7 @@ class Bucketer(object):
     the visitors"""
 
     def __init__(self):
-        """ Initializes bucketer with vwo common logger """
+        """Initializes bucketer with vwo common logger"""
         self.logger = VWOLogger.getInstance()
 
     def get_allocated_item(self, items, bucket_value):
@@ -53,7 +53,7 @@ class Bucketer(object):
                 return item
         return None
 
-    def get_bucket_value_for_user(self, user_id, max_value, multiplier=1, disable_logs=False):
+    def get_bucket_value_for_user(self, user_seed, user_id, max_value, multiplier=1, disable_logs=False):
         """Returns Bucket Value of the user by hashing the userId with murmur hash and scaling it down.
 
         Args:
@@ -67,7 +67,7 @@ class Bucketer(object):
             (between 1 to MAX_TRAFFIC_PERCENT)
         """
 
-        hash_value = Hasher.hash(user_id, constants.SEED_VALUE) & U_MAX_32_BIT
+        hash_value = Hasher.hash(user_seed, constants.SEED_VALUE) & U_MAX_32_BIT
         ratio = hash_value / (2 ** 32)
         multiplied_value = (max_value * ratio + 1) * multiplier
         bucket_value = int(multiplied_value)
@@ -112,7 +112,10 @@ class Bucketer(object):
         traffic_allocation = campaign.get("percentTraffic")
 
         value_assigned_to_user = self.get_bucket_value_for_user(
-            user_id, constants.MAX_TRAFFIC_PERCENT, disable_logs=disable_logs
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
+            user_id,
+            constants.MAX_TRAFFIC_PERCENT,
+            disable_logs=disable_logs,
         )
         is_user_part = value_assigned_to_user != 0 and value_assigned_to_user <= traffic_allocation
         self.logger.log(
@@ -155,7 +158,12 @@ class Bucketer(object):
 
         normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
         multiplier = normalize / 100
-        bucket_value = self.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE, multiplier)
+        bucket_value = self.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
+            user_id,
+            constants.MAX_TRAFFIC_VALUE,
+            multiplier,
+        )
 
         self.logger.log(
             LogLevelEnum.DEBUG,

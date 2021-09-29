@@ -175,13 +175,37 @@ class BucketerTest(unittest.TestCase):
 
     def test_get_bucket_value_for_multiple_user_ids(self):
         for test in USER_EXPECTATIONS["USER_AND_BUCKET_VALUES"]:
-            bucket_value = self.bucketer.get_bucket_value_for_user(test["user"], 10000)
+            user_seed = campaign_util.get_bucketing_seed(user_id=test["user"], campaign=test["campaign"])
+            bucket_value = self.bucketer.get_bucket_value_for_user(user_seed, test["user"], 10000)
             self.assertEquals(bucket_value, test["bucket_value"])
 
-    def test_get_bucket_value_for_user_64(self):
-        bucket_value = self.bucketer.get_bucket_value_for_user("someone@mail.com", 100)
+    def test_get_bucket_value_for_user_25_someonemailcom(self):
+        campaign = {"id": 1, "isBucketingSeedEnabled": True}
+        user_id = "someone@mail.com"
+
+        bucket_value = self.bucketer.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+        )
+        self.assertEquals(bucket_value, 25)
+
+        campaign["isBucketingSeedEnabled"] = False
+        bucket_value = self.bucketer.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+        )
         self.assertEquals(bucket_value, 64)
 
-    def test_get_bucket_value_for_user_50(self):
-        bucket_value = self.bucketer.get_bucket_value_for_user("1111111111111111", 100)
+    def test_get_bucket_value_for_user_1111111111111111(self):
+        campaign = {"id": 1, "isBucketingSeedEnabled": True}
+        user_id = "1111111111111111"
+
+        campaign = {"id": 1, "isBucketingSeedEnabled": True}
+        bucket_value = self.bucketer.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+        )
+        self.assertEquals(bucket_value, 82)
+
+        campaign["isBucketingSeedEnabled"] = False
+        bucket_value = self.bucketer.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+        )
         self.assertEquals(bucket_value, 50)

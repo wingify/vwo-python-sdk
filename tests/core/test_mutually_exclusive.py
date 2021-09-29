@@ -217,7 +217,7 @@ class MutuallyExclusiveTest(unittest.TestCase):
             variation_targeting_variables=self.variation_targeting_variables,
         )
 
-        self.assertEqual("Variation-1", variation, self.case.get("description"))
+        self.assertEqual("Control", variation, self.case.get("description"))
 
         # Adding c5 campaign as part of another group
         self.vwo_instance.config.settings_file.get("campaignGroups").update({"5": 1})

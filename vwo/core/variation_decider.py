@@ -288,7 +288,7 @@ class VariationDecider(object):
                 ),
             )
 
-            winner_campaign = self._get_winner_campaign(user_id, eligible_campaigns)
+            winner_campaign = self._get_winner_campaign(user_id, eligible_campaigns, group_id)
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_WINNER_CAMPAIGN.format(
@@ -449,7 +449,11 @@ class VariationDecider(object):
                 # Allocate new range
                 campaign_util.set_allocation_ranges(white_listed_variations_list)
                 # Now retrieve the variation from the modified_campaign_for_whitelisting
-                bucket_value = self.bucketer.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE)
+                bucket_value = self.bucketer.get_bucket_value_for_user(
+                    campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
+                    user_id,
+                    constants.MAX_TRAFFIC_VALUE,
+                )
                 targeted_variation = self.bucketer.get_allocated_item(white_listed_variations_list, bucket_value)
             variation_status = "and variation {variation_name} is assigned"
             self.logger.log(
@@ -854,13 +858,14 @@ class VariationDecider(object):
 
         return eligible_campaigns
 
-    def _get_winner_campaign(self, user_id, eligible_campaigns):
+    def _get_winner_campaign(self, user_id, eligible_campaigns, group_id):
         """Finds and returns the winner campaign from eligible_campaigns list.
 
         Args:
             user_id (string): the unique ID assigned to User
             eligible_campaigns (list): campaigns part of group which were
                 eligible to be winner
+            group_id (int): group id of which called campaign is part of
 
         Returns:
             winner_campaign (dict): winner campaign from eligible_campaigns
@@ -874,7 +879,12 @@ class VariationDecider(object):
         # Allocate new range for campaigns
         campaign_util.set_allocation_ranges(eligible_campaigns)
         # Now retrieve the campaign from the modified_campaign_for_whitelisting
-        bucket_value = self.bucketer.get_bucket_value_for_user(user_id, constants.MAX_TRAFFIC_VALUE, disable_logs=True)
+        bucket_value = self.bucketer.get_bucket_value_for_user(
+            campaign_util.get_bucketing_seed(user_id=user_id, group_id=group_id),
+            user_id,
+            constants.MAX_TRAFFIC_VALUE,
+            disable_logs=True,
+        )
         winner_campaign = self.bucketer.get_allocated_item(eligible_campaigns, bucket_value)
 
         return winner_campaign

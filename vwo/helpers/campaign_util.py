@@ -314,3 +314,23 @@ def get_group_campaigns(settings_file, group_id):
                     group_campaigns.append(copy.copy(campaign))
 
     return group_campaigns
+
+
+def get_bucketing_seed(user_id, campaign=None, group_id=None):
+    """Decide the Seed for murmurhash to bucket user.
+
+    Args:
+        user_id (string): ID assigned to a user
+        campaign (dict): Campaign object
+        group_id (int): group id if called campaign is part of group
+
+    Returns:
+        string: user seed for generating hash for bucketing variation/campaigns
+    """
+
+    if group_id:
+        return str(group_id) + "_" + user_id
+    elif campaign and campaign.get("isBucketingSeedEnabled"):
+        return str(campaign.get("id")) + "_" + user_id
+
+    return user_id

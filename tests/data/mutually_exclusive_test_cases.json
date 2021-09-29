@@ -835,7 +835,7 @@
                                 "changes": {},
                                 "id": 1,
                                 "variables": {},
-                                "isFeatureEnabled": false,
+                                "isFeatureEnabled": true,
                                 "weight": 50,
                                 "name": "Control"
                             },
@@ -844,7 +844,7 @@
                                 "changes": {},
                                 "id": 2,
                                 "variables": {},
-                                "isFeatureEnabled": true,
+                                "isFeatureEnabled": false,
                                 "weight": 50,
                                 "name": "Variation-1"
                             }
@@ -988,7 +988,7 @@
             "isDevelopmentMode": true
         },
         "campaignKey": "c2",
-        "userId": "Dominic",
+        "userId": "Akram",
         "options": {
             "variationTargetingVariables": {
                 "c1": 0,
@@ -1005,7 +1005,7 @@
                 "c5": 1
             }
         },
-        "expectation": [true, "Variation-1"]
+        "expectation": [true, "Control"]
     },
     "11": {
         "description": "variation should be allocated as earlier campaign was not part of meg but stored in user storage and later was made part of meg and other campaigns satisfies whitelisting",
