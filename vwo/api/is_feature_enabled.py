@@ -86,11 +86,8 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
         )
         return False
 
-    # check if user has already been tracked
-    is_user_tracked = vwo_instance.variation_decider.identify_tracked_user_from_user_storage(user_id, campaign_key)
-
     # Get variation
-    variation = vwo_instance.variation_decider.get_variation(
+    variation, is_user_tracked = vwo_instance.variation_decider.get_variation(
         user_id,
         campaign,
         custom_variables=custom_variables,

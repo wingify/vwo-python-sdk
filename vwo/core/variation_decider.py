@@ -157,11 +157,11 @@ class VariationDecider(object):
             if self.hooks_manager is not None:
                 self.hooks_manager.execute(decision)
 
-            return targeted_variation
+            return targeted_variation, False
 
-        is_user_tracked = self.identify_tracked_user_from_user_storage(
-            user_id, campaign_key=campaign.get("key"), disable_logs=True
-        )
+        # Try retrieving data from user_storage
+        user_storage_data = self._get_user_storage_data(user_id, campaign.get("key"))
+        is_user_tracked = bool(user_storage_data)
         if (
             bool(self.user_storage) is True
             and is_user_tracked is False
@@ -185,10 +185,8 @@ class VariationDecider(object):
                 ),
             )
 
-            return None
+            return None, is_user_tracked
 
-        # Try retrieving data from user_storage
-        user_storage_data = self._get_user_storage_data(user_id, campaign.get("key"))
         if user_storage_data:
             # If being called by track, check for goals identified
             if goal_data:
@@ -203,7 +201,7 @@ class VariationDecider(object):
                             user_id=user_id,
                         ),
                     )
-                    return None
+                    return None, is_user_tracked
             # Retreving variation from user_storage_data
             variation = self.get_variation_from_user_storage(user_id, campaign, user_storage_data)
             # Setting goal information if variation found and api is track
@@ -223,7 +221,7 @@ class VariationDecider(object):
                 if self.hooks_manager is not None:
                     self.hooks_manager.execute(decision)
 
-                return variation
+                return variation, is_user_tracked
 
         is_presegmentation_and_traffic_passed = self.evaluate_pre_segmentation(
             user_id, campaign, custom_variables
@@ -248,7 +246,7 @@ class VariationDecider(object):
                         user_id=user_id,
                     ),
                 )
-                return None
+                return None, is_user_tracked
 
             # eligible campaigns cannot be empty as atleast called campaign will be present
             eligible_campaigns = self._get_eligible_campaigns(user_id, custom_variables, campaign, group_campaigns)
@@ -300,7 +298,7 @@ class VariationDecider(object):
             )
 
             if winner_campaign and winner_campaign.get("id") == campaign.get("id"):
-                return self._get_bucketed_variation(user_id, campaign, decision, goal_data)
+                return self._get_bucketed_variation(user_id, campaign, decision, goal_data), is_user_tracked
 
             # No winner/variation
             self.logger.log(
@@ -313,11 +311,11 @@ class VariationDecider(object):
                 ),
             )
 
-            return None
+            return None, is_user_tracked
 
         # Evaluate pre-segmentation and percent-traffic
         if is_presegmentation_and_traffic_passed:
-            return self._get_bucketed_variation(user_id, campaign, decision, goal_data)
+            return self._get_bucketed_variation(user_id, campaign, decision, goal_data), is_user_tracked
 
         # No variation
         self.logger.log(
@@ -326,7 +324,7 @@ class VariationDecider(object):
                 file=FILE, user_id=user_id, campaign_key=campaign.get("key"), campaign_type=campaign.get("type")
             ),
         )
-        return None
+        return None, is_user_tracked
 
     def identify_tracked_goal_from_user_storage(self, goal_data, user_storage_data):
         """Identifies whether the given goal has been already tracked or not.
@@ -342,20 +340,6 @@ class VariationDecider(object):
         if goals_tracked and (goal_data.get("identifier") in goals_tracked.split("_vwo_")):
             return True
         return False
-
-    def identify_tracked_user_from_user_storage(self, user_id, campaign_key, disable_logs=False):
-        """Identifies whether a user has been already tracked or not.
-
-        Args:
-            user_id (string): the unique ID assigned to User
-            campaign_key (string): Unique campaign identifier
-            disable_logs (bool): disable logs if True
-
-        Returns:
-            bool: True if user has already been tracked else False
-        """
-        user_storage_data = self._get_user_storage_data(user_id, campaign_key, disable_logs=disable_logs)
-        return bool(user_storage_data)
 
     def update_goals_tracked_in_user_storage(self, goal_data, user_storage_data):
         """Updates the goals tracked information stored inside the user_storage service

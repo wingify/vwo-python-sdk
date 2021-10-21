@@ -202,7 +202,7 @@ def track_campaign_goal(
     if goal_type == constants.GOAL_TYPES.CUSTOM:
         revenue_value = None
 
-    variation = vwo_instance.variation_decider.get_variation(
+    variation, _ = vwo_instance.variation_decider.get_variation(
         user_id,
         campaign,
         custom_variables=custom_variables,

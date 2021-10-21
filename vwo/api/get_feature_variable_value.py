@@ -23,7 +23,7 @@ FILE = FileNameEnum.Api.GetFeatureVariableValue
 
 
 def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_id, **kwargs):
-    """ Returns the feature variable corresponding to the variable_key
+    """Returns the feature variable corresponding to the variable_key
     passed. It typecasts the value to the corresponding value type
     found in settings_file
 
@@ -87,7 +87,7 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
         )
         return None
 
-    variation = vwo_instance.variation_decider.get_variation(
+    variation, _ = vwo_instance.variation_decider.get_variation(
         user_id,
         campaign,
         custom_variables=custom_variables,

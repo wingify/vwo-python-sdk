@@ -72,16 +72,18 @@ class VariationDeciderTest(unittest.TestCase):
 
         # First let variation_decider compute variation, and store
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
+        variation, is_user_tracked = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
+        self.assertFalse(is_user_tracked)
 
         # Now check whether the variation_decider is able to retrieve
         # variation for user_storage, no campaign is required
         # for this.
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
+        variation, is_user_tracked = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
+        self.assertTrue(is_user_tracked)
 
     def test_get_with_broken_set_in_user_storage(self):
         client_db = {}
@@ -96,9 +98,10 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider(US())
 
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
+        variation, is_user_tracked = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
+        self.assertFalse(is_user_tracked)
 
     def test_get_with_broken_get_in_user_storage(self):
         client_db = {}
@@ -114,13 +117,15 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider(US())
 
         user_id = "Sarah"
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
+        variation, is_user_tracked = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
+        self.assertFalse(is_user_tracked)
 
-        variation = variation_decider.get_variation(user_id, self.dummy_campaign)
+        variation, is_user_tracked = variation_decider.get_variation(user_id, self.dummy_campaign)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
+        self.assertFalse(is_user_tracked)
 
     def test__get_user_storage_data_no_get(self):
         variation_decider = VariationDecider()
@@ -202,7 +207,7 @@ class VariationDeciderTest(unittest.TestCase):
         status = variation_decider.evaluate_pre_segmentation("Sarah", campaign, true_custom_variables)
         self.assertEquals(status, True)
 
-    def test_get_white_listed_variations_list_returns_empty_list_all_fails(self,):
+    def test_get_white_listed_variations_list_returns_empty_list_all_fails(self):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = settings_file["campaigns"][0]
@@ -212,7 +217,7 @@ class VariationDeciderTest(unittest.TestCase):
         )
         self.assertFalse(variation_list)
 
-    def test_get_white_listed_variations_list_returns_empty_list_control_empty_segments(self,):
+    def test_get_white_listed_variations_list_returns_empty_list_control_empty_segments(self):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
@@ -223,7 +228,7 @@ class VariationDeciderTest(unittest.TestCase):
         )
         self.assertFalse(variation_list)
 
-    def test_get_white_listed_variations_list_returns_variation_1_list_variation_1_whitelisting_pass(self,):
+    def test_get_white_listed_variations_list_returns_variation_1_list_variation_1_whitelisting_pass(self):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
@@ -235,7 +240,7 @@ class VariationDeciderTest(unittest.TestCase):
         self.assertTrue(variation_list)
         self.assertEquals(variation_list[0].get("name"), "Variation-1")
 
-    def test_get_white_listed_variations_list_returns_all_variation_list_whitelisting_passes_for_all(self,):
+    def test_get_white_listed_variations_list_returns_all_variation_list_whitelisting_passes_for_all(self):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
@@ -289,7 +294,7 @@ class VariationDeciderTest(unittest.TestCase):
         result_user_storage_data = variation_decider._get_user_storage_data("Sarah", "FEATURE_TEST_1")
         self.assertIsNone(result_user_storage_data)
 
-    def test_get_variation_from_user_storage_returns_none_as_garbage_variation_name(self,):
+    def test_get_variation_from_user_storage_returns_none_as_garbage_variation_name(self):
         client_storage = ClientUserStorage()
         variation_decider = VariationDecider(user_storage=client_storage)
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")

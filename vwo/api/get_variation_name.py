@@ -23,7 +23,7 @@ FILE = FileNameEnum.Api.GetVariationName
 
 
 def _get_variation_name(vwo_instance, campaign_key, user_id, **kwargs):
-    """ This API method: Gets the variation name assigned for the
+    """This API method: Gets the variation name assigned for the
         user for the campaign
 
     1. Validates the arguments being passed
@@ -84,7 +84,7 @@ def _get_variation_name(vwo_instance, campaign_key, user_id, **kwargs):
         )
         return None
 
-    variation = vwo_instance.variation_decider.get_variation(
+    variation, _ = vwo_instance.variation_decider.get_variation(
         user_id,
         campaign,
         custom_variables=custom_variables,
