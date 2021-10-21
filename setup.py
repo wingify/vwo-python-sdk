@@ -121,7 +121,7 @@ class PostDevelopCommand(develop):
 
 setup(
     name="vwo-python-sdk",
-    version="1.23.1",
+    version="1.23.2",
     description="Python SDK for VWO server-side A/B Testing",
     long_description=long_description,
     long_description_content_type="text/markdown",
