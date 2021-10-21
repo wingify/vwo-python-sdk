@@ -17,6 +17,7 @@ import unittest
 import json
 import random
 import mock
+import copy
 
 import vwo
 from ..data.settings_files import SETTINGS_FILES
@@ -86,6 +87,52 @@ class IsFeatureEnabledTest(unittest.TestCase):
         self.set_up("FR_T_100_W_100")
         for test in USER_EXPECTATIONS.get("T_100_W_10_20_30_40"):
             self.assertIs(self.vwo.is_feature_enabled("FR_T_100_W_100", test["user"]), test["variation"] is not None)
+
+    def test_is_feature_enabled_FR_T_100_WW(self):
+        settings_file = copy.deepcopy(SETTINGS_FILES.get("FR_T_100_WW"))
+        vwo_instance = vwo.launch(json.dumps(settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        false_variation_targeting_variables = {"safari": "true"}
+        self.assertTrue(
+            vwo_instance.is_feature_enabled(
+                "FR_T_100_WW", "ashley", variation_targeting_variables=false_variation_targeting_variables
+            )
+        )
+
+        self.assertTrue(vwo_instance.is_feature_enabled("FR_T_100_WW", "ashley"))
+
+    def test_is_feature_enabled_FR_T_10_WW(self):
+        settings_file = copy.deepcopy(SETTINGS_FILES.get("FR_T_100_WW"))
+        settings_file["campaigns"][0]["percentTraffic"] = 10
+        vwo_instance = vwo.launch(json.dumps(settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        false_variation_targeting_variables = {"safari": "true"}
+        self.assertTrue(
+            vwo_instance.is_feature_enabled(
+                "FR_T_100_WW", "ashley", variation_targeting_variables=false_variation_targeting_variables
+            )
+        )
+
+        false_variation_targeting_variables = {"safari": "false"}
+        self.assertFalse(
+            vwo_instance.is_feature_enabled(
+                "FR_T_100_WW", "ashley", variation_targeting_variables=false_variation_targeting_variables
+            )
+        )
+
+    def test_is_feature_enabled_FR_T_0_WW(self):
+        settings_file = copy.deepcopy(SETTINGS_FILES.get("FR_T_100_WW"))
+        settings_file["campaigns"][0]["percentTraffic"] = 0
+        vwo_instance = vwo.launch(json.dumps(settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        false_variation_targeting_variables = {"safari": "true"}
+        self.assertTrue(
+            vwo_instance.is_feature_enabled(
+                "FR_T_100_WW", "ashley", variation_targeting_variables=false_variation_targeting_variables
+            )
+        )
+
+        self.assertFalse(vwo_instance.is_feature_enabled("FR_T_100_WW", "ashley"))
 
     def test_is_feature_enabled_FT_T_75_W_10_20_30_40(self):
         self.set_up("FT_T_75_W_10_20_30_40")

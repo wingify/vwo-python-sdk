@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated whitelisting logs for Feature Rollout campaign
+- Test cases added to verify whitelisting cases in Feature Rollout campaign
+
+## [1.23.1] - 2020-10-21
+
+### Changed
+
 - Refactored code to prevent multiple calls to get data from User Storage Service, if used.
 
 ## [1.23.0] - 2021-09-29

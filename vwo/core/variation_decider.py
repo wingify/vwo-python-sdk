@@ -133,16 +133,6 @@ class VariationDecider(object):
         # Evaluate whitelisting at first
         targeted_variation = self.find_targeted_variation(user_id, campaign, variation_targeting_variables)
         if targeted_variation:
-            self.logger.log(
-                LogLevelEnum.INFO,
-                LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
-                    file=FILE,
-                    variation_name=targeted_variation.get("name"),
-                    user_id=user_id,
-                    campaign_key=campaign.get("key"),
-                    campaign_type=campaign.get("type"),
-                ),
-            )
 
             decision.update({"from_user_storage_service": False, "is_user_whitelisted": True})
             if campaign.get("type") == constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT:
@@ -435,18 +425,23 @@ class VariationDecider(object):
                     constants.MAX_TRAFFIC_VALUE,
                 )
                 targeted_variation = self.bucketer.get_allocated_item(white_listed_variations_list, bucket_value)
-            variation_status = "and variation {variation_name} is assigned"
+            variation_status = (
+                "and variation {variation_name} is assigned"
+                if campaign.get("type") != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
+                else ""
+            )
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.SEGMENTATION_STATUS.format(
                     file=FILE,
                     campaign_key=campaign.get("key"),
                     user_id=user_id,
+                    campaign_type=campaign.get("type"),
                     variables=variation_targeting_variables,
                     variation_status=variation_status.format(
                         variation_name=targeted_variation.get("name") if targeted_variation else None
                     ),
-                    segmentation_type="whitelisting",
+                    segmentation_type=constants.SEGMENTATION_TYPES.WHITELISTING,
                     status=ResultStatus.PASSED if targeted_variation is not None else ResultStatus.FAILED,
                 ),
                 disable_logs,
@@ -488,7 +483,7 @@ class VariationDecider(object):
                         file=FILE,
                         user_id=user_id,
                         campaign_key=campaign.get("key"),
-                        segmentation_type="pre_segmentation",
+                        segmentation_type=constants.SEGMENTATION_TYPES.PRE_SEGMENTATION,
                     ),
                     disable_logs,
                 )
@@ -501,9 +496,10 @@ class VariationDecider(object):
                         file=FILE,
                         user_id=user_id,
                         campaign_key=campaign.get("key"),
+                        campaign_type=campaign.get("type"),
                         variables=custom_variables,
                         variation_status="",
-                        segmentation_type="pre_segmentation",
+                        segmentation_type=constants.SEGMENTATION_TYPES.PRE_SEGMENTATION,
                         status=ResultStatus.PASSED if result else ResultStatus.FAILED,
                     ),
                     disable_logs,
@@ -571,7 +567,10 @@ class VariationDecider(object):
             self.logger.log(
                 LogLevelEnum.DEBUG,
                 LogMessageEnum.DEBUG_MESSAGES.NO_VARIABLES.format(
-                    file=FILE, user_id=user_id, campaign_key=campaign.get("key"), segmentation_type="whitelisting"
+                    file=FILE,
+                    user_id=user_id,
+                    campaign_key=campaign.get("key"),
+                    segmentation_type=constants.SEGMENTATION_TYPES.WHITELISTING,
                 ),
                 disable_logs,
             )
@@ -590,7 +589,9 @@ class VariationDecider(object):
                         user_id=user_id,
                         variation_name=variation.get("name"),
                         campaign_key=campaign.get("key"),
-                        variation_status="for variation %s" % variation.get("name"),
+                        variation_status="for variation %s" % variation.get("name")
+                        if campaign.get("type") != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
+                        else "",
                     ),
                     disable_logs,
                 )
@@ -604,9 +605,11 @@ class VariationDecider(object):
                             user_id=user_id,
                             status="passed" if result else "failed",
                             variables=variation_targeting_variables,
-                            variation_status="for variation %s" % variation.get("name"),
+                            variation_status="for variation %s" % variation.get("name")
+                            if campaign.get("type") != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
+                            else "and becomes part of the rollout",
                             campaign_key=campaign.get("key"),
-                            segmentation_type="white_listing",
+                            segmentation_type=constants.SEGMENTATION_TYPES.WHITELISTING,
                         ),
                         disable_logs,
                     )
@@ -740,10 +743,12 @@ class VariationDecider(object):
             LogLevelEnum.INFO,
             LogMessageEnum.INFO_MESSAGES.GOT_VARIATION_FOR_USER.format(
                 file=FILE,
-                variation_name=variation.get("name"),
                 user_id=user_id,
                 campaign_key=campaign.get("key"),
                 campaign_type=campaign.get("type"),
+                variation_status="got variation_name:%s" % variation.get("name")
+                if campaign.get("type") != constants.CAMPAIGN_TYPES.FEATURE_ROLLOUT
+                else "becomes part of rollout",
             ),
         )
 

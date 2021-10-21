@@ -106,6 +106,11 @@ class PUSH_API:
 PY_VARIABLE_TYPES = {"string": str, "integer": int, "double": float, "boolean": bool, "json": dict}
 
 
+class SEGMENTATION_TYPES:
+    WHITELISTING = "whitelisting"
+    PRE_SEGMENTATION = "pre_segmentation"
+
+
 # For exposing log levels to vwo_instance
 class LOG_LEVELS:
     DEBUG = logging.DEBUG

@@ -67,7 +67,7 @@ class LogMessageEnum:
         GOT_STORED_VARIATION = "({file}): [API_NAME] Got stored variation:{variation_name} of campaign_key:{campaign_key} for user_id:{user_id} from UserStorage"
         NO_VARIATION_ALLOCATED = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} type: {campaign_type} did not get any variation"
         USER_ELIGIBILITY_FOR_CAMPAIGN = "({file}): [API_NAME] Is user_id:{user_id} part of campaign? {is_user_part}"
-        GOT_VARIATION_FOR_USER = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} got variation_name:{variation_name}"
+        GOT_VARIATION_FOR_USER = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} {variation_status}"
         USER_GOT_NO_VARIATION = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} did not allot any variation"
         IMPRESSION_SUCCESS = "({file}): [API_NAME] Impression event - {end_point} was successfully received by VWO"
         IMPRESSION_SUCCESS_QUEUE = "({file}): [API_NAME] Impression event - {end_point} was successfully pushed in queue, current queue length : {queue_length}, queue summary: {queue_metadata}"
@@ -89,7 +89,7 @@ class LogMessageEnum:
 
         VARIABLE_FOUND = "({file}): [API_NAME] Value for variable:{variable_key} of campaign_key:{campaign_key} and campaign type: {campaign_type} is:{variable_value} for user:{user_id}"
 
-        SEGMENTATION_STATUS = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} with variables: {variables} {status} {segmentation_type} {variation_status}"
+        SEGMENTATION_STATUS = "({file}): [API_NAME] user_id:{user_id} of campaign_key:{campaign_key} type: {campaign_type} with variables: {variables} {status} {segmentation_type} {variation_status}"
 
         GOAL_ALREADY_TRACKED = "({file}): [API_NAME] Goal:{goal_identifier} of Campaign:{campaign_key} for User ID:{user_id} has already been tracked earlier. Skipping now."
         USER_ALREADY_TRACKED = "({file}): [API_NAME] User ID:{user_id} for Campaign:{campaign_key} has already been tracked earlier for '{api_method}' API. Skipping now"

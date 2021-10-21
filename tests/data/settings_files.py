@@ -348,6 +348,35 @@ SETTINGS_FILES = {
         "accountId": 123456,
         "version": 2,
     },
+    "FR_T_100_WW": {
+        "sdkKey": "someuniquestuff1234567",
+        "groups": {},
+        "campaignGroups": {},
+        "campaigns": [
+            {
+                "goals": [],
+                "variations": [
+                    {
+                        "id": "1",
+                        "name": "Control",
+                        "weight": 100,
+                        "segments": {"or": [{"custom_variable": {"safari": "true"}}]},
+                    }
+                ],
+                "variables": [{"id": 2, "key": "BOOLEAN_VARIABLE", "type": "boolean", "value": True}],
+                "id": 29,
+                "percentTraffic": 100,
+                "isForcedVariationEnabled": True,
+                "key": "FR_T_100_WW",
+                "name": "Campaign-24",
+                "status": "RUNNING",
+                "type": "FEATURE_ROLLOUT",
+                "segments": {},
+            }
+        ],
+        "accountId": 123456,
+        "version": 2,
+    },
     "FR_WRONG_VARIABLE_TYPE": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
