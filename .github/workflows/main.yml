@@ -50,7 +50,7 @@ jobs:
       uses: wingify/slack-github-action@v1.15.1-wingify
       with:
         channel-id: 'fs-review-team'
-        slack-message: "<!here> Test on *Python-${{ matrix.node_version }}* and *${{ matrix.os }}* got *${{job.status}}* ${{job.status == 'success' && ':heavy_check_mark:' || ':x:'}} \nCommit: `${{github.event.head_commit.message}}`. \nCheck the latest build: https://github.com/wingify/vwo-python-sdk/actions"
+        slack-message: "<!here> Test on *Python-${{ matrix.python-version }}* and *${{ matrix.os }}* got *${{job.status}}* ${{job.status == 'success' && ':heavy_check_mark:' || ':x:'}} \nCommit: `${{github.event.head_commit.message}}`. \nCheck the latest build: https://github.com/wingify/vwo-python-sdk/actions"
         color: "${{job.status == 'success' && '#00FF00' || '#FF0000'}}"
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
