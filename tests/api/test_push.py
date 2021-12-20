@@ -53,6 +53,160 @@ class PushTest(unittest.TestCase):
         )
         self.assertIs(False, vwo_instance.push("browser", 1, "12345"))
 
+    def test_push_with_invalid_custom_dimension_map(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            result = self.vwo.push(custom_dimension_map={}, user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 0)
+            self.assertFalse(result)
+
+            self.vwo.push(custom_dimension_map=[1, 2], user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 0)
+            self.assertFalse(result)
+
+            self.vwo.push(custom_dimension_map="invalid_custom_dimension_map", user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 0)
+            self.assertFalse(result)
+            self.vwo.push(custom_dimension_map=9999999, user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 0)
+            self.assertFalse(result)
+
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
+    def test_push_with_custom_dimension_map_without_event_arch_and_event_batching(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.push(custom_dimension_map={"tag_key_1": "tag_value_1"}, user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.push(
+                custom_dimension_map={
+                    "tag_key_1": "tag_value_1",
+                    "tag_key_2": "tag_value_2",
+                    "tag_key_3": "tag_value_3",
+                },
+                user_id="12345",
+            )
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 4)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
+    def test_push_with_custom_dimension_map_and_event_arch_and_without_event_batching(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+
+        event_arch_settings_file = SETTINGS_FILES.get("DUMMY_SETTINGS_FILE").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(json.dumps(event_arch_settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch_events", return_value=None
+        ) as mock_event_dispatcher_dispatch_events:
+            self.vwo.event_dispatcher.dispatch = mock.MagicMock()
+            self.vwo.push(custom_dimension_map={"tag_key_1": "tag_value_1"}, user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch_events.call_count, 1)
+            self.vwo.push(
+                custom_dimension_map={
+                    "tag_key_1": "tag_value_1",
+                    "tag_key_2": "tag_value_2",
+                    "tag_key_3": "tag_value_3",
+                },
+                user_id="12345",
+            )
+            self.assertIs(mock_event_dispatcher_dispatch_events.call_count, 2)
+            mock_event_dispatcher_dispatch_events.reset_mock()
+            self.vwo.event_dispatcher.dispatch.assert_not_called()
+
+    def test_push_with_custom_dimension_map_positional_params(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.push({"tag_key_1": "tag_value_1"}, "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.push({"tag_key_1": "tag_value_1", "tag_key_2": "tag_value_2", "tag_key_3": "tag_value_3"}, "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 4)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
+    def test_push_with_custom_dimension_map_and_event_arch_and_event_batching(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+        event_arch_settings_file = SETTINGS_FILES.get("DUMMY_SETTINGS_FILE").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+
+        self.vwo = vwo.launch(
+            json.dumps(event_arch_settings_file),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            batch_events={"events_per_request": 5, "request_time_interval": 1},
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.push(custom_dimension_map={"tag_key_1": "tag_value_1"}, user_id="12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.push(
+                custom_dimension_map={
+                    "tag_key_1": "tag_value_1",
+                    "tag_key_2": "tag_value_2",
+                    "tag_key_3": "tag_value_3",
+                },
+                user_id="12345",
+            )
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 4)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
+    def test_push_with_event_arch_and_event_batching_disabled(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+        event_arch_settings_file = SETTINGS_FILES.get("DUMMY_SETTINGS_FILE").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(json.dumps(event_arch_settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch_events", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch = mock.MagicMock()
+            self.vwo.push("browser", "a", "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.push("browser", "a", "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch.assert_not_called()
+
+    def test_push_with_event_arch_and_event_batching_enabled(self):
+        self.set_up("DUMMY_SETTINGS_FILE")
+        event_arch_settings_file = SETTINGS_FILES.get("DUMMY_SETTINGS_FILE").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(
+            json.dumps(event_arch_settings_file),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            batch_events={"events_per_request": 5, "request_time_interval": 1},
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.push("browser", "a", "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.push("browser", "a", "12345")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
     def test_push_longer_than_255_value_false(self):
         vwo_instance = vwo.launch(
             json.dumps(SETTINGS_FILES.get("DUMMY_SETTINGS_FILE")), log_level=TEST_LOG_LEVEL, is_development_mode=True

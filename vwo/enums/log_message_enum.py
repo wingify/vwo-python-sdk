@@ -39,10 +39,14 @@ class LogMessageEnum:
         UUID_FOR_USER = (
             "({file}): [API_NAME] Uuid generated for user_id:{user_id} and account_id:{account_id} is {desired_uuid}"
         )
+
         IMPRESSION_FOR_TRACK_USER = "({file}): [API_NAME] Impression built for track-user - {properties}"
         IMPRESSION_FOR_TRACK_GOAL = "({file}): [API_NAME] Impression built for track-goal - {properties}"
-
         PARAMS_FOR_PUSH_CALL = "({file}): [API_NAME] Params for push call - {properties}"
+
+        IMPRESSION_FOR_EVENT_ARCH_TRACK_USER = "({file}): [API_NAME] Impression built for vwo_variationShown event for account ID:{account_id}, user ID:{user_id}, and campaign ID:{campaign_id}"
+        IMPRESSION_FOR_EVENT_ARCH_TRACK_GOAL = "({file}): [API_NAME] Impression built for {goal_identifier} event for accountId:{account_id}, user ID:{user_id}, and campaign ID(s): {campaign_ids}"
+        IMPRESSION_FOR_EVENT_ARCH_PUSH = "({file}): [API_NAME] Impression built for visitor property:{property} for accountId:{account_id} and user ID:{user_id}"
 
         NO_VARIABLES = "({file}): [API_NAME] For user_id:{user_id} of campaign: {campaign_key} variables are not passed for {segmentation_type}"
         SEGMENTATION_SKIPPED = "({file}): [API_NAME] For user_id:{user_id} of campaign_key: {campaign_key} segments are missing, hence skipping segmentation {variation_status}"
@@ -69,8 +73,11 @@ class LogMessageEnum:
         USER_ELIGIBILITY_FOR_CAMPAIGN = "({file}): [API_NAME] Is user_id:{user_id} part of campaign? {is_user_part}"
         GOT_VARIATION_FOR_USER = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} {variation_status}"
         USER_GOT_NO_VARIATION = "({file}): [API_NAME] user_id:{user_id} for campaign_key:{campaign_key} type: {campaign_type} did not allot any variation"
+
         IMPRESSION_SUCCESS = "({file}): [API_NAME] Impression event - {end_point} was successfully received by VWO"
         IMPRESSION_SUCCESS_QUEUE = "({file}): [API_NAME] Impression event - {end_point} was successfully pushed in queue, current queue length : {queue_length}, queue summary: {queue_metadata}"
+        IMPRESSION_SUCCESS_FOR_EVENT_ARCH = "({file}): [API_NAME] Impression for {event} - https://dev.visualwebsiteoptimizer.com/events/t was successfully received by VWO for account ID:{account_id}"
+
         MAIN_KEYS_FOR_IMPRESSION = "({file}): [API_NAME] Having main keys: account_id:{account_id} campaignId:{campaign_id} and variation_id:{variation_id}"
         MAIN_KEYS_FOR_PUSH_API = "({file}): [API_NAME] Having main keys: account_id:{account_id} u:{u} and tags:{tags}"
         INVALID_VARIATION_KEY = (

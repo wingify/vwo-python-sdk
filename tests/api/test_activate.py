@@ -72,6 +72,47 @@ class ActivateTest(unittest.TestCase):
         for test in USER_EXPECTATIONS[self.campaign_key]:
             self.assertEqual(self.vwo.activate(self.campaign_key, test["user"]), test["variation"])
 
+    def test_activate_with_event_arch_and_event_batching_disabled(self):
+        self.set_up("AB_T_100_W_50_50")
+        event_arch_settings_file = SETTINGS_FILES.get("AB_T_100_W_50_50").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        vwo_instance = vwo.launch(
+            json.dumps(event_arch_settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch_events", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            vwo_instance.event_dispatcher.dispatch = mock.MagicMock()
+            vwo_instance.activate(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            vwo_instance.activate(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            vwo_instance.event_dispatcher.dispatch.assert_not_called()
+
+    def test_activate_with_event_arch_and_event_batching_enabled(self):
+        self.set_up("AB_T_100_W_50_50")
+        event_arch_settings_file = SETTINGS_FILES.get("AB_T_100_W_50_50").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        vwo_instance = vwo.launch(
+            json.dumps(event_arch_settings_file),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            batch_events={"events_per_request": 5, "request_time_interval": 1},
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            vwo_instance.event_dispatcher.dispatch_events = mock.MagicMock()
+            vwo_instance.activate(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            vwo_instance.activate(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            vwo_instance.event_dispatcher.dispatch_events.assert_not_called()
+
     def test_activate_against_campaign_traffic_100_and_split_20_80(self):
         self.set_up("AB_T_100_W_20_80")
         for test in USER_EXPECTATIONS[self.campaign_key]:

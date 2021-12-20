@@ -39,6 +39,39 @@ test_properties = {
     "account_id": TEST_ACCOUNT_ID,
 }
 
+test_events_track_impression_properties = {
+    "d": {
+        "msgId": "09CD6107E42B51F9BFC3DD97EA900990-1565949670",
+        "visId": "09CD6107E42B51F9BFC3DD97EA900990",
+        "sessionId": 1633330743,
+        "event": {
+            "props": {
+                "$visitor": {"props": {"vwo_fs_environment": "testenvkey123456789472c212c972e"}},
+                "sdkName": constants.SDK_NAME,
+                "sdkVersion": constants.SDK_VERSION,
+                "variation": 2,
+                "isFirst": 1,
+            },
+            "name": constants.EVENTS.VWO_VARIATION_SHOWN,
+            "time": 1565949670344,
+        },
+        "visitor": {"props": {"vwo_fs_environment": "testenvkey123456789472c212c972e"}},
+    }
+}
+
+test_events__track_query_params_properties = {
+    "en": constants.EVENTS.VWO_VARIATION_SHOWN,
+    "a": TEST_ACCOUNT_ID,
+    "env": "testenvkey123456789472c212c972e",
+    "eTime": 1565949670344,
+    "random": 0.7382938446947298,
+    "ig": 1,
+    "ss": 1,
+    "ll": 1,
+    "_l": 1,
+    "id": 10,
+}
+
 test_event_batching_settings = {"events_per_request": 5, "request_time_interval": 1, "flush_callback": flush_callback}
 
 
@@ -64,6 +97,29 @@ class DispatcherTest(unittest.TestCase):
         properties = test_properties.copy()
         with mock.patch("vwo.http.connection.Connection.get", return_value={"status_code": 503}):
             result = self.dispatcher.dispatch(properties)
+            self.assertIs(result, False)
+
+    def test_dispatch_sends_events_impression(self):
+        url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL + constants.ENDPOINTS.EVENTS
+        with mock.patch(
+            "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
+        ) as mock_connection_get:
+            result = self.dispatcher.dispatch_events(
+                params=test_events__track_query_params_properties, impression=test_events_track_impression_properties
+            )
+            self.assertIs(result, True)
+        mock_connection_get.assert_called_once_with(
+            url,
+            params=test_events__track_query_params_properties,
+            data=test_events_track_impression_properties,
+            headers={"User-Agent": constants.SDK_NAME},
+        )
+
+    def test_dispatch_events_returns_error_status_code(self):
+        with mock.patch("vwo.http.connection.Connection.post", return_value={"status_code": 503}):
+            result = self.dispatcher.dispatch_events(
+                params=test_events__track_query_params_properties, impression=test_events_track_impression_properties
+            )
             self.assertIs(result, False)
 
     def test_event_batching_dispatch_sends_event(self):

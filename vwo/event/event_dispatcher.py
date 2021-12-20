@@ -25,7 +25,7 @@ FILE = FileNameEnum.Event.EventDispatcher
 
 
 class EventDispatcher(object):
-    """ Class having request making/event dispatching capabilities to our servers"""
+    """Class having request making/event dispatching capabilities to our servers"""
 
     def __init__(self, is_development_mode=False, batch_event_settings=None, sdk_key=None):
         """Initialize the dispatcher with logger
@@ -63,6 +63,40 @@ class EventDispatcher(object):
 
             if batch_event_settings.get(constants.BATCH_EVENTS.FLUSH_CALLBACK):
                 self.flush_callback = batch_event_settings.get(constants.BATCH_EVENTS.FLUSH_CALLBACK)
+
+    def dispatch_events(self, params, impression):
+        """This method checks for development mode, if it is False then it sends the impression
+        to our servers at events endpoint, else return True without sending the impression.
+
+        Args:
+            params (dict): Dictionaty objet containing query params for the call
+            impression (dict): Dictionary object containing the information of the impression
+
+        Returns:
+            bool: True if impression is successfully received by our servers, else false
+        """
+        url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL + constants.ENDPOINTS.EVENTS
+        headers = {"User-Agent": constants.SDK_NAME}
+
+        if self.is_development_mode:
+            result = True
+        else:
+            resp = self.connection.post(url, params=params, data=impression, headers=headers)
+            result = resp.get("status_code") == 200
+
+        if result is True:
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS_FOR_EVENT_ARCH.format(
+                    file=FILE, event=params.get("en"), account_id=params.get("a")
+                ),
+            )
+        else:
+            self.logger.log(
+                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url)
+            )
+
+        return result
 
     def dispatch(self, impression):
         """This method checks for development mode, if it is False then it sends the impression
@@ -138,11 +172,7 @@ class EventDispatcher(object):
             return True
         except Exception:
             self.logger.log(
-                LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(
-                    file=FILE,
-                    end_point=url,
-                ),
+                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url)
             )
             return False
 
@@ -163,10 +193,7 @@ class EventDispatcher(object):
         url_split = url.split("/")
         event_name = url_split[-1]
 
-        payload = {
-            "u": impression.get("u"),
-            "sId": impression.get("sId"),
-        }
+        payload = {"u": impression.get("u"), "sId": impression.get("sId")}
 
         if event_name == constants.EVENTS.TRACK_USER:
             payload.update({"c": impression.get("combination"), "e": impression.get("experiment_id"), "eT": 1})
@@ -212,37 +239,22 @@ class EventDispatcher(object):
                 self.logger.log(
                     LogLevelEnum.INFO,
                     LogMessageEnum.INFO_MESSAGES.IMPRESSION_SUCCESS.format(
-                        file=FILE,
-                        end_point=url,
-                        account_id=self.account_id,
+                        file=FILE, end_point=url, account_id=self.account_id
                     ),
                 )
             elif status_code == 413:
                 self.logger.log(
                     LogLevelEnum.ERROR,
                     LogMessageEnum.ERROR_MESSAGES.BATCH_EVENT_LIMIT_EXCEEDED.format(
-                        file=FILE,
-                        end_point=url,
-                        events_per_request=queue_length,
-                        account_id=self.account_id,
+                        file=FILE, end_point=url, events_per_request=queue_length, account_id=self.account_id
                     ),
                 )
             else:
-                self.logger.log(
-                    LogLevelEnum.ERROR,
-                    LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
-                        file=FILE,
-                    ),
-                )
+                self.logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE))
             if self.flush_callback:
                 self.flush_callback(None, events)
         except Exception as err:
-            self.logger.log(
-                LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
-                    file=FILE,
-                ),
-            )
+            self.logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE))
             if self.flush_callback:
                 self.flush_callback(err, events)
 

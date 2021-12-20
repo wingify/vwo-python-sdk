@@ -19,7 +19,7 @@ import random
 import mock
 
 import vwo
-from ..data.settings_files import SETTINGS_FILES 
+from ..data.settings_files import SETTINGS_FILES
 from ..data.constants import TEST_ACCOUNT_ID, TEST_SDK_KEY
 
 from ..config.config import TEST_LOG_LEVEL
@@ -36,7 +36,7 @@ class GetAndUpdateSettingsFileTest(unittest.TestCase):
             self.goal_identifier = SETTINGS_FILES[config_variant]["campaigns"][0]["goals"][0]["identifier"]
         except Exception:
             pass
-    
+
     def test_invalid_args_passed(self):
         self.set_up()
         result = self.vwo.get_and_update_settings_file("", "")
@@ -51,7 +51,7 @@ class GetAndUpdateSettingsFileTest(unittest.TestCase):
         self.set_up()
         result = self.vwo.get_and_update_settings_file(TEST_ACCOUNT_ID, "")
         self.assertEqual(result, self.settings_file)
-    
+
     def test_invalid_settings_file_fetched(self):
         self.set_up()
         with mock.patch("vwo.services.settings_file_manager.get_settings_file", return_value="{}"):
@@ -60,15 +60,16 @@ class GetAndUpdateSettingsFileTest(unittest.TestCase):
 
     def test_same_settings_file_fetched(self):
         self.set_up()
-        with mock.patch("vwo.services.settings_file_manager.get_settings_file", return_value=self.settings_file):       
+        with mock.patch("vwo.services.settings_file_manager.get_settings_file", return_value=self.settings_file):
             result = self.vwo.get_and_update_settings_file(TEST_ACCOUNT_ID, TEST_SDK_KEY)
-            self.maxDiff = None
             self.assertEqual(result, self.settings_file)
 
     def test_updated_settings_file_fetched(self):
         self.set_up()
         config_variant = "AB_T_100_W_50_50"
-        with mock.patch("vwo.services.settings_file_manager.get_settings_file", return_value=json.dumps(SETTINGS_FILES.get(config_variant))):       
+        with mock.patch(
+            "vwo.services.settings_file_manager.get_settings_file",
+            return_value=json.dumps(SETTINGS_FILES.get(config_variant)),
+        ):
             result = self.vwo.get_and_update_settings_file(TEST_ACCOUNT_ID, TEST_SDK_KEY)
-            self.maxDiff = None
             self.assertEqual(result, json.dumps(SETTINGS_FILES.get(config_variant)))

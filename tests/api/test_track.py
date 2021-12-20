@@ -88,6 +88,45 @@ class TrackTest(unittest.TestCase):
                 test["variation"] is not None,
             )
 
+    def test_track_with_event_arch_and_event_batching_disabled(self):
+        self.set_up("AB_T_100_W_50_50")
+        event_arch_settings_file = SETTINGS_FILES.get("AB_T_100_W_50_50").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(json.dumps(event_arch_settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch_events", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch = mock.MagicMock()
+            self.vwo.track(self.campaign_key, "Ashley", self.goal_identifier, revenue_value=23)
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.track(self.campaign_key, "Ashley", self.goal_identifier, revenue_value=23)
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch.assert_not_called()
+
+    def test_track_with_event_arch_and_event_batching_enabled(self):
+        self.set_up("AB_T_100_W_50_50")
+        event_arch_settings_file = SETTINGS_FILES.get("AB_T_100_W_50_50").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(
+            json.dumps(event_arch_settings_file),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            batch_events={"events_per_request": 5, "request_time_interval": 1},
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.track(self.campaign_key, "Ashley", self.goal_identifier, revenue_value=23)
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.track(self.campaign_key, "Ashley", self.goal_identifier, revenue_value=23)
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
     def test_track_against_campaign_traffic_100_and_split_50_50_r_float(self):
         # It's goal_type is revenue, so test revenue
         self.set_up("AB_T_100_W_50_50")

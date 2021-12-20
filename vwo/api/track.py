@@ -123,6 +123,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         return None
 
     ret_value = {}
+    campaign_goal_revenue_prop_list = []
     for campaign, goal in campaign_goal_list:
         result = track_campaign_goal(
             vwo_instance,
@@ -133,10 +134,21 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             custom_variables,
             variation_targeting_variables,
             goal_type_to_track,
+            campaign_goal_revenue_prop_list,
         )
         ret_value[campaign.get("key")] = result
     for campaign in campaigns_without_goal:
         ret_value[campaign.get("key")] = False
+
+    if len(campaign_goal_revenue_prop_list) != 0 and (
+        not vwo_instance.is_event_batching_enabled and vwo_instance.is_event_arch_enabled is True
+    ):
+        params = impression_util.get_events_params(vwo_instance.settings_file, goal_identifier)
+        impression = impression_util.create_track_goal_events_impression(
+            vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, revenue=revenue_value
+        )
+        vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
+
     return ret_value
 
 
@@ -149,6 +161,7 @@ def track_campaign_goal(
     custom_variables,
     variation_targeting_variables,
     goal_type_to_track,
+    campaign_goal_revenue_prop_list,
 ):
     """
     It marks the conversion of given goal for the given campaign
@@ -156,7 +169,8 @@ def track_campaign_goal(
     1. Checks if user is eligible to get bucketed into the campaign,
     2. Gets the assigned determinitic variation to the
         user(based on userId), if user becomes part of campaign
-    3. Sends an impression call to VWO server to track goal data
+    3. Sends an impression call to VWO server to track goal data if event arch
+        is not enabled
 
     Args:
         campaign (dict): Campaign object
@@ -167,6 +181,8 @@ def track_campaign_goal(
         variation_targeting_variables (dict): Whitelisting variables to target users
         goal_type_to_track (vwo.GOAL_TYPES): Goal type that should be tracked in case of mixed
         global goal identifier
+        campaign_goal_revenue_prop_list (list): list of campaign_id, goal_id & goal's revenueProp
+            (if revenue goal else None) to build event arch impression
 
     Returns:
         bool: True if goal successfully tracked else False
@@ -212,20 +228,30 @@ def track_campaign_goal(
     )
 
     if variation:
-        impression = impression_util.create_impression(
-            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id, goal.get("id"), revenue_value
-        )
 
-        vwo_instance.event_dispatcher.dispatch(impression)
+        if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
+            impression = impression_util.create_impression(
+                vwo_instance.settings_file,
+                campaign.get("id"),
+                variation.get("id"),
+                user_id,
+                goal.get("id"),
+                revenue_value,
+            )
 
-        vwo_instance.logger.log(
-            LogLevelEnum.INFO,
-            LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
-                file=FILE,
-                campaign_id=impression.get("experiment_id"),
-                account_id=impression.get("account_id"),
-                variation_id=impression.get("combination"),
-            ),
-        )
+            vwo_instance.event_dispatcher.dispatch(impression)
+
+            vwo_instance.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
+                    file=FILE,
+                    campaign_id=impression.get("experiment_id"),
+                    account_id=impression.get("account_id"),
+                    variation_id=impression.get("combination"),
+                ),
+            )
+        else:
+            campaign_goal_revenue_prop_list.append((campaign.get("id"), goal.get("id"), goal.get("revenueProp")))
+
         return True
     return False

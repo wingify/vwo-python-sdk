@@ -29,7 +29,7 @@ logger = VWOLogger.getInstance()
 
 
 class VWO(object):
-    """ Core class of the SDK, consisting all the APIs featured in VWO Full Stack Server Side Testing """
+    """Core class of the SDK, consisting all the APIs featured in VWO Full Stack Server Side Testing"""
 
     def __init__(
         self, settings_file, user_storage, is_development_mode, goal_type_to_track, batch_event_settings, integrations
@@ -65,6 +65,8 @@ class VWO(object):
             batch_event_settings=batch_event_settings,
             sdk_key=self.settings_file.get("sdkKey"),
         )
+        self.is_event_batching_enabled = bool(batch_event_settings)
+        self.is_event_arch_enabled = bool(self.settings_file.get("isEventArchEnabled"))
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
 

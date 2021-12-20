@@ -101,20 +101,28 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
 
     # track user if user has not already been tracked
     if is_user_tracked is False:
-        impression = impression_util.create_impression(
-            vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
-        )
 
-        vwo_instance.event_dispatcher.dispatch(impression)
-        vwo_instance.logger.log(
-            LogLevelEnum.INFO,
-            LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
-                file=FILE,
-                campaign_id=impression.get("experiment_id"),
-                account_id=impression.get("account_id"),
-                variation_id=impression.get("combination"),
-            ),
-        )
+        if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
+            impression = impression_util.create_impression(
+                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+            )
+
+            vwo_instance.event_dispatcher.dispatch(impression)
+            vwo_instance.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
+                    file=FILE,
+                    campaign_id=impression.get("experiment_id"),
+                    account_id=impression.get("account_id"),
+                    variation_id=impression.get("combination"),
+                ),
+            )
+        else:
+            params = impression_util.get_events_params(vwo_instance.settings_file, constants.EVENTS.VWO_VARIATION_SHOWN)
+            impression = impression_util.create_track_user_events_impression(
+                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+            )
+            vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
     else:
         vwo_instance.logger.log(
             LogLevelEnum.INFO,

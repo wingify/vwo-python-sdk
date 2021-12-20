@@ -143,6 +143,45 @@ class IsFeatureEnabledTest(unittest.TestCase):
                 test["variation"] is not None and test["variation"] not in feature_not_enabled_variations,
             )
 
+    def test_is_feature_enabled_with_event_arch_and_event_batching_disabled(self):
+        self.set_up("FT_T_75_W_10_20_30_40")
+        event_arch_settings_file = SETTINGS_FILES.get("FT_T_75_W_10_20_30_40").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(json.dumps(event_arch_settings_file), is_development_mode=True, log_level=TEST_LOG_LEVEL)
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch_events", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch = mock.MagicMock()
+            self.vwo.is_feature_enabled(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.is_feature_enabled(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch.assert_not_called()
+
+    def test_is_feature_enabled_with_event_arch_and_event_batching_enabled(self):
+        self.set_up("FT_T_75_W_10_20_30_40")
+        event_arch_settings_file = SETTINGS_FILES.get("FT_T_75_W_10_20_30_40").copy()
+        event_arch_settings_file["isEventArchEnabled"] = True
+        self.vwo = vwo.launch(
+            json.dumps(event_arch_settings_file),
+            is_development_mode=True,
+            log_level=TEST_LOG_LEVEL,
+            batch_events={"events_per_request": 5, "request_time_interval": 1},
+        )
+
+        with mock.patch(
+            "vwo.event.event_dispatcher.EventDispatcher.dispatch", return_value=None
+        ) as mock_event_dispatcher_dispatch:
+            self.vwo.event_dispatcher.dispatch_events = mock.MagicMock()
+            self.vwo.is_feature_enabled(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
+            self.vwo.is_feature_enabled(self.campaign_key, "Ashley")
+            self.assertIs(mock_event_dispatcher_dispatch.call_count, 2)
+            mock_event_dispatcher_dispatch.reset_mock()
+            self.vwo.event_dispatcher.dispatch_events.assert_not_called()
+
     def test_is_feature_enabled_raises_exception(self):
         with mock.patch("vwo.helpers.validate_util.is_valid_string", side_effect=Exception("Test")):
             self.set_up()

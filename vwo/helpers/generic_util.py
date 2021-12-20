@@ -25,7 +25,7 @@ logger = VWOLogger.getInstance()
 
 
 def get_random_number():
-    """ Returns a random number
+    """Returns a random number
 
     Returns:
         float: A random number
@@ -34,7 +34,7 @@ def get_random_number():
 
 
 def get_current_unix_timestamp():
-    """ Returns current unix timestamp
+    """Returns current unix timestamp
 
     Returns:
         int: Current unix timestamp
@@ -42,8 +42,17 @@ def get_current_unix_timestamp():
     return int(time.mktime(datetime.now().timetuple()))
 
 
+def get_current_unix_timestamp_milli():
+    """Returns current unix timestamp in milliseconds
+
+    Returns:
+        int: Current unix timestamp
+    """
+    return int(time.time() * 1000)
+
+
 def get_key_value(var):
-    """ Returns first key value pair of the given dict. Use this only when the dict has one
+    """Returns first key value pair of the given dict. Use this only when the dict has one
     key-value pair as python2 and python3 sort dicts in different ways.
 
     Returns:
@@ -55,7 +64,7 @@ def get_key_value(var):
 
 
 def get_attribute_values(obj):
-    """ Returns list of attribute values
+    """Returns list of attribute values
 
     Args:
     obj(class): class obj
@@ -67,7 +76,7 @@ def get_attribute_values(obj):
 
 
 def safe_method(method, fail_return_value, FILE):
-    """ A decoratore to wrap API methods in fail safe manner
+    """A decoratore to wrap API methods in fail safe manner
 
     Args:
         method (method): the API method which should be wrapped

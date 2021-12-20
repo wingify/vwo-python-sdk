@@ -37,12 +37,15 @@ class ENDPOINTS:
     TRACK_GOAL = "/server-side/track-goal"
     PUSH = "/server-side/push"
     BATCH_EVENTS = "/server-side/batch-events"
+    EVENTS = "/events/t"
 
 
 class EVENTS:
     TRACK_USER = "track-user"
     TRACK_GOAL = "track-goal"
     PUSH = "push"
+    VWO_VARIATION_SHOWN = "vwo_variationShown"
+    VWO_SYNC_VISITOR_PROP = "vwo_syncVisitorProp"
 
 
 class DATA_TYPE:

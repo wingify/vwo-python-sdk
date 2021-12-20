@@ -4,7 +4,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.23.1] - 2020-10-21
+## [1.25.0] - 2021-12-20
+
+### Added
+
+- Support for pushing multiple custom dimensions at once.
+  Earlier, you had to call `push` API multiple times for tracking multiple custom dimensions as follows:
+
+  ```python
+  vwo_client_instance.push("browser", "chrome", user_id)
+  vwo_client_instance.push("price", "20", user_id)
+  ```
+
+  Now, you can pass a dictionary
+
+  ```python
+  custom_dimension_map = {
+    "tag_key_1": "tag_value_1",
+    "tag_key_2": "tag_value_2",
+    "tag_key_3": "tag_value_3"
+  }
+
+  # using named parameters/kwargs
+  vwo_client_instance.push(custom_dimension_map = custom_dimension_map, user_id = user_id)
+
+  # or positional parameters
+  vwo_client_instance.push({"tag_key_1": "tag_value_1"}, "user_id")
+
+  ```
+
+  Multiple tracking calls would be initiated in this case.
+
+### Changed
+
+- If Events Architecture is enabled for your VWO account, all the tracking calls being initiated from SDK would now be `POST` instead of `GET` and there would be single endpoint i.e. `/events/t`. This is done in order to bring events support and building advancded capabilities in future.
+
+- For events architecture accounts, tracking same goal across multiple campaigns will not send multiple tracking calls. Instead one single `POST` call would be made to track the same goal across multiple different campaigns running on the same environment.
+
+- Multiple custome dimension can be pushed via `push` API. For events architecture enabled account, only one single tracking call would be made to track multiple custom dimensions.
+
+  ```python
+  custom_dimension_map = {
+    "tag_key_1": "tag_value_1",
+    "tag_key_2": "tag_value_2",
+    "tag_key_3": "tag_value_3"
+  }
+
+  # using named parameters/kwargs
+  vwo_client_instance.push(custom_dimension_map = custom_dimension_map, user_id = user_id)
+
+  # or positional parameters
+  vwo_client_instance.push({"tag_key_1": "tag_value_1"}, "user_id")
+
+  ```
+
+## [1.23.2] - 2020-10-21
 
 ### Changed
 

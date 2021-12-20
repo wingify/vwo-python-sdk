@@ -15,7 +15,12 @@
 GOAL = {
     "items": {
         "type": "object",
-        "properties": {"identifier": {"type": "string"}, "id": {"type": "number"}, "type": {"type": "string"}},
+        "properties": {
+            "identifier": {"type": "string"},
+            "id": {"type": "number"},
+            "type": {"type": "string"},
+            "revenueProp": {"type": "string"},
+        },
         "required": ["identifier", "id", "type"],
     }
 }
