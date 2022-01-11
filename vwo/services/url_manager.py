@@ -37,6 +37,7 @@ class UrlManager(object):
     """
 
         self.config = config
+        self.collection_prefix = None
 
         collection_prefix_value = config.get("collection_prefix")
         if collection_prefix_value and validate_util.is_valid_string(collection_prefix_value):

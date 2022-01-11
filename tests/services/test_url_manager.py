@@ -19,6 +19,7 @@ from vwo.constants import constants
 
 class UrlManagerTest(unittest.TestCase):
     def test_url_manager_get_base_url(self):
+        url_manager.set_config()
         self.assertEquals(url_manager.get_base_url(), constants.ENDPOINTS.BASE_URL)
 
     def test_url_manager_get_base_url_with_prefix(self):

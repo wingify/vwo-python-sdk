@@ -19,6 +19,7 @@ import time
 from vwo.event import event_dispatcher
 from ..data.constants import TEST_ACCOUNT_ID
 from vwo.constants import constants
+from vwo.services.url_manager import url_manager
 
 
 def flush_callback(err, events):
@@ -100,7 +101,7 @@ class DispatcherTest(unittest.TestCase):
             self.assertIs(result, False)
 
     def test_dispatch_sends_events_impression(self):
-        url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL + constants.ENDPOINTS.EVENTS
+        url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         with mock.patch(
             "vwo.http.connection.Connection.post", return_value={"status_code": 200, "text": ""}
         ) as mock_connection_get:
