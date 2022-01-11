@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,18 @@ import sys
 import json
 import jsonschema
 from ..schemas.settings_file_schema import SETTINGS_FILE_SCHEMA
-from ..constants.constants import INTEGRATIONS, LOG_LEVELS, GOAL_TYPES, BATCH_EVENTS
+from ..constants.constants import LOG_LEVELS, GOAL_TYPES, BATCH_EVENTS
 from . import generic_util
 from ..logger import VWOLogger
 from ..enums.log_level_enum import LogLevelEnum
 from ..enums.log_message_enum import LogMessageEnum
 
-services = {"logger": ["log"], "event_dispatcher": ["dispatch"], "user_storage": ["get", "set"], "integrations": ["callback"]}
+services = {
+    "logger": ["log"],
+    "event_dispatcher": ["dispatch"],
+    "user_storage": ["get", "set"],
+    "integrations": ["callback"],
+}
 
 
 def is_valid_settings_file(settings_file):
@@ -214,22 +219,37 @@ def is_valid_batch_event_settings(val, file):
         logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENT_BATCHING_INSUFFICIENT.format(file=file))
         return False
 
-    if events_per_request is not None and not(type(events_per_request) in [int]):
+    if events_per_request is not None and not (type(events_per_request) in [int]):
         logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENTS_PER_REQUEST_INVALID.format(file=file))
         return False
 
-    if request_time_interval is not None and not(type(request_time_interval) in [int, float]):
+    if request_time_interval is not None and not (type(request_time_interval) in [int, float]):
         logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.REQUEST_TIME_INTERVAL_INVALID.format(file=file))
         return False
 
     if events_per_request is not None:
-        if events_per_request < BATCH_EVENTS.MIN_EVENTS_PER_REQUEST or events_per_request > BATCH_EVENTS.MAX_EVENTS_PER_REQUEST:
-            logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.EVENTS_PER_REQUEST_OUT_OF_BOUNDS.format(file=file, min_value=BATCH_EVENTS.MIN_EVENTS_PER_REQUEST, max_value=BATCH_EVENTS.MAX_EVENTS_PER_REQUEST))
+        if (
+            events_per_request < BATCH_EVENTS.MIN_EVENTS_PER_REQUEST
+            or events_per_request > BATCH_EVENTS.MAX_EVENTS_PER_REQUEST
+        ):
+            logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.EVENTS_PER_REQUEST_OUT_OF_BOUNDS.format(
+                    file=file,
+                    min_value=BATCH_EVENTS.MIN_EVENTS_PER_REQUEST,
+                    max_value=BATCH_EVENTS.MAX_EVENTS_PER_REQUEST,
+                ),
+            )
             return False
 
     if request_time_interval is not None:
         if request_time_interval < BATCH_EVENTS.MIN_REQUEST_TIME_INTERVAL:
-            logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.REQUEST_TIME_INTERVAL_OUT_OF_BOUNDS.format(file=file, min_value=BATCH_EVENTS.MIN_REQUEST_TIME_INTERVAL))
+            logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.REQUEST_TIME_INTERVAL_OUT_OF_BOUNDS.format(
+                    file=file, min_value=BATCH_EVENTS.MIN_REQUEST_TIME_INTERVAL
+                ),
+            )
             return False
 
     if flush_callback is not None and not callable(flush_callback):
@@ -237,4 +257,3 @@ def is_valid_batch_event_settings(val, file):
         return False
 
     return True
-

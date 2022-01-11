@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,53 +56,37 @@ class ValidateUtilTest(unittest.TestCase):
             self.assertIs(False, validate_util.is_valid_unicode(val))
 
     def test_is_valid_batch_event_settings_events_per_request_passed_below_limit(self):
-        val = {
-            'events_per_request': 0
-        }
+        val = {"events_per_request": 0}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_events_per_request_passed_above_limit(self):
-        val = {
-            'events_per_request': 5001
-        }
+        val = {"events_per_request": 5001}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_events_per_request_passed_with_decimal(self):
-        val = {
-            'events_per_request': 400.2
-        }
+        val = {"events_per_request": 400.2}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_request_time_interval_passed_with_character(self):
-        val = {
-            'request_time_interval': 'a'
-        }
+        val = {"request_time_interval": "a"}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_request_time_interval_below_limit(self):
-        val = {
-            'request_time_interval': 0.2
-        }
+        val = {"request_time_interval": 0.2}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_missing_values(self):
-        val = {
-            'flush_callback': 1
-        }
+        val = {"flush_callback": 1}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
     def test_is_valid_batch_event_settings_flush_callback_non_callable(self):
-        val = {
-            'events_per_request': 400,
-            'request_time_interval': 10,
-            'flush_callback': 1
-        }
+        val = {"events_per_request": 400, "request_time_interval": 10, "flush_callback": 1}
         result = validate_util.is_valid_batch_event_settings(val, FileNameEnum.Api.Launch)
         self.assertIs(result, False)
 
@@ -112,9 +96,8 @@ class ValidateUtilTest(unittest.TestCase):
         self.assertIs(result, False)
 
     def test_is_valid_bool(self):
-        vals = [1, 'test', [], (), {}, lambda x: None, None, False]
+        vals = [1, "test", [], (), {}, lambda x: None, None, False]
         result = []
         for val in vals:
             result.append(validate_util.is_valid_bool(val))
         self.assertListEqual(result, [False, False, False, False, False, False, False, True])
-

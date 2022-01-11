@@ -12,4 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEST_LOG_LEVEL = 40
+import unittest
+from vwo.services.url_manager import url_manager
+from vwo.constants import constants
+
+
+class UrlManagerTest(unittest.TestCase):
+    def test_url_manager_get_base_url(self):
+        self.assertEquals(url_manager.get_base_url(), constants.ENDPOINTS.BASE_URL)
+
+    def test_url_manager_get_base_url_with_prefix(self):
+        collection_prefix = "eu"
+        url_manager.set_config({"collection_prefix": collection_prefix})
+
+        self.assertEquals(url_manager.get_base_url(), constants.ENDPOINTS.BASE_URL + "/" + collection_prefix)

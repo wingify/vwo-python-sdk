@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 
 from ..helpers import impression_util
 from ..constants import constants
@@ -19,7 +20,7 @@ from ..logger import VWOLogger
 from ..enums.log_level_enum import LogLevelEnum
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
-import json
+from ..services.url_manager import url_manager
 
 FILE = FileNameEnum.Helpers.CustomDimensionsUtil
 
@@ -36,7 +37,7 @@ def get_url_params(settings_file, tag_key, tag_value, user_id):
     Returns:
         dict : dict of all the required properties
     """
-    url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL + constants.ENDPOINTS.PUSH
+    url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.PUSH
     tag = {"u": {tag_key: tag_value}}
 
     params = impression_util.get_common_properties(user_id, settings_file)

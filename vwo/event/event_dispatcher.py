@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ from ..enums.file_name_enum import FileNameEnum
 from ..enums.log_level_enum import LogLevelEnum
 from ..logger import VWOLogger
 from ..constants import constants
+from ..services.url_manager import url_manager
 
 FILE = FileNameEnum.Event.EventDispatcher
 
@@ -75,7 +76,7 @@ class EventDispatcher(object):
         Returns:
             bool: True if impression is successfully received by our servers, else false
         """
-        url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL + constants.ENDPOINTS.EVENTS
+        url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
 
         if self.is_development_mode:
@@ -224,7 +225,7 @@ class EventDispatcher(object):
         sync_thread.start()
 
     def sync_with_vwo(self, events):
-        url = constants.HTTPS_PROTOCOL + constants.ENDPOINTS.BASE_URL
+        url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
         url = url + constants.ENDPOINTS.BATCH_EVENTS
         queue_length = len(events)
         try:

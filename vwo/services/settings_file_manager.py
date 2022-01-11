@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ class SettingsFileManager(object):
         return self.settings_file_string
 
     def get_and_update_settings_file(self, account_id, sdk_key, is_via_webhook):
-        """ 
+        """
         Fetch latest settings_file and update so that vwo_instance could use the latest settings
 
         Args:
@@ -68,30 +68,29 @@ class SettingsFileManager(object):
         Returns:
             bool: True if settings_file is updated else False
         """
-        
+
         latest_settings_file = get_settings_file(account_id, sdk_key, is_via_webhook)
 
         if not validate_util.is_valid_settings_file(latest_settings_file):
             self.logger.log(
-                LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.INVALID_SETTINGS_FILE.format(file=FILE, account_id=account_id),
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.INVALID_SETTINGS_FILE.format(file=FILE, account_id=account_id),
             )
             return False
 
         if latest_settings_file == self.settings_file_string:
-            self.logger.log(
-                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.SETTINGS_FILE_NOT_UPDATED.format(file=FILE),
-            )
+            self.logger.log(LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.SETTINGS_FILE_NOT_UPDATED.format(file=FILE))
             return False
 
         self.update_settings_file(latest_settings_file)
         return True
 
     def update_settings_file(self, settings_file):
-        """ Update the settings_file on the instance so that latest settings could be used 
+        """ Update the settings_file on the instance so that latest settings could be used
         from next hit onwards
-        
+
         Args:
-            settings_file (json_string): stringified json representing the settings_file, 
+            settings_file (json_string): stringified json representing the settings_file,
                 as received from the website
         """
         self.settings_file_string = settings_file

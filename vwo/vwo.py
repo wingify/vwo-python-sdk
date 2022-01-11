@@ -1,4 +1,4 @@
-# Copyright 2019-2021 Wingify Software Pvt. Ltd.
+# Copyright 2019-2022 Wingify Software Pvt. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ from .helpers.generic_util import safe_method
 from .logger import VWOLogger
 from .services.settings_file_manager import SettingsFileManager
 from .constants.constants import GOAL_TYPES
+from .services.url_manager import url_manager
 
 
 FILE = FileNameEnum.Vwo.VWO
@@ -68,6 +69,7 @@ class VWO(object):
         self.is_event_batching_enabled = bool(batch_event_settings)
         self.is_event_arch_enabled = bool(self.settings_file.get("isEventArchEnabled"))
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
+        self.url_manager = url_manager.set_config({"collection_prefix": self.settings_file.get("collectionPrefix")})
         self.is_opted_out = False
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
 
