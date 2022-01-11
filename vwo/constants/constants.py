@@ -64,6 +64,7 @@ class API_METHODS:
     PUSH = "push"
     FLUSH_EVENTS = "flush_events"
     GET_AND_UPDATE_SETTINGS_FILE = "get_and_update_settings_file"
+    SET_OPT_OUT = "set_opt_out"
 
 
 class GOAL_TYPES:

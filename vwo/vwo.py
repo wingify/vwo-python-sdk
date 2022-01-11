@@ -68,6 +68,7 @@ class VWO(object):
         self.is_event_batching_enabled = bool(batch_event_settings)
         self.is_event_arch_enabled = bool(self.settings_file.get("isEventArchEnabled"))
         self.goal_type_to_track = goal_type_to_track or GOAL_TYPES.ALL
+        self.is_opted_out = False
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SDK_INITIALIZED.format(file=FILE))
 
     # PUBLIC METHODS
@@ -79,3 +80,4 @@ class VWO(object):
     push = safe_method(api._push, False, FILE)
     flush_events = safe_method(api._flush_events, False, FILE)
     get_and_update_settings_file = safe_method(api._get_and_update_settings_file, None, FILE)
+    set_opt_out = safe_method(api._set_opt_out, None, FILE)

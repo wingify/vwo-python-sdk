@@ -199,3 +199,17 @@ class GetVariationNameTest(unittest.TestCase):
                 ),
                 test["variation"],
             )
+
+    def test_get_variation_name_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True, log_level=40
+        )
+
+        variation = vwo_instance.get_variation_name("AB_T_100_W_50_50", "user")
+        self.assertEqual(variation, "Variation-1")
+
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        variation1 = vwo_instance.get_variation_name("AB_T_100_W_50_50", "user")
+        self.assertIs(variation1, None)

@@ -500,3 +500,17 @@ class GetFeatureVariableValueTest(unittest.TestCase):
         vwo_instance.is_feature_enabled("FR_T_75_W_100", "Ashley")
         result = vwo_instance.get_feature_variable_value("FR_T_75_W_100", "FLOAT_VARIABLE", "Ashley")
         self.assertEquals(result, FLOAT_VARIABLE)
+
+    def test_get_feature_variable_value_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, log_level=40
+        )
+
+        result = vwo_instance.get_feature_variable_value("FT_T_100_W_10_20_30_40", "STRING_VARIABLE", "user")
+        self.assertEqual(result, "Variation-3 string")
+
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = vwo_instance.get_feature_variable_value("FT_T_100_W_10_20_30_40", "STRING_VARIABLE", "user")
+        self.assertIs(result, None)

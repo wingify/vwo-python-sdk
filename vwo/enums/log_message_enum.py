@@ -117,6 +117,8 @@ class LogMessageEnum:
         OTHER_CAMPAIGN_SATIFIES_WHITELISTING_OR_STORAGE = (
             "({file}): Campaign:{campaign_key} of Group:{group_name} satisfies {type} for User ID:{user_id}"
         )
+        OPT_OUT_API_CALLED = "({file}): You have opted out for not tracking i.e. all API calls will stop functioning and will simply early return"
+        API_NOT_ENABLED = "({file}): {api} API is disabled as you opted out for tracking. Reinitialize the SDK to enable the normal functioning of all APIs"
 
     class WARNING_MESSAGES:
         """Classobj encapsulating various WARNING messages"""

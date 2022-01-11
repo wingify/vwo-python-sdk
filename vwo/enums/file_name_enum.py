@@ -31,6 +31,7 @@ class FileNameEnum:
         Launch = API_PATH + "launch"
         FlushEvents = API_PATH + "flush_events"
         GetAndUpdateSettingsFile = API_PATH + "get_and_update_settings_file"
+        SET_OPT_OUT = API_PATH + "set_opt_out"
 
     class Core:
         CORE_PATH = "vwo/core/"

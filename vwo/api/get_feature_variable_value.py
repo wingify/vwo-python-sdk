@@ -50,6 +50,14 @@ def _get_feature_variable_value(vwo_instance, campaign_key, variable_key, user_i
     """
 
     vwo_instance.logger.set_api(API_METHODS.GET_FEATURE_VARIABLE_VALUE)
+
+    if vwo_instance.is_opted_out:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.API_NOT_ENABLED.format(file=FILE, api=API_METHODS.GET_FEATURE_VARIABLE_VALUE),
+        )
+
+        return None
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")

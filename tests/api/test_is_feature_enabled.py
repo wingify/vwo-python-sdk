@@ -320,3 +320,31 @@ class IsFeatureEnabledTest(unittest.TestCase):
             vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
             self.assertIs(mock_event_dispatcher_dispatch.call_count, 1)
             mock_event_dispatcher_dispatch.reset_mock()
+
+    def test_is_feature_enabled_feature_test_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, log_level=40
+        )
+
+        result = vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
+        self.assertEqual(result, True)
+
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = vwo_instance.is_feature_enabled("FT_T_100_W_10_20_30_40", "user")
+        self.assertIs(result, False)
+
+    def test_is_feature_enabled_feature_rollout_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FR_T_100_W_100")), is_development_mode=True, log_level=40
+        )
+
+        result = vwo_instance.is_feature_enabled("FR_T_100_W_100", "user")
+        self.assertEqual(result, True)
+
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = vwo_instance.is_feature_enabled("FR_T_100_W_100", "user")
+        self.assertIs(result, False)

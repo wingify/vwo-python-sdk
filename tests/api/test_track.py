@@ -651,3 +651,16 @@ class TrackTest(unittest.TestCase):
             vwo_instance.activate("AB_T_100_W_50_50", "user")
             self.assertEqual(mock_event_dispatcher_dispatch.call_count, 1)
             mock_event_dispatcher_dispatch.reset_mock()
+
+    def test_track_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("AB_T_100_W_50_50")), is_development_mode=True, log_level=40
+        )
+
+        result = vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
+        self.assertEqual(result, {u"AB_T_100_W_50_50": True})
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
+        self.assertIs(result, None)

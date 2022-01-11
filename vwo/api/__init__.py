@@ -22,3 +22,4 @@ from .push import _push
 from .track import _track
 from .flush_events import _flush_events
 from .get_and_update_settings_file import _get_and_update_settings_file
+from .set_opt_out import _set_opt_out

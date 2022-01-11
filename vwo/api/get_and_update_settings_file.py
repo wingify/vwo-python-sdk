@@ -29,19 +29,27 @@ def _get_and_update_settings_file(vwo_instance, account_id, sdk_key, is_via_webh
         sdk_key (string): Unique sdk key for user,
             can be retrieved from our webside
         is_via_webhook (bool): is triggered via webhook flag
-    
+
     Returns:
         (json_string): stringified json representing the settings_file,
             as received from the website
     """
     vwo_instance.logger.set_api(API_METHODS.GET_AND_UPDATE_SETTINGS_FILE)
 
+    if vwo_instance.is_opted_out:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO,
+            LogMessageEnum.INFO_MESSAGES.API_NOT_ENABLED.format(
+                file=FILE, api=API_METHODS.GET_AND_UPDATE_SETTINGS_FILE
+            ),
+        )
+
+        return False
+
     is_settings_file_updated = vwo_instance.config.get_and_update_settings_file(account_id, sdk_key, is_via_webhook)
 
     if is_settings_file_updated:
         vwo_instance.settings_file = vwo_instance.config.get_settings_file()
-        vwo_instance.logger.log(
-            LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.SETTINGS_FILE_UPDATED.format(file=FILE),
-        )
-    
+        vwo_instance.logger.log(LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.SETTINGS_FILE_UPDATED.format(file=FILE))
+
     return vwo_instance.config.get_settings_file_string()

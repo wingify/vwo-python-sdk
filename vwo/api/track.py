@@ -52,6 +52,14 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     """
 
     vwo_instance.logger.set_api(API_METHODS.TRACK)
+
+    if vwo_instance.is_opted_out:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.API_NOT_ENABLED.format(file=FILE, api=API_METHODS.TRACK)
+        )
+
+        return None
+
     # Retrive revenue value and custom_variables
     revenue_value = kwargs.get("revenue_value")
     custom_variables = kwargs.get("custom_variables")

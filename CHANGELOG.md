@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2022-11-01
+
+### Changed
+
+- In case you want to opt out of tracking by VWO, simply call the `set_opt_out` API. This will exclude all the users from any kind of tracking by VWO. This is useful when you just want to make the VWO SDK ineffective without actually removing the associated code.
+
+  `set_opt_out` API will also remove unwanted memory footprint by destructing all the instance variables. Calling any other API after this will not be effective i.e. no decision-making or impression would be made to VWO.
+
+  ```python
+  vwo_client_instance.set_opt_out()
+  ```
+
+  If you want to opt-in again for tracking by VWO SDK, reinitialize the SDK with the latest settings.
+
+
 ## [1.25.0] - 2021-12-20
 
 ### Added

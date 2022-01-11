@@ -97,3 +97,15 @@ class FlushTest(unittest.TestCase):
         with mock.patch("vwo.http.connection.Connection.post", side_effect=Exception("Test")):
             self.vwo.event_dispatcher.dispatch(test_properties.copy())
             self.vwo.flush_events(mode="sync")
+
+    def test_flush_when_opted_out(self):
+        self.set_up(event_batching_settings=test_event_batching_settings)
+
+        result = self.vwo.flush_events(mode="sync")
+        self.assertIs(result, True)
+
+        api_response = self.vwo.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = self.vwo.flush_events(mode="sync")
+        self.assertIs(result, False)

@@ -43,6 +43,13 @@ def _push(vwo_instance, tag_key="", tag_value="", user_id="", custom_dimension_m
 
     vwo_instance.logger.set_api(API_METHODS.PUSH)
 
+    if vwo_instance.is_opted_out:
+        vwo_instance.logger.log(
+            LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.API_NOT_ENABLED.format(file=FILE, api=API_METHODS.PUSH)
+        )
+
+        return False
+
     is_multiple_custom_dimension_used = False
 
     # Argument reshuffling

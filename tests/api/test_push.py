@@ -230,3 +230,17 @@ class PushTest(unittest.TestCase):
             json.dumps(SETTINGS_FILES.get("DUMMY_SETTINGS_FILE")), log_level=TEST_LOG_LEVEL, is_development_mode=True
         )
         self.assertIs(True, vwo_instance.push("a" * 255, "browser", "12345"))
+
+    def test_push_when_opted_out(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("FT_T_100_W_10_20_30_40")), is_development_mode=True, log_level=40
+        )
+
+        result = vwo_instance.push("a" * 255, "browser", "12345")
+        self.assertEqual(result, True)
+
+        api_response = vwo_instance.set_opt_out()
+        self.assertIs(api_response, True)
+
+        result = vwo_instance.push("a" * 255, "browser", "12345")
+        self.assertIs(result, False)
