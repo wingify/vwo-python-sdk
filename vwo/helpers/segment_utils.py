@@ -132,6 +132,18 @@ def process_operand_value(operand):
         else:
             operand_type = OperandValueTypes.equals
 
+    if operand_type_name == OperandValueTypesName.GREATER_THAN:
+        operand_type = OperandValueTypes.greaterthan
+
+    if operand_type_name == OperandValueTypesName.LESS_THAN:
+        operand_type = OperandValueTypes.lessthan
+
+    if operand_type_name == OperandValueTypesName.GREATER_THAN_EQUAL_TO:
+        operand_type = OperandValueTypes.greaterthanequalto
+
+    if operand_type_name == OperandValueTypesName.LESS_THAN_EQUAL_TO:
+        operand_type = OperandValueTypes.lessthanequalto
+
     # In case there is an abnormal patter, it would have passed all the above if cases, which means it
     # should be equals, so set the whole operand as operand value and operand type as equals
     if operand_type is None:

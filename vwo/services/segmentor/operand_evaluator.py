@@ -100,6 +100,56 @@ class OperandEvaluator:
         """
         return custom_variables_value == operand_value
 
+    def less_than(self, operand_value, custom_variables_value):
+        """ Checks if custom_variable_value is less than operand_value
+
+        Args:
+            operand_value: Leaf value from the segments
+            custom_variables_value: Value from the custom_variables
+
+        Returns:
+            bool (result): True or False
+        """
+        return float(custom_variables_value) < float(operand_value)
+
+    def greater_than(self, operand_value, custom_variables_value):
+        """ Checks if custom_variable_value is greater than operand_value
+
+        Args:
+            operand_value: Leaf value from the segments
+            custom_variables_value: Value from the custom_variables
+
+        Returns:
+            bool (result): True or False
+        """
+        return float(custom_variables_value) > float(operand_value)
+
+    def less_than_equal_to(self, operand_value, custom_variables_value):
+        """ Checks if custom_variable_value is less than equal to operand_value
+
+        Args:
+            operand_value: Leaf value from the segments
+            custom_variables_value: Value from the custom_variables
+
+        Returns:
+            bool (result): True or False
+        """
+        return float(custom_variables_value) <= float(operand_value)
+
+    def greater_than_equal_to(self, operand_value, custom_variables_value):
+        """ Checks if custom_variable_value is greater than equal to operand_value
+
+        Args:
+            operand_value: Leaf value from the segments
+            custom_variables_value: Value from the custom_variables
+
+        Returns:
+            bool (result): True or False
+        """
+        return float(custom_variables_value) >= float(operand_value)
+
+
+
     def evaluate_custom_variable(self, operand, custom_variables):
         """ Identifies the condition stated in the leaf node and evaluates the result
 
@@ -124,6 +174,9 @@ class OperandEvaluator:
 
         # Pre process operand value
         operand_type, operand_value = process_operand_value(operand)
+
+        if custom_variables_value == '':
+          return False
 
         # Process the custom_variables_value and operand_value to make them of same type
         operand_value, custom_variables_value = convert_to_true_types(operand_value, custom_variables_value)

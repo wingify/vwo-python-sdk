@@ -18,3 +18,7 @@ class OperandValueTypesName:
     WILDCARD = "wildcard"
     LOWER = "lower"
     EQUALS = "equals"
+    GREATER_THAN="gt"
+    LESS_THAN="lt"
+    GREATER_THAN_EQUAL_TO="gte"
+    LESS_THAN_EQUAL_TO="lte"

@@ -20,3 +20,7 @@ class OperandValueTypes:
     endswith = "endswith"
     regex = "regex"
     equals = "equals"
+    lessthan="less_than"
+    greaterthan="greater_than"
+    lessthanequalto="less_than_equal_to"
+    greaterthanequalto="greater_than_equal_to"
