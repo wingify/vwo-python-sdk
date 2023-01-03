@@ -1,4 +1,4 @@
-pyrsistent==0.16.1; python_version=="3.4"
+pyrsistent>=0.16.1; python_version>="3.4"
 jsonschema>=3.0.1,<4.0
 mmh3==2.5.1
 requests[security]>=2.9.1
