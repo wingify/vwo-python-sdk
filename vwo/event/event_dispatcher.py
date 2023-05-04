@@ -227,12 +227,18 @@ class EventDispatcher(object):
     def sync_with_vwo(self, events):
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
         url = url + constants.ENDPOINTS.BATCH_EVENTS
+        query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v, "env": self.sdk_key}
+        headers = {"Authorization": self.sdk_key}
+
         queue_length = len(events)
+        first_event = 'No event in queue'
+
+        if queue_length > 0:
+            first_event = events[0]
+
         try:
-            query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v, "env": self.sdk_key}
             post_data = {"ev": events}
             query_params.update(UsageStats.get_usage_stats())
-            headers = {"Authorization": self.sdk_key}
             resp = self.connection.post(url, params=query_params, data=post_data, headers=headers)
             status_code = resp.get("status_code")
 
@@ -251,11 +257,37 @@ class EventDispatcher(object):
                     ),
                 )
             else:
-                self.logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE))
+                self.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
+                        file=FILE,
+                        url=url,
+                        status_code=status_code,
+                        queue_length=queue_length,
+                        first_event=first_event,
+                        query_params=query_params,
+                        headers=headers,
+                        err='Wrong status code'
+                    )
+                )
+
             if self.flush_callback:
                 self.flush_callback(None, events)
         except Exception as err:
-            self.logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(file=FILE))
+            self.logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.BULK_NOT_PROCESSED.format(
+                    file=FILE,
+                    url=url,
+                    status_code=-1,
+                    queue_length=queue_length,
+                    first_event=first_event,
+                    query_params=query_params,
+                    headers=headers,
+                    err=err
+                )
+            )
+
             if self.flush_callback:
                 self.flush_callback(err, events)
 

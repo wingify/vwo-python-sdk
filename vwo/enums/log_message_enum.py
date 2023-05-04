@@ -175,7 +175,7 @@ class LogMessageEnum:
         )
 
         BULK_NOT_PROCESSED = (
-            "({file}): Batch events couldn't be received by VWO. Calling Flush Callback with error and data."
+            "({file}): Batch events couldn't be received by VWO. Calling Flush Callback with error and data. Request - URL: {url} having query-params: {query_params} and headers: {headers} got status code: {status_code}. Queue - length: {queue_length} and first event info: {first_event}. Error: {err}"
         )
 
         BATCH_EVENT_LIMIT_EXCEEDED = "({file}): Impression event - {end_point} failed due to exceeding payload size. Parameter events_per_request in batch_events config in launch API has value:{events_per_request} for accountId:{account_id}. Please read the official documentation for knowing the size limits."
