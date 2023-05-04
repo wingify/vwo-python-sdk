@@ -39,7 +39,7 @@ class Connection:
             total=3,
             backoff_factor=1,
             status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
+            allowed_methods=["HEAD", "GET", "OPTIONS", "POST"],
             raise_on_status=False,
             connect=3,  # Retry on connection-related errors
             read=3,  # Retry on read-related errors
