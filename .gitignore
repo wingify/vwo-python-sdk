@@ -45,4 +45,4 @@ MANIFEST
 coverage/
 htmlcov/
 .venv/
-ENV/
+ENV*

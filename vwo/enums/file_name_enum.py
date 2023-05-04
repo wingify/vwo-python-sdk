@@ -14,7 +14,7 @@
 
 
 class FileNameEnum:
-    """ Classobj encapsulating locations various files of the SDK """
+    """Classobj encapsulating locations various files of the SDK"""
 
     class Vwo:
         VWO_PATH = "vwo/"
@@ -41,6 +41,10 @@ class FileNameEnum:
     class Event:
         EVENT_PATH = "vwo/event/"
         EventDispatcher = EVENT_PATH + "event_dispatcher"
+
+    class Http:
+        HTTP_PATH = "vwo/http/"
+        Connection = HTTP_PATH + "connection"
 
     class Helpers:
         HELPERS_PATH = "vwo/helpers/"
