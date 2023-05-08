@@ -47,6 +47,8 @@ class EventDispatcher(object):
         self.queue_metadata = {}
         self.timer = None
 
+        self.lock = threading.Lock()
+
         self.event_batching = False
         self.events_per_request = constants.BATCH_EVENTS.DEFAULT_EVENTS_PER_REQUEST
         self.request_time_interval = constants.BATCH_EVENTS.DEFAULT_REQUEST_TIME_INTERVAL
@@ -158,19 +160,21 @@ class EventDispatcher(object):
             bool: True if impression is successfully pushed in queue, else false
         """
         try:
-            # build payload
-            payload = self.build_event_payload(url, impression)
-            # push in queue
-            self.queue.append(payload)
-            self.update_queue_metadata(url=url)
-            # flush queue periodically
-            if len(self.queue) == 1:
-                self.timer = threading.Timer(self.request_time_interval, self.flush_queue)
-                self.timer.start()
-            # flush queue when full
-            if len(self.queue) >= self.events_per_request:
-                self.flush_queue()
-            return True
+            # only one thread at a time can add to queue, to keep queue thread safe
+            with self.lock:
+                # build payload
+                payload = self.build_event_payload(url, impression)
+                # push in queue
+                self.queue.append(payload)
+                self.update_queue_metadata(url=url)
+                # flush queue periodically
+                if len(self.queue) == 1:
+                    self.timer = threading.Timer(self.request_time_interval, self.flush_queue)
+                    self.timer.start()
+                # flush queue when full
+                if len(self.queue) >= self.events_per_request:
+                    self.flush_queue()
+                return True
         except Exception:
             self.logger.log(
                 LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.IMPRESSION_FAILED.format(file=FILE, end_point=url)
@@ -231,7 +235,7 @@ class EventDispatcher(object):
         headers = {"Authorization": self.sdk_key}
 
         queue_length = len(events)
-        first_event = 'No event in queue'
+        first_event = "No event in queue"
 
         if queue_length > 0:
             first_event = events[0]
@@ -267,8 +271,8 @@ class EventDispatcher(object):
                         first_event=first_event,
                         query_params=query_params,
                         headers=headers,
-                        err='Wrong status code'
-                    )
+                        err="Wrong status code",
+                    ),
                 )
 
             if self.flush_callback:
@@ -284,13 +288,14 @@ class EventDispatcher(object):
                     first_event=first_event,
                     query_params=query_params,
                     headers=headers,
-                    err=err
-                )
+                    err=err,
+                ),
             )
 
             if self.flush_callback:
                 self.flush_callback(err, events)
 
+    # Note : all calls to flush_queue must only be made from async_dispatcher, to keep it thread safe
     def flush_queue(self, manual=False, mode="async"):
         """
         Flush_queue
