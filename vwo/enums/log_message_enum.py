@@ -159,9 +159,7 @@ class LogMessageEnum:
         )
 
         USER_NOT_IN_CAMPAIGN = "({file}): [API_NAME] user_id:{user_id} did not become part of campaign_key:{campaign_key} and campaign type:{campaign_type}"
-        API_NOT_WORKING = (
-            "({file}): [API_NAME] API not working, exception caught: {exception}. Please contact VWO Support for help."
-        )
+        API_NOT_WORKING = "({file}): [API_NAME] API not working, exception caught: {exception}. Please contact VWO Support for help. Stacktrace - {stacktrace}"
 
         SEGMENTATION_ERROR = "({file}): [API_NAME] Error while segmenting the user_id:{user_id} of campaign_key:{campaign_key} with variables:{variables}{variation_status}. Error message: {error_message}"
 

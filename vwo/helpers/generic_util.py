@@ -20,6 +20,7 @@ import time
 from ..logger import VWOLogger
 from ..enums.log_level_enum import LogLevelEnum
 from ..enums.log_message_enum import LogMessageEnum
+import traceback
 
 logger = VWOLogger.getInstance()
 
@@ -92,7 +93,12 @@ def safe_method(method, fail_return_value, FILE):
         try:
             return method(*args, **kwargs)
         except Exception as e:
-            logger.log(LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(file=FILE, exception=e))
+            stacktrace = traceback.format_exc()
+            logger.log(
+                LogLevelEnum.ERROR,
+                LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(file=FILE, exception=e, stacktrace=stacktrace),
+            )
+
             return fail_return_value
 
     return inner_method
