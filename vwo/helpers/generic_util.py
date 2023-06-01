@@ -93,10 +93,18 @@ def safe_method(method, fail_return_value, FILE):
         try:
             return method(*args, **kwargs)
         except Exception as e:
+            # log the exception and stack trace
             stacktrace = traceback.format_exc()
+
+            # log the args for this API call
+            args_log = str(args)
+            kwargs_log = str(kwargs)
+
             logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(file=FILE, exception=e, stacktrace=stacktrace),
+                LogMessageEnum.ERROR_MESSAGES.API_NOT_WORKING.format(
+                  file=FILE, exception=e, stacktrace=stacktrace, args_log=args_log, kwargs_log=kwargs_log
+                ),
             )
 
             return fail_return_value

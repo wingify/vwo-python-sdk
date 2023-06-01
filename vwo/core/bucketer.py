@@ -28,6 +28,10 @@ from ..logger import VWOLogger
 U_MAX_32_BIT = 0xFFFFFFFF
 FILE = FileNameEnum.Core.Bucketer
 
+# min and max range of bucket value
+MIN_BUCKET_VALUE = 1
+MAX_BUCKET_VALUE = 10000
+
 
 class Bucketer(object):
     """Class consisting the core bucketing/distribution logic for
@@ -51,6 +55,17 @@ class Bucketer(object):
         for item in items:
             if item.get("allocation_range_start") <= bucket_value <= item.get("allocation_range_end"):
                 return item
+
+        variations_log_string = ""
+        for item in items:
+            variations_log_string += str(item) + "\n"
+
+        # log for None item
+        self.logger.log(
+            LogLevelEnum.ERROR,
+            "tmpLog::bucketer::get_allocated_item() - Variation is None for bucket_value=" + str(bucket_value) + '. Variations details - ' + variations_log_string,
+        )
+
         return None
 
     def get_bucket_value_for_user(self, user_seed, user_id, max_value, multiplier=1, disable_logs=False):
@@ -67,10 +82,17 @@ class Bucketer(object):
             (between 1 to MAX_TRAFFIC_PERCENT)
         """
 
+        # calculate valid bucket value
         hash_value = Hasher.hash(user_seed, constants.SEED_VALUE) & U_MAX_32_BIT
-        ratio = hash_value / (2 ** 32)
+        ratio = hash_value / (2**32)
         multiplied_value = (max_value * ratio + 1) * multiplier
         bucket_value = int(multiplied_value)
+
+        # set bucket value to the min/max value if outside ranges
+        if bucket_value > MAX_BUCKET_VALUE:
+            bucket_value = MAX_BUCKET_VALUE
+        elif bucket_value < MIN_BUCKET_VALUE:
+            bucket_value = MIN_BUCKET_VALUE
 
         self.logger.log(
             LogLevelEnum.DEBUG,
@@ -156,6 +178,28 @@ class Bucketer(object):
             )
             return None
 
+        # logging for problem with percent traffic
+        if campaign.get("percentTraffic") is not None and campaign.get("percentTraffic") == 0:
+            log_str = (
+                "tmpLog::bucketer::bucket_user_to_variation() - campaign="
+                + campaign.get("key")
+                + ", userId="
+                + str(user_id)
+                + ", percentTraffic="
+                + str(campaign.get("percentTraffic"))
+            )
+            self.logger.log(LogLevelEnum.ERROR, log_str)
+        elif campaign.get("percentTraffic") is None:
+            log_str = (
+                "tmpLog::bucketer::bucket_user_to_variation() - campaign="
+                + campaign.get("key")
+                + ", userId="
+                + str(user_id)
+                + ", percentTraffic=None"
+            )
+            self.logger.logger(LogLevelEnum.ERROR, log_str)
+
+        # get valid bucket value
         normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
         multiplier = normalize / 100
         bucket_value = self.get_bucket_value_for_user(
@@ -164,6 +208,27 @@ class Bucketer(object):
             constants.MAX_TRAFFIC_VALUE,
             multiplier,
         )
+
+        # logging for problem with bucket value
+        if bucket_value is not None and (bucket_value < 1 or bucket_value > 10000):
+            log_str = (
+                "tmpLog::bucketer::bucket_user_to_variation() - campaign="
+                + campaign.get("key")
+                + ", userId="
+                + str(user_id)
+                + ", bucket_value="
+                + str(bucket_value)
+            )
+            self.logger.log(LogLevelEnum.ERROR, log_str)
+        elif bucket_value is None:
+            log_str = (
+                "tmpLog::bucketer::bucket_user_to_variation() - campaign="
+                + campaign.get("key")
+                + +", userId="
+                + str(user_id)
+                + ", bucket_value=None"
+            )
+            self.logger.log(LogLevelEnum.ERROR, log_str)
 
         self.logger.log(
             LogLevelEnum.DEBUG,
@@ -175,4 +240,5 @@ class Bucketer(object):
                 bucket_value=bucket_value,
             ),
         )
+
         return self.get_allocated_item(campaign.get("variations"), bucket_value)
