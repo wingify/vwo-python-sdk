@@ -33,5 +33,5 @@ CAMPAIGN = {
         "segments": {"type": "object"},
         "isBucketingSeedEnabled": {"type": "boolean"},
     },
-    "required": ["id", "name", "key", "status", "percentTraffic", "variations", "goals"],
+    "required": ["id", "key", "status", "percentTraffic", "variations", "goals"],
 }

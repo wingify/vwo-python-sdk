@@ -20,6 +20,9 @@ GROUP_SCHEMA = {
             "properties": {
                 "name": {"type": "string"},
                 "campaigns": {"type": "array", "items": {"type": "number"}, "uniqueItems": True},
+                "et": {"type": "number"},
+                "p": {"type": "array", "items": {"type": "number"}},
+                "wt": {"type": "object", "patternProperties": {"^[0-9]+$": {"type": "number"}}},
             },
         }
     },

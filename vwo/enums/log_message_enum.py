@@ -112,6 +112,8 @@ class LogMessageEnum:
         )
         CAMPAIGN_NOT_ACTIVATED = "({file}): Activate the campaign:{campaign_key} for User ID:{user_id} to {reason}"
         GOT_WINNER_CAMPAIGN = "({file}): Campaign:{campaign_key} is selected from the mutually exclusive group:{group_name} for the User ID:{user_id}"
+        PRIORITY_CAMPAIGN_WINNER = "({file}): Priority Campaign:{campaign_id} is Winner campaign"
+        TRAFFIC_WEIGHTAGE_CAMPAIGN_WINNER = "({file}): Traffic Weightage Campaign:{campaign_id} is Winner campaign"
         GOT_ELIGIBLE_CAMPAIGNS = "({file}): Got {no_of_eligible_campaigns} eligible winners out of {no_of_group_campaigns} from the Group:{group_name} and for User ID:{user_id}"
         CALLED_CAMPAIGN_NOT_WINNER = "({file}): Campaign:{campaign_key} does not qualify from the mutually exclusive group:{group_name} for User ID:{user_id}"
         OTHER_CAMPAIGN_SATIFIES_WHITELISTING_OR_STORAGE = (

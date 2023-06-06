@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
+import bisect
 import copy
 from ..enums.log_message_enum import LogMessageEnum
 from ..enums.file_name_enum import FileNameEnum
@@ -26,6 +28,10 @@ from ..services.hooks_manager import HooksManager
 from ..constants import constants
 
 FILE = FileNameEnum.Core.VariationDecider
+
+# MEG algorithm types (default: random)
+MEG_ALGO_RANDOM = 1
+MEG_ALGO_ADVANCED = 2
 
 
 class VariationDecider(object):
@@ -94,6 +100,7 @@ class VariationDecider(object):
         is_campaign_part_of_group = self.settings_file and campaign_util.is_part_of_group(
             self.settings_file, campaign.get("id")
         )
+        group_algo = MEG_ALGO_RANDOM
 
         decision = {
             # campaign info
@@ -120,13 +127,23 @@ class VariationDecider(object):
             "vwo_user_id": uuid_util.generate_for(user_id, self.account_id),
         }
 
+        # check if campaign part of MEG
         if is_campaign_part_of_group:
+            # get group details
             group_id = self.settings_file.get("campaignGroups").get(str(campaign.get("id")))
+            group_algo = (
+                self.settings_file.get("groups").get(str(group_id)).get("et")
+                if self.settings_file.get("groups").get(str(group_id)).get("et") != None
+                else MEG_ALGO_RANDOM
+            )
+
+            # update group details in decision dictionary
             decision.update(
                 {
                     # Group info
                     "group_id": group_id,
                     "group_name": self.settings_file.get("groups").get(str(group_id)).get("name"),
+                    "group_algo": group_algo,
                 }
             )
 
@@ -276,7 +293,12 @@ class VariationDecider(object):
                 ),
             )
 
-            winner_campaign = self._get_winner_campaign(user_id, eligible_campaigns, group_id)
+            # get winner campaign based on algorithm
+            if group_algo == MEG_ALGO_RANDOM:
+                winner_campaign = self._get_winner_campaign(user_id, eligible_campaigns, group_id)
+            elif group_algo == MEG_ALGO_ADVANCED:
+                winner_campaign = self._get_winner_campaign_advanced(user_id, eligible_campaigns, group_id)
+
             self.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.GOT_WINNER_CAMPAIGN.format(
@@ -287,6 +309,7 @@ class VariationDecider(object):
                 ),
             )
 
+            # get variation from the winner campaign, if same as called campaign
             if winner_campaign and winner_campaign.get("id") == campaign.get("id"):
                 return self._get_bucketed_variation(user_id, campaign, decision, goal_data), is_user_tracked
 
@@ -873,3 +896,117 @@ class VariationDecider(object):
         winner_campaign = self.bucketer.get_allocated_item(eligible_campaigns, bucket_value)
 
         return winner_campaign
+
+    def _get_winner_campaign_advanced(self, user_id, eligible_campaigns, group_id):
+        """Finds and returns the winner campaign from eligible_campaigns list for advanced algo - priority campaigns and traffic distribution
+
+        Args:
+            user_id (string): the unique ID assigned to User
+            eligible_campaigns (list): campaigns part of group which were eligible to be winner
+            group_id (int): MEG id of which called campaign is part of
+            group_name (string): MEG name of which called campaign is part of
+
+        Returns:
+            winner_campaign (dict): winner campaign from eligible_campaigns
+        """
+
+        winner_campaign = None
+
+        if len(eligible_campaigns) == 1:
+            return eligible_campaigns[0]
+
+        # get the priorirty and traffic weightage campaigns
+        priority_campaigns = (
+            self.settings_file.get("groups").get(str(group_id)).get("p")
+            if self.settings_file.get("groups").get(str(group_id)).get("p") != None
+            else None
+        )
+        traffic_weightage_campaigns = (
+            self.settings_file.get("groups").get(str(group_id)).get("wt")
+            if self.settings_file.get("groups").get(str(group_id)).get("wt") != None
+            else None
+        )
+
+        # Traffic weightage campaigns
+        eligible_traffic_weightage_campaigns = []
+        percentage_traffic_for_weightage_campaigns = []
+
+        # Parse through the priority campaigns and find the winner from the shortlisted campaigns
+        if priority_campaigns and eligible_campaigns:
+            for priority_campaign_id in priority_campaigns:
+                # Stop parsing if winner found
+                if winner_campaign:
+                    break
+
+                # Parse through the eligible campaigns to search for this priority campaign
+                for eligible_campaign in eligible_campaigns:
+                    if eligible_campaign.get("id") == priority_campaign_id:
+                        # Set the winner campaign
+                        winner_campaign = eligible_campaign
+
+                        # log priority campaign winner
+                        self.logger.log(
+                            LogLevelEnum.INFO,
+                            LogMessageEnum.INFO_MESSAGES.PRIORITY_CAMPAIGN_WINNER.format(
+                                file=FILE,
+                                campaign_id=winner_campaign.get("id"),
+                            ),
+                        )
+                        break
+
+        # If winner not found, parse through traffic weightage campaigns
+        if winner_campaign is None and eligible_campaigns and traffic_weightage_campaigns:
+            # Parse through eligible campaigns and get their traffic weightages
+            for eligible_campaign in eligible_campaigns:
+
+                if str(eligible_campaign.get("id")) in traffic_weightage_campaigns:
+                    # Get campaign and percentage traffic
+                    eligible_traffic_weightage_campaigns.append(eligible_campaign)
+                    percentage_traffic_for_weightage_campaigns.append(
+                        traffic_weightage_campaigns.get(str(eligible_campaign.get("id")))
+                    )
+
+            # Select winner based on traffic weightage from eligible campaigns
+            winner_campaign = self._get_campaign_based_on_traffic_weightage(
+                eligible_traffic_weightage_campaigns, percentage_traffic_for_weightage_campaigns
+            )
+
+            # log traffic weightage campaign winner
+            self.logger.log(
+                LogLevelEnum.INFO,
+                LogMessageEnum.INFO_MESSAGES.TRAFFIC_WEIGHTAGE_CAMPAIGN_WINNER.format(
+                    file=FILE,
+                    campaign_id=winner_campaign.get("id"),
+                ),
+            )
+
+        return winner_campaign
+
+    def _get_campaign_based_on_traffic_weightage(self, campaigns, traffic_weightage):
+        """Returns a campaign based on traffic weightage of campaigns
+
+        Args:
+            campaigns (list): campaigns eligible for traffic weightage
+            traffic_weightage (list): traffic distribution for each of the campaigns
+
+        Returns:
+            campaign (dict): selected campaign based on random weighted traffic
+        """
+
+        cumulative_weights = []
+        total_weight = 0
+
+        # Get the cumulative weights for the campaigns
+        for weight in traffic_weightage:
+            total_weight += weight
+            cumulative_weights.append(total_weight)
+
+        # Get a weighted random
+        random_num = random.randint(0, total_weight - 1)
+        index = bisect.bisect_left(cumulative_weights, random_num)
+
+        # Binary search returns a negative value when the generated number is between cumulative weights
+        if index < 0:
+            index = -(index + 1)
+
+        return campaigns[index]
