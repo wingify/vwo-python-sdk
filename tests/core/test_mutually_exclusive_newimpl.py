@@ -45,6 +45,7 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
             self.user_id,
         )
 
+        print("Variation is: " + variation)
         # valid variation should be returned
         self.assertIsNotNone(variation)
 
@@ -58,6 +59,8 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
             campaign_key,
             self.user_id,
         )
+
+        print("Variation is: " + variation)
 
         # valid variation should not be returned
         self.assertIsNone(variation)
