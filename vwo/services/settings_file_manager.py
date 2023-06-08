@@ -25,10 +25,10 @@ FILE = FileNameEnum.Services.SettingsFileManager
 
 
 class SettingsFileManager(object):
-    """ VWO settings_file manager """
+    """VWO settings_file manager"""
 
     def __init__(self, settings_file):
-        """ Init method to load and set vwo object with settings_file data.
+        """Init method to load and set vwo object with settings_file data.
 
         Args:
             settings_file (json_string): stringified json representing the vwo settings_file.
@@ -38,7 +38,7 @@ class SettingsFileManager(object):
 
     # PUBLIC METHODS
     def process_settings_file(self):
-        """ Processes the settings_file, assigns variation allocation range """
+        """Processes the settings_file, assigns variation allocation range"""
 
         settings_file = self.settings_file
         for campaign in settings_file.get("campaigns"):
@@ -46,12 +46,12 @@ class SettingsFileManager(object):
         self.logger.log(LogLevelEnum.DEBUG, LogMessageEnum.DEBUG_MESSAGES.SETTINGS_FILE_PROCESSED.format(file=FILE))
 
     def get_settings_file(self):
-        """ Retrieves settings file """
+        """Retrieves settings file"""
 
         return self.settings_file
 
     def get_settings_file_string(self):
-        """ Retrieves stringified json representing the settings_file """
+        """Retrieves stringified json representing the settings_file"""
 
         return self.settings_file_string
 
@@ -74,7 +74,9 @@ class SettingsFileManager(object):
         if not validate_util.is_valid_settings_file(latest_settings_file):
             self.logger.log(
                 LogLevelEnum.ERROR,
-                LogMessageEnum.ERROR_MESSAGES.INVALID_SETTINGS_FILE.format(file=FILE, account_id=account_id),
+                LogMessageEnum.ERROR_MESSAGES.INVALID_SETTINGS_FILE.format(
+                    file=FILE, account_id=account_id, settings_file=latest_settings_file
+                ),
             )
             return False
 
@@ -86,7 +88,7 @@ class SettingsFileManager(object):
         return True
 
     def update_settings_file(self, settings_file):
-        """ Update the settings_file on the instance so that latest settings could be used
+        """Update the settings_file on the instance so that latest settings could be used
         from next hit onwards
 
         Args:

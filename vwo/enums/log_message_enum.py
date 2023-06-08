@@ -180,9 +180,7 @@ class LogMessageEnum:
         CONNECTION_ERROR = "({file}): HTTP Connection - {reason}. Error - {err}"
 
         BATCH_EVENT_LIMIT_EXCEEDED = "({file}): Impression event - {end_point} failed due to exceeding payload size. Parameter events_per_request in batch_events config in launch API has value:{events_per_request} for accountId:{account_id}. Please read the official documentation for knowing the size limits."
-        INVALID_SETTINGS_FILE = (
-            "({file}): [API_NAME] settings_file fetched is not proper for the account_id: {account_id}."
-        )
+        INVALID_SETTINGS_FILE = "({file}): [API_NAME] settings_file fetched is not proper for the account_id: {account_id}, settings_file: {settings_file}"
 
         EVENT_BATCHING_NOT_OBJECT = "({file}): Batch event settings are not of type object"
         EVENT_BATCHING_INSUFFICIENT = (

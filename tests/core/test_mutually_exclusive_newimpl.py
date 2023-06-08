@@ -76,7 +76,7 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
 
         # remove priority from settings file and initialize local vwo instance (so that logic flows to traffic weightage)
         new_meg_settings_without_p = new_meg_settings
-        del new_meg_settings_without_p["groups"]["1"]["p"]
+        new_meg_settings_without_p["groups"]["1"].pop("p", None)
         vwo_instance = vwo.launch(
             json.dumps(new_meg_settings_without_p),
             log_level=TEST_LOG_LEVEL,
