@@ -48,7 +48,10 @@ class Connection:
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
 
-    def get(self, url, params=None):
+        # marker
+        self.logger.log(LogLevelEnum.ERROR, "RD_Connection_init")
+
+    def get(self, url, params=None, headers=None):
         """Get method, it wraps upon requests' get method.
         Args:
             url (str): Unique resource locator
@@ -56,8 +59,13 @@ class Connection:
         Returns:
             dict : Status code and Response text
         """
+
+        # marker
+        if headers is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection::Get() - RD_Headers=" + str(headers))
+
         try:
-            resp = self.session.get(url, params=params)
+            resp = self.session.get(url, params=params, headers=headers)
             return {"status_code": resp.status_code, "text": resp.text}
         except Timeout as err:
             self.logger.log(
@@ -100,6 +108,11 @@ class Connection:
         Returns:
             dict : Status code and Response text
         """
+
+        # marker
+        # if headers is not None:
+        # self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Headers="+str(headers))
+
         try:
             resp = self.session.post(url, params=params, json=data, headers=headers)
             return {"status_code": resp.status_code, "text": resp.text}

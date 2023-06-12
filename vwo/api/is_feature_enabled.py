@@ -59,6 +59,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
         return False
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
+    custom_headers = kwargs.get("custom_headers")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
 
     if (
@@ -115,7 +116,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
                 vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
             )
 
-            vwo_instance.event_dispatcher.dispatch(impression)
+            vwo_instance.event_dispatcher.dispatch(impression, custom_headers=custom_headers)
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
@@ -130,7 +131,9 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
             impression = impression_util.create_track_user_events_impression(
                 vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
             )
-            vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
+            vwo_instance.event_dispatcher.dispatch_events(
+                params=params, impression=impression, custom_headers=custom_headers
+            )
     else:
         vwo_instance.logger.log(
             LogLevelEnum.INFO,

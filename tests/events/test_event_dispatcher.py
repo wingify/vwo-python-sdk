@@ -38,6 +38,11 @@ test_properties = {
     "sdk-v": constants.SDK_VERSION,
     "sdk": constants.SDK_NAME,
     "account_id": TEST_ACCOUNT_ID,
+    "User-Agent": "vwo-python-sdk",
+}
+
+test_headers = {
+    "User-Agent": "vwo-python-sdk",
 }
 
 test_events_track_impression_properties = {
@@ -92,7 +97,7 @@ class DispatcherTest(unittest.TestCase):
             result = self.dispatcher.dispatch(properties)
             self.assertIs(result, True)
         url = properties_for_check.pop("url")
-        mock_connection_get.assert_called_once_with(url, params=properties)
+        mock_connection_get.assert_called_once_with(url, params=properties, headers=test_headers)
 
     def test_dispatch_returns_error_status_code(self):
         properties = test_properties.copy()

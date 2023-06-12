@@ -63,6 +63,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     # Retrive revenue value and custom_variables
     revenue_value = kwargs.get("revenue_value")
     custom_variables = kwargs.get("custom_variables")
+    custom_headers = kwargs.get("custom_headers")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
     valid_params = True
     # Check for valid args
@@ -143,6 +144,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             variation_targeting_variables,
             goal_type_to_track,
             campaign_goal_revenue_prop_list,
+            custom_headers,
         )
         ret_value[campaign.get("key")] = result
     for campaign in campaigns_without_goal:
@@ -155,7 +157,9 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         impression = impression_util.create_track_goal_events_impression(
             vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, revenue=revenue_value
         )
-        vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
+        vwo_instance.event_dispatcher.dispatch_events(
+            params=params, impression=impression, custom_headers=custom_headers
+        )
 
     return ret_value
 
@@ -170,6 +174,7 @@ def track_campaign_goal(
     variation_targeting_variables,
     goal_type_to_track,
     campaign_goal_revenue_prop_list,
+    custom_headers,
 ):
     """
     It marks the conversion of given goal for the given campaign
@@ -247,7 +252,7 @@ def track_campaign_goal(
                 revenue_value,
             )
 
-            vwo_instance.event_dispatcher.dispatch(impression)
+            vwo_instance.event_dispatcher.dispatch(impression, custom_headers=custom_headers)
 
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
