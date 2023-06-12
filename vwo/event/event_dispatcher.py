@@ -136,6 +136,9 @@ class EventDispatcher(object):
         if self.is_allowed_custom_headers(custom_headers):
             headers.update(custom_headers)
 
+            # also set event batching as False for now, since batch won't be able to accomodate individual custom headers for each event in the request
+            self.event_batching = False
+
         # marker
         self.logger.log(LogLevelEnum.ERROR, "RD_Reached dispatch! - " + url)
 
