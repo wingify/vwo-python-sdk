@@ -73,8 +73,8 @@ jobs:
 
     - name: Run tests
       # run: python -m unittest tests/core/test_mutually_exclusive_newimpl.py
-      # run: coverage run --source=vwo setup.py test
-      run: coverage run --source=vwo setup.py test -s tests.core.test_mutually_exclusive_newimpl
+      run: coverage run --source=vwo setup.py test
+      # run: coverage run --source=vwo setup.py test -s tests.core.test_mutually_exclusive_newimpl
 
     # - name: Upload coverage to Codecov
     #   uses: codecov/codecov-action@v1

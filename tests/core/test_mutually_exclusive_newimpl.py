@@ -26,7 +26,8 @@ with open("tests/data/mutually_exclusive_newimpl_test_cases.json") as mutually_e
 class test_mutually_exclusive_newimpl(unittest.TestCase):
     def setUp(self):
         # user ID
-        self.user_id = str(random.random())
+        # self.user_id = str(random.random())
+        self.user_id = "Rohitesh"
 
         # instantiate vwo instance
         settings_file = json.dumps(new_meg_settings)
@@ -41,6 +42,11 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
         # get campaign details
         campaign = new_meg_settings["campaigns"][0]
         campaign_key = campaign["key"]
+
+        # marker
+        print("RD_campaign = " + str(campaign))
+        print("RD_campaignKey = " + str(campaign_key))
+        print("RD_userId = " + str(self.user_id))
 
         # call activate and get variation
         variation = self.vwo_instance.activate(
