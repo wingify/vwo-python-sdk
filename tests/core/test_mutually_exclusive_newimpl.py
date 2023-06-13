@@ -36,6 +36,9 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
 
     # called campaign is same as priority campaign
     def test_called_campaign_is_priority_campaign(self):
+        self.setUp()
+
+        # get campaign details
         campaign = new_meg_settings["campaigns"][0]
         campaign_key = campaign["key"]
 
@@ -45,12 +48,14 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
             self.user_id,
         )
 
-        print(variation)
         # valid variation should be returned
         self.assertIsNotNone(variation)
 
     # called campaign is not priority campaign
     def test_called_campaign_is_not_priority_campaign(self):
+        self.setUp()
+
+        # get campaign details
         campaign = new_meg_settings["campaigns"][1]
         campaign_key = campaign["key"]
 
@@ -60,13 +65,13 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
             self.user_id,
         )
 
-        print(variation)
-
         # valid variation should not be returned
         self.assertIsNone(variation)
 
     # traffic weightage campaigns
     def test_traffic_weightage_campaigns(self):
+        self.setUp()
+
         # high and low traffic campaigns
         high_traffic_campaign = new_meg_settings["campaigns"][2]
         low_traffic_campaign = new_meg_settings["campaigns"][3]
@@ -79,6 +84,7 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
 
         # remove priority from settings file and initialize local vwo instance (so that logic flows to traffic weightage)
         new_meg_settings_without_p = new_meg_settings
+        # del new_meg_settings_without_p["groups"]["1"]["p"]
         new_meg_settings_without_p["groups"]["1"].pop("p", None)
         vwo_instance = vwo.launch(
             json.dumps(new_meg_settings_without_p),
