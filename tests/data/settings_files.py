@@ -1407,4 +1407,276 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "version": 1,
     },
+    "VALIDATE_EXTRA_PARAM_IN_CAMPAIGN": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
+                "variations": [
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
+                ],
+                "isExtraParamPresentInValidation": True,
+                "id": 230,
+                "name": "Campaign-230",
+                "percentTraffic": 50,
+                "key": "AB_T_50_W_50_50",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1,
+    },
+    "VALIDATE_EXTRA_PARAM_IN_ROOT": {
+        "sdkKey": "someuniquestuff1234567",
+        "isExtraParamPresentInValidation": True,
+        "campaigns": [
+            {
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
+                "variations": [
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
+                ],
+                "id": 230,
+                "name": "Campaign-230",
+                "percentTraffic": 50,
+                "key": "AB_T_50_W_50_50",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1,
+    },
+    "NEW_BUCKET_ALGO": {
+        "isNB": True,
+        "sdkKey": "someuniquestuff1234567",
+        "isExtraParamPresentInValidation": True,
+        "campaigns": [
+            {
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
+                "variations": [
+                    {"id": 1, "name": "Control-Old", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1-Old", "changes": {}, "weight": 50},
+                ],
+                "isOB": True,
+                "id": 230,
+                "name": "Campaign-230",
+                "percentTraffic": 100,
+                "key": "NEW_BUCKET_ALGO_OLD_CAMPAIGN",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+            },
+            {
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
+                "variations": [
+                    {"id": 1, "name": "Control-New", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1-New", "changes": {}, "weight": 50},
+                ],
+                "id": 231,
+                "name": "Campaign-231",
+                "percentTraffic": 100,
+                "key": "NEW_BUCKET_ALGO_NEW_CAMPAIGN",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1,
+    },
+    "SETTINGS_WITHOUT_SEED_WITHOUT_ISOB": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                    "identifier": "CUSTOM",
+                    "id": 213,
+                    "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                    "id": 1,
+                    "name": "Control",
+                    "changes": {},
+                    "weight": 50
+                    },
+                    {
+                    "id": 2,
+                    "name": 'Variation-1',
+                    "changes": {},
+                    "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "name": "BUCKET_ALGO_WITHOUT_SEED",
+                "key": "BUCKET_ALGO_WITHOUT_SEED",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "isNB": True
+    },
+    "SETTINGS_WITH_SEED_WITHOUT_ISOB": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "isBucketingSeedEnabled": True,
+                "name": "BUCKET_ALGO_WITH_SEED",
+                "key": "BUCKET_ALGO_WITH_SEED",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "isNB": True
+    },
+    "SETTINGS_WITH_ISNB_WITH_ISOB": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "isBucketingSeedEnabled": True,
+                "name": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITH_isOB",
+                "key": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITH_isOB",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {},
+                "isOB": True
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "isNB": True
+    },
+    "SETTINGS_WITH_ISNB_WITHOUT_ISOB": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "isBucketingSeedEnabled": True,
+                "name": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
+                "key": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "isNB": True
+    },
+    "SETTINGS_WITHOUT_SEED_WITH_ISNB_WITHOUT_ISOB": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "name": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
+                "key": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "isNB": True
+    }
 }
