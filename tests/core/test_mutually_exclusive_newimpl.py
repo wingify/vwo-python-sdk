@@ -17,10 +17,8 @@ import random
 import unittest
 
 import vwo
-from tests.config.config import TEST_LOG_LEVEL
-
-with open("tests/data/mutually_exclusive_newimpl_test_cases.json") as mutually_exclusive_test_cases_json:
-    new_meg_settings = json.load(mutually_exclusive_test_cases_json)
+from ..data.settings_files import SETTINGS_FILES
+from ..data.settings_file_and_user_expectations import USER_EXPECTATIONS
 
 
 class test_mutually_exclusive_newimpl(unittest.TestCase):
@@ -28,66 +26,47 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
         # user ID
         self.user_id = str(random.random())
 
-        # instantiate vwo instance
-        settings_file = json.dumps(new_meg_settings)
-        self.vwo_instance = vwo.launch(
-            settings_file, log_level=TEST_LOG_LEVEL, user_storage=None, is_development_mode=True
-        )
-
     # called campaign is same as priority campaign
     def test_called_campaign_is_priority_campaign(self):
-        campaign = new_meg_settings["campaigns"][0]
-        campaign_key = campaign["key"]
+        settings_file = SETTINGS_FILES["SETTINGS_MEGNEW_ONLY_PRIORITY"]
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+        user_and_variations = USER_EXPECTATIONS["SETTINGS_MEGNEW_ONLY_PRIORITY"]
+        campaign_key = settings_file.get("campaigns")[0].get("key")
 
-        # call activate and get variation
-        variation = self.vwo_instance.activate(
-            campaign_key,
-            self.user_id,
-        )
+        # get variation for each test user and validate
+        for test in user_and_variations:
+            variation = vwo_instance.get_variation_name(campaign_key, test["user"])
+            self.assertEqual(variation, test["variation"])
 
-        # valid variation should be returned
-        self.assertIsNotNone(variation)
-
-    # called campaign is not priority campaign
+    # called campaign is not same as priority campaign
     def test_called_campaign_is_not_priority_campaign(self):
-        campaign = new_meg_settings["campaigns"][1]
-        campaign_key = campaign["key"]
+        settings_file = SETTINGS_FILES["SETTINGS_MEGNEW_ONLY_PRIORITY"]
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+        user_and_variations = USER_EXPECTATIONS["SETTINGS_MEGNEW_ONLY_PRIORITY"]
+        campaign_key = settings_file.get("campaigns")[1].get("key")
 
-        # call activate and get variation
-        variation = self.vwo_instance.activate(
-            campaign_key,
-            self.user_id,
-        )
-
-        # valid variation should not be returned
-        self.assertIsNone(variation)
+        # get variation for each test user and validate
+        for test in user_and_variations:
+            variation = vwo_instance.get_variation_name(campaign_key, test["user"])
+            self.assertIsNone(variation)
 
     # traffic weightage campaigns
     def test_traffic_weightage_campaigns(self):
+        settings_file = SETTINGS_FILES["SETTINGS_MEGNEW_ONLY_TRAFFIC"]
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+
         # high and low traffic campaigns
-        high_traffic_campaign = new_meg_settings["campaigns"][2]
-        low_traffic_campaign = new_meg_settings["campaigns"][3]
-        high_traffic_campaign_key = high_traffic_campaign["key"]
-        low_traffic_campaign_key = low_traffic_campaign["key"]
+        high_traffic_campaign_key = settings_file.get("campaigns")[0].get("key")
+        low_traffic_campaign_key = settings_file.get("campaigns")[1].get("key")
 
         # count for returned valid variations
         high_traffic_count = 0
         low_traffic_count = 0
 
-        # remove priority from settings file and initialize local vwo instance (so that logic flows to traffic weightage)
-        new_meg_settings_without_p = new_meg_settings
-        new_meg_settings_without_p["groups"]["1"].pop("p", None)
-        vwo_instance = vwo.launch(
-            json.dumps(new_meg_settings_without_p),
-            log_level=TEST_LOG_LEVEL,
-            user_storage=None,
-            is_development_mode=True,
-        )
-
         # run through 1000 iterations of called campaign is high traffic campaign
         for _ in range(1000):
             # call activate on local vwo instance and get variation
-            variation = vwo_instance.activate(high_traffic_campaign_key, self.user_id)
+            variation = vwo_instance.get_variation_name(high_traffic_campaign_key, self.user_id)
 
             # if valid variation returned, increment high count
             if variation:
@@ -96,7 +75,7 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
         # run through 1000 iterations of called campaign is low traffic campaign
         for _ in range(1000):
             # call activate on local vwo and get variation
-            variation = vwo_instance.activate(low_traffic_campaign_key, self.user_id)
+            variation = vwo_instance.get_variation_name(low_traffic_campaign_key, self.user_id)
 
             # if valid variation returned, increment low count
             if variation:

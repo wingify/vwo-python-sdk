@@ -1678,5 +1678,166 @@ SETTINGS_FILES = {
         "accountId": 888888,
         "version": 1,
         "isNB": True
+    },
+    "SETTINGS_MEGNEW_ONLY_PRIORITY": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "name": "MEGNEW_ONLY_PRIORITY_0",
+                "key": "MEGNEW_ONLY_PRIORITY_0",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            },
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 232,
+                "percentTraffic": 100,
+                "name": "MEGNEW_ONLY_PRIORITY_1",
+                "key": "MEGNEW_ONLY_PRIORITY_1",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "groups": {
+            "1": {
+                "name": "group1",
+                "campaigns": [231, 232],
+                "et": 2,
+                "p": [231, 232]
+            }
+        },
+        "campaignGroups":{
+            "231": 1,
+            "232": 1
+        }
+    },
+    "SETTINGS_MEGNEW_ONLY_TRAFFIC": {
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "name": "MEGNEW_ONLY_TRAFFIC_0",
+                "key": "MEGNEW_ONLY_TRAFFIC_0",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            },
+            {
+                "goals": [
+                    {
+                        "identifier": "CUSTOM",
+                        "id": 213,
+                        "type": "CUSTOM_GOAL"
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 232,
+                "percentTraffic": 100,
+                "name": "MEGNEW_ONLY_TRAFFIC_1",
+                "key": "MEGNEW_ONLY_TRAFFIC_1",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "groups": {
+            "1": {
+                "name": "group1",
+                "campaigns": [231, 232],
+                "et": 2,
+                "wt": {
+                    "231": 80,
+                    "232": 20
+                }
+            }
+        },
+        "campaignGroups":{
+            "231": 1,
+            "232": 1
+        }
     }
 }

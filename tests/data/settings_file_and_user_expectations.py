@@ -567,5 +567,12 @@ USER_EXPECTATIONS = {
         { "user": "Xin", "variation": "Control" },
         { "user": "You", "variation": "Variation-1" },
         { "user": "Zeba", "variation": "Control" }
+    ],
+    "SETTINGS_MEGNEW_ONLY_PRIORITY": [
+        { "user": "Ashley", "variation":"Control"},
+        { "user": "Bill", "variation":"Control"},
+        { "user": "Chris", "variation":"Variation-1"},
+        { "user": "Dominic", "variation":"Variation-1"},
+        { "user": "Emma", "variation":"Control"},
     ]
 }
