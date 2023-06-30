@@ -55,13 +55,6 @@ class EventDispatcher(object):
         self.request_time_interval = constants.BATCH_EVENTS.DEFAULT_REQUEST_TIME_INTERVAL
         self.flush_callback = None
 
-        # set custom headers if available, and reset batch_event_settings (custom headers can't be sent via batch)
-        # if custom_headers:
-        # self.custom_headers = custom_headers
-        # batch_event_settings = None
-        # else:
-        # self.custom_headers = None
-
         if batch_event_settings:
             self.event_batching = True
             self.queue = []
@@ -75,7 +68,7 @@ class EventDispatcher(object):
             if batch_event_settings.get(constants.BATCH_EVENTS.FLUSH_CALLBACK):
                 self.flush_callback = batch_event_settings.get(constants.BATCH_EVENTS.FLUSH_CALLBACK)
 
-    def dispatch_events(self, params, impression, custom_headers=None):
+    def dispatch_events(self, params, impression):
         """This method checks for development mode, if it is False then it sends the impression
         to our servers at events endpoint, else return True without sending the impression.
 
@@ -87,15 +80,8 @@ class EventDispatcher(object):
             bool: True if impression is successfully received by our servers, else false
         """
 
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Reached dispatch_events!")
-
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
-
-        # add custom headers if present and allowed
-        if self.is_allowed_custom_headers(custom_headers):
-            headers.update(custom_headers)
 
         if self.is_development_mode:
             result = True
@@ -117,7 +103,7 @@ class EventDispatcher(object):
 
         return result
 
-    def dispatch(self, impression, custom_headers=None):
+    def dispatch(self, impression):
         """This method checks for development mode, if it is False then it sends the impression
         to our servers using a vwo.http.connection.Connection object, else return True without
         sending the impression.
@@ -131,16 +117,6 @@ class EventDispatcher(object):
 
         url = impression.pop("url")
         headers = {"User-Agent": constants.SDK_NAME}
-
-        # add custom headers if present and allowed
-        if self.is_allowed_custom_headers(custom_headers):
-            headers.update(custom_headers)
-
-            # also set event batching as False for now, since batch won't be able to accomodate individual custom headers for each event in the request
-            self.event_batching = False
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Reached dispatch! - " + url)
 
         if self.is_development_mode:
             result = True
@@ -227,7 +203,7 @@ class EventDispatcher(object):
         url_split = url.split("/")
         event_name = url_split[-1]
 
-        payload = {"u": impression.get("u"), "sId": impression.get("sId")}
+        payload = {"u": impression.get("u"), "sId": impression.get("sId"), "visitor_ua": impression.get("visitor_ua")}
 
         if event_name == constants.EVENTS.TRACK_USER:
             payload.update({"c": impression.get("combination"), "e": impression.get("experiment_id"), "eT": 1})
@@ -247,7 +223,7 @@ class EventDispatcher(object):
 
         return payload
 
-    def spawn_thread_to_sync(self, events, custom_headers=None):
+    def spawn_thread_to_sync(self, events):
         """
         Spawns a thread to sync events to VWO servers
 
@@ -256,26 +232,15 @@ class EventDispatcher(object):
         """
         sync_thread = threading.Thread(
             target=self.sync_with_vwo,
-            args=(
-                events,
-                custom_headers,
-            ),
+            args=(events,),
         )
         sync_thread.start()
 
-    def sync_with_vwo(self, events, custom_headers=None):
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Reached sync_with_vwo!")
-
+    def sync_with_vwo(self, events):
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
         url = url + constants.ENDPOINTS.BATCH_EVENTS
         query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v, "env": self.sdk_key}
         headers = {"Authorization": self.sdk_key, "User-Agent": constants.SDK_NAME}
-
-        # add custom headers if present and allowed
-        if self.is_allowed_custom_headers(custom_headers):
-            headers.update(custom_headers)
 
         queue_length = len(events)
         first_event = "No event in queue"
@@ -339,7 +304,7 @@ class EventDispatcher(object):
                 self.flush_callback(err, events)
 
     # Note : all calls to flush_queue must only be made from async_dispatcher, to keep it thread safe
-    def flush_queue(self, manual=False, mode="async", custom_headers=None):
+    def flush_queue(self, manual=False, mode="async"):
         """
         Flush_queue
 
@@ -348,10 +313,6 @@ class EventDispatcher(object):
             mode(string): In sync mode, function makes a synchronous call before exiting
                 In async mode, function spawns a thread to sync to VWO and exits
         """
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Reached flush_queue!")
-
         if self.event_batching is False:
             return
 
@@ -391,7 +352,7 @@ class EventDispatcher(object):
         if mode == "async":
             self.spawn_thread_to_sync(events=events)
         else:
-            self.sync_with_vwo(events=events, custom_headers=custom_headers)
+            self.sync_with_vwo(events=events)
 
     def update_queue_metadata(self, url):
         url_split = url.split("/")
@@ -399,31 +360,3 @@ class EventDispatcher(object):
         if self.queue_metadata.get(event_name) is None:
             self.queue_metadata[event_name] = 0
         self.queue_metadata[event_name] += 1
-
-    def is_allowed_custom_headers(self, custom_headers):
-        """
-        Validate that the custom headers added are allowed
-
-        Returns: True if custom headers are present and allowed
-        """
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Reached is_allowed_custom_headers")
-
-        # validate if custom headers are present and a valid dict
-        is_allowed = custom_headers is not None and validate_util.is_valid_dict(custom_headers)
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_is_allowed=" + str(is_allowed))
-
-        # pare through the keys in custom_headers and check if they are allowed
-        if is_allowed:
-            for key in custom_headers.keys():
-                if key not in constants.CUSTOM_HEADERS.ALLOWED_CUSTOM_HEADERS:
-                    is_allowed = False
-                    break
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_is_allowed2=" + str(is_allowed))
-
-        return is_allowed

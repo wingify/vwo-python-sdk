@@ -57,10 +57,11 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
         )
 
         return False
+
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
-    custom_headers = kwargs.get("custom_headers")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
+    visitor_user_agent = kwargs.get("visitor_user_agent")
 
     if (
         not validate_util.is_valid_string(campaign_key)
@@ -113,10 +114,14 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
 
         if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
             impression = impression_util.create_impression(
-                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+                vwo_instance.settings_file,
+                campaign.get("id"),
+                variation.get("id"),
+                user_id,
+                visitor_user_agent=visitor_user_agent,
             )
 
-            vwo_instance.event_dispatcher.dispatch(impression, custom_headers=custom_headers)
+            vwo_instance.event_dispatcher.dispatch(impression)
             vwo_instance.logger.log(
                 LogLevelEnum.INFO,
                 LogMessageEnum.INFO_MESSAGES.MAIN_KEYS_FOR_IMPRESSION.format(
@@ -127,13 +132,13 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
                 ),
             )
         else:
-            params = impression_util.get_events_params(vwo_instance.settings_file, constants.EVENTS.VWO_VARIATION_SHOWN)
+            params = impression_util.get_events_params(
+                vwo_instance.settings_file, constants.EVENTS.VWO_VARIATION_SHOWN, visitor_user_agent=visitor_user_agent
+            )
             impression = impression_util.create_track_user_events_impression(
                 vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
             )
-            vwo_instance.event_dispatcher.dispatch_events(
-                params=params, impression=impression, custom_headers=custom_headers
-            )
+            vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
     else:
         vwo_instance.logger.log(
             LogLevelEnum.INFO,

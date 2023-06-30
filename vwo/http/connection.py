@@ -48,9 +48,6 @@ class Connection:
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
 
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_Connection_init")
-
     def get(self, url, params=None, headers=None):
         """Get method, it wraps upon requests' get method.
         Args:
@@ -61,8 +58,8 @@ class Connection:
         """
 
         # marker
-        if headers is not None:
-            self.logger.log(LogLevelEnum.ERROR, "Connection::Get() - RD_Headers=" + str(headers))
+        if params is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection::Get() - RD_Params=" + str(params))
 
         try:
             resp = self.session.get(url, params=params, headers=headers)
@@ -110,8 +107,10 @@ class Connection:
         """
 
         # marker
-        # if headers is not None:
-        # self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Headers="+str(headers))
+        if params is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Params=" + str(params))
+        if data is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Data=" + str(data))
 
         try:
             resp = self.session.post(url, params=params, json=data, headers=headers)

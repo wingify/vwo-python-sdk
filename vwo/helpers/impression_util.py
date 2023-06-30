@@ -33,7 +33,9 @@ except ImportError:
 FILE = FileNameEnum.Helpers.ImpressionUtil
 
 
-def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None):
+def create_impression(
+    settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None, visitor_user_agent=None
+):
     """Creates the impression from the arguments passed according to
     call type
 
@@ -58,12 +60,15 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
     if goal_id is not None:
         is_track_user_api = False
 
-    impression = get_common_properties(user_id, settings_file)
+    impression = get_common_properties(user_id, settings_file, visitor_user_agent)
 
     impression.update(experiment_id=campaign_id, combination=variation_id)
 
     url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
     logger = VWOLogger.getInstance()
+
+    # marker
+    logger.log(LogLevelEnum.ERROR, "RD_Impression: " + str(impression))
 
     if is_track_user_api:
         impression.update(ed=json.dumps({"p": constants.PLATFORM}))
@@ -89,7 +94,7 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
     return impression
 
 
-def get_common_properties(user_id, settings_file):
+def get_common_properties(user_id, settings_file, visitor_user_agent):
     """Returns commonly used params for making requests to our servers.
 
     Args:
@@ -99,6 +104,10 @@ def get_common_properties(user_id, settings_file):
     Returns:
         properties(object): commonly used params for making call to our servers
     """
+
+    # initialize visitor user agent to blank string if None
+    if visitor_user_agent is None:
+        visitor_user_agent = ""
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -111,6 +120,7 @@ def get_common_properties(user_id, settings_file):
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
         "env": sdk_key,
+        "visitor_ua": visitor_user_agent,
     }
     return properties
 
@@ -267,7 +277,7 @@ def get_events_common_properties(settings_file, user_id, event_name):
     return properties
 
 
-def get_events_params(settings_file, event_name):
+def get_events_params(settings_file, event_name, visitor_user_agent):
     """Returns query params for making requests to our servers using events.
 
     Args:
@@ -278,6 +288,10 @@ def get_events_params(settings_file, event_name):
         properties(dict): query params for event call
     """
 
+    # initialize visitor user agent to blank string if None
+    if visitor_user_agent is None:
+        visitor_user_agent = ""
+
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
     params = {
@@ -287,6 +301,7 @@ def get_events_params(settings_file, event_name):
         "eTime": generic_util.get_current_unix_timestamp_milli(),
         "random": generic_util.get_random_number(),
         "p": "FS",
+        "visitor_ua": visitor_user_agent,
     }
 
     if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:
