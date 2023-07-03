@@ -120,7 +120,7 @@ def get_common_properties(user_id, settings_file, visitor_user_agent):
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
         "env": sdk_key,
-        "visitor_ua": visitor_user_agent,
+        constants.VISITOR.USER_AGENT: visitor_user_agent,
     }
     return properties
 
@@ -301,7 +301,7 @@ def get_events_params(settings_file, event_name, visitor_user_agent):
         "eTime": generic_util.get_current_unix_timestamp_milli(),
         "random": generic_util.get_random_number(),
         "p": "FS",
-        "visitor_ua": visitor_user_agent,
+        constants.VISITOR.USER_AGENT: visitor_user_agent,
     }
 
     if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:

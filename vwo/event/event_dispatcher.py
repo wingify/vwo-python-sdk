@@ -22,6 +22,7 @@ from ..logger import VWOLogger
 from ..constants import constants
 from ..services.url_manager import url_manager
 from ..helpers import validate_util
+from ..constants import constants
 
 FILE = FileNameEnum.Event.EventDispatcher
 
@@ -203,7 +204,11 @@ class EventDispatcher(object):
         url_split = url.split("/")
         event_name = url_split[-1]
 
-        payload = {"u": impression.get("u"), "sId": impression.get("sId"), "visitor_ua": impression.get("visitor_ua")}
+        payload = {
+            "u": impression.get("u"),
+            "sId": impression.get("sId"),
+            constants.VISITOR.USER_AGENT: impression.get(constants.VISITOR.USER_AGENT),
+        }
 
         if event_name == constants.EVENTS.TRACK_USER:
             payload.update({"c": impression.get("combination"), "e": impression.get("experiment_id"), "eT": 1})

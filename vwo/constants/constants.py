@@ -122,3 +122,8 @@ class LOG_LEVELS:
     INFO = logging.INFO
     WARNING = logging.WARNING
     ERROR = logging.ERROR
+
+
+# visitor user agent
+class VISITOR:
+    USER_AGENT = "visitor_ua"

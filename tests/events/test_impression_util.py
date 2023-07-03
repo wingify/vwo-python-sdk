@@ -49,12 +49,13 @@ class ImpressionTest(unittest.TestCase):
                     "eTime": generic_util.get_current_unix_timestamp_milli(),
                     "random": generic_util.get_random_number(),
                     "p": "FS",
+                    constants.VISITOR.USER_AGENT: "",
                 }
 
                 if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:
                     expected.update({"_l": 1, "ll": 1})
 
-                result = impression_util.get_events_params(self.settings_file, event_name)
+                result = impression_util.get_events_params(self.settings_file, event_name, None)
                 self.assertDictEqual(result, expected)
 
     def test_get_events_common_properties(self):

@@ -61,9 +61,6 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
     visitor_user_agent = kwargs.get("visitor_user_agent")
 
-    # marker
-    vwo_instance.logger.log(LogLevelEnum.ERROR, "RD_activate() - " + visitor_user_agent)
-
     # Validate input parameters
     if (
         not validate_util.is_valid_string(campaign_key)
