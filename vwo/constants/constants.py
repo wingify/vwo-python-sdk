@@ -127,3 +127,4 @@ class LOG_LEVELS:
 # visitor user agent
 class VISITOR:
     USER_AGENT = "visitor_ua"
+    CUSTOM_HEADER_USER_AGENT = "X-Device-User-Agent"

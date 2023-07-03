@@ -81,8 +81,19 @@ class EventDispatcher(object):
             bool: True if impression is successfully received by our servers, else false
         """
 
+        # marker
+        self.logger.log(LogLevelEnum.ERROR, "RD_dispatch_events()")
+
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
+
+        # check if impression has visitor user agent and add it to header, if exists
+        if impression is not None and constants.VISITOR.USER_AGENT in impression:
+            visitor_ua = impression.get(constants.VISITOR.USER_AGENT)
+            if visitor_ua is not None and len(visitor_ua) > 0:
+                # create and update http headers
+                custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
+                headers.update(custom_header)
 
         if self.is_development_mode:
             result = True
@@ -116,6 +127,9 @@ class EventDispatcher(object):
             bool: True if impression is successfully received by our servers, else false
         """
 
+        # marker
+        self.logger.log(LogLevelEnum.ERROR, "RD_dispatch()")
+
         url = impression.pop("url")
         headers = {"User-Agent": constants.SDK_NAME}
 
@@ -124,6 +138,14 @@ class EventDispatcher(object):
         else:
             result = False
             if self.event_batching is False:
+                # check if impression has visitor user agent and add it to header, if exists
+                if impression is not None and constants.VISITOR.USER_AGENT in impression:
+                    visitor_ua = impression.get(constants.VISITOR.USER_AGENT)
+                    if visitor_ua is not None and len(visitor_ua) > 0:
+                        # create and update http headers
+                        custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
+                        headers.update(custom_header)
+
                 # sync API call
                 resp = self.connection.get(url, params=impression, headers=headers)
                 result = resp.get("status_code") == 200

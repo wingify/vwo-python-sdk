@@ -60,6 +60,8 @@ class Connection:
         # marker
         if params is not None:
             self.logger.log(LogLevelEnum.ERROR, "Connection::Get() - RD_Params=" + str(params))
+        if headers is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Headers=" + str(headers))
 
         try:
             resp = self.session.get(url, params=params, headers=headers)
@@ -111,6 +113,8 @@ class Connection:
             self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Params=" + str(params))
         if data is not None:
             self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Data=" + str(data))
+        if headers is not None:
+            self.logger.log(LogLevelEnum.ERROR, "Connection_Post:: RD_Headers=" + str(headers))
 
         try:
             resp = self.session.post(url, params=params, json=data, headers=headers)
