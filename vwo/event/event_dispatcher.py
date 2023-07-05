@@ -87,9 +87,9 @@ class EventDispatcher(object):
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
 
-        # check if impression has visitor user agent and add it to header, if exists
-        if impression is not None and constants.VISITOR.USER_AGENT in impression:
-            visitor_ua = impression.get(constants.VISITOR.USER_AGENT)
+        # check if params has visitor user agent and add it to header, if exists
+        if params is not None and constants.VISITOR.USER_AGENT in params:
+            visitor_ua = params.get(constants.VISITOR.USER_AGENT)
             if visitor_ua is not None and len(visitor_ua) > 0:
                 # create and update http headers
                 custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
