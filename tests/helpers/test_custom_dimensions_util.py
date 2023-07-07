@@ -48,5 +48,6 @@ class CustomDimensionUtilTest(unittest.TestCase):
                 "ap": constants.PLATFORM,
                 "env": sdk_key,
                 constants.VISITOR.USER_AGENT: "",
+                constants.VISITOR.IP: "",
             }
             self.assertDictEqual(params, result)

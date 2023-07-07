@@ -34,7 +34,14 @@ FILE = FileNameEnum.Helpers.ImpressionUtil
 
 
 def create_impression(
-    settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None, visitor_user_agent=None
+    settings_file,
+    campaign_id,
+    variation_id,
+    user_id,
+    goal_id=None,
+    revenue=None,
+    visitor_user_agent=None,
+    visitor_ip=None,
 ):
     """Creates the impression from the arguments passed according to
     call type
@@ -60,7 +67,7 @@ def create_impression(
     if goal_id is not None:
         is_track_user_api = False
 
-    impression = get_common_properties(user_id, settings_file, visitor_user_agent)
+    impression = get_common_properties(user_id, settings_file, visitor_user_agent, visitor_ip)
 
     impression.update(experiment_id=campaign_id, combination=variation_id)
 
@@ -94,7 +101,7 @@ def create_impression(
     return impression
 
 
-def get_common_properties(user_id, settings_file, visitor_user_agent):
+def get_common_properties(user_id, settings_file, visitor_user_agent, visitor_ip):
     """Returns commonly used params for making requests to our servers.
 
     Args:
@@ -105,9 +112,11 @@ def get_common_properties(user_id, settings_file, visitor_user_agent):
         properties(object): commonly used params for making call to our servers
     """
 
-    # initialize visitor user agent to blank string if None
+    # initialize visitor user agent and ip to blank string if None
     if visitor_user_agent is None:
         visitor_user_agent = ""
+    if visitor_ip is None:
+        visitor_ip = ""
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -121,6 +130,7 @@ def get_common_properties(user_id, settings_file, visitor_user_agent):
         "account_id": account_id,
         "env": sdk_key,
         constants.VISITOR.USER_AGENT: visitor_user_agent,
+        constants.VISITOR.IP: visitor_ip,
     }
     return properties
 
@@ -277,7 +287,7 @@ def get_events_common_properties(settings_file, user_id, event_name):
     return properties
 
 
-def get_events_params(settings_file, event_name, visitor_user_agent):
+def get_events_params(settings_file, event_name, visitor_user_agent, visitor_ip):
     """Returns query params for making requests to our servers using events.
 
     Args:
@@ -288,9 +298,11 @@ def get_events_params(settings_file, event_name, visitor_user_agent):
         properties(dict): query params for event call
     """
 
-    # initialize visitor user agent to blank string if None
+    # initialize visitor user agent and IP to blank string if None
     if visitor_user_agent is None:
         visitor_user_agent = ""
+    if visitor_ip is None:
+        visitor_ip = ""
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -302,6 +314,7 @@ def get_events_params(settings_file, event_name, visitor_user_agent):
         "random": generic_util.get_random_number(),
         "p": "FS",
         constants.VISITOR.USER_AGENT: visitor_user_agent,
+        constants.VISITOR.IP: visitor_ip,
     }
 
     if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:

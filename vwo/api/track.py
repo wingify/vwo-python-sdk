@@ -64,6 +64,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     revenue_value = kwargs.get("revenue_value")
     custom_variables = kwargs.get("custom_variables")
     visitor_user_agent = kwargs.get("visitor_user_agent")
+    visitor_ip = kwargs.get("visitor_ip")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
     valid_params = True
     # Check for valid args
@@ -145,6 +146,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             goal_type_to_track,
             campaign_goal_revenue_prop_list,
             visitor_user_agent,
+            visitor_ip,
         )
         ret_value[campaign.get("key")] = result
     for campaign in campaigns_without_goal:
@@ -154,7 +156,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         not vwo_instance.is_event_batching_enabled and vwo_instance.is_event_arch_enabled is True
     ):
         params = impression_util.get_events_params(
-            vwo_instance.settings_file, goal_identifier, visitor_user_agent=visitor_user_agent
+            vwo_instance.settings_file, goal_identifier, visitor_user_agent=visitor_user_agent, visitor_ip=visitor_ip
         )
         impression = impression_util.create_track_goal_events_impression(
             vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, revenue=revenue_value
@@ -175,6 +177,7 @@ def track_campaign_goal(
     goal_type_to_track,
     campaign_goal_revenue_prop_list,
     visitor_user_agent,
+    visitor_ip,
 ):
     """
     It marks the conversion of given goal for the given campaign
@@ -251,6 +254,7 @@ def track_campaign_goal(
                 goal.get("id"),
                 revenue_value,
                 visitor_user_agent=visitor_user_agent,
+                visitor_ip=visitor_ip,
             )
 
             vwo_instance.event_dispatcher.dispatch(impression)

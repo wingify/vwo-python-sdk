@@ -40,7 +40,7 @@ def get_url_params(settings_file, tag_key, tag_value, user_id):
     url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.PUSH
     tag = {"u": {tag_key: tag_value}}
 
-    params = impression_util.get_common_properties(user_id, settings_file, None)
+    params = impression_util.get_common_properties(user_id, settings_file, None, None)
     params.update(url=url, tags=json.dumps(tag))
 
     VWOLogger.getInstance().log(

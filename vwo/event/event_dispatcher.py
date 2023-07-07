@@ -95,6 +95,14 @@ class EventDispatcher(object):
                 custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
                 headers.update(custom_header)
 
+        # check if params has visitor IP and add it to header, if exists
+        if params is not None and constants.VISITOR.IP in params:
+            visitor_ip = params.get(constants.VISITOR.IP)
+            if visitor_ip is not None and len(visitor_ip) > 0:
+                # create and update http headers
+                custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: visitor_ip}
+                headers.update(custom_header)
+
         if self.is_development_mode:
             result = True
         else:
@@ -144,6 +152,14 @@ class EventDispatcher(object):
                     if visitor_ua is not None and len(visitor_ua) > 0:
                         # create and update http headers
                         custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
+                        headers.update(custom_header)
+
+                # check if impression has visitor IP and add it to header, if exists
+                if impression is not None and constants.VISITOR.IP in impression:
+                    visitor_ip = impression.get(constants.VISITOR.IP)
+                    if visitor_ip is not None and len(visitor_ip) > 0:
+                        # create and update http headers
+                        custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: visitor_ip}
                         headers.update(custom_header)
 
                 # sync API call
@@ -230,6 +246,7 @@ class EventDispatcher(object):
             "u": impression.get("u"),
             "sId": impression.get("sId"),
             constants.VISITOR.USER_AGENT: impression.get(constants.VISITOR.USER_AGENT),
+            constants.VISITOR.IP: impression.get(constants.VISITOR.IP),
         }
 
         if event_name == constants.EVENTS.TRACK_USER:
