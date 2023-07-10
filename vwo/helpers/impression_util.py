@@ -74,9 +74,6 @@ def create_impression(
     url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
     logger = VWOLogger.getInstance()
 
-    # marker
-    logger.log(LogLevelEnum.ERROR, "RD_Impression: " + str(impression))
-
     if is_track_user_api:
         impression.update(ed=json.dumps({"p": constants.PLATFORM}))
         impression.update(url=url + constants.ENDPOINTS.TRACK_USER)
@@ -111,12 +108,33 @@ def get_common_properties(user_id, settings_file, visitor_user_agent, visitor_ip
     Returns:
         properties(object): commonly used params for making call to our servers
     """
+    logger = VWOLogger.getInstance()
 
-    # initialize visitor user agent and ip to blank string if None
+    # initialize visitor user agent to blank string if None
     if visitor_user_agent is None:
         visitor_user_agent = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="UA",
+                value=visitor_user_agent,
+            ),
+        )
+
+    # initialize visitor IP to blank string if None
     if visitor_ip is None:
         visitor_ip = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="IP",
+                value=visitor_ip,
+            ),
+        )
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -297,12 +315,33 @@ def get_events_params(settings_file, event_name, visitor_user_agent, visitor_ip)
     Returns:
         properties(dict): query params for event call
     """
+    logger = VWOLogger.getInstance()
 
-    # initialize visitor user agent and IP to blank string if None
+    # initialize visitor user agent to blank string if None, else log
     if visitor_user_agent is None:
         visitor_user_agent = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="UserAgent",
+                value=visitor_user_agent,
+            ),
+        )
+
+    # initialize visitor IP to blank string if None, else log
     if visitor_ip is None:
         visitor_ip = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="IP",
+                value=visitor_ip,
+            ),
+        )
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")

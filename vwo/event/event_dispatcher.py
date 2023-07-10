@@ -81,9 +81,6 @@ class EventDispatcher(object):
             bool: True if impression is successfully received by our servers, else false
         """
 
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_dispatch_events()")
-
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
 
@@ -134,9 +131,6 @@ class EventDispatcher(object):
         Returns:
             bool: True if impression is successfully received by our servers, else false
         """
-
-        # marker
-        self.logger.log(LogLevelEnum.ERROR, "RD_dispatch()")
 
         url = impression.pop("url")
         headers = {"User-Agent": constants.SDK_NAME}
