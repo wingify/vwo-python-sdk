@@ -1839,5 +1839,62 @@ SETTINGS_FILES = {
             "231": 1,
             "232": 1
         }
+    },
+    "SETTINGS_FILE_EVENTPROPERTIES" :{
+        "sdkKey": "someuniquestuff1234567",
+        "campaigns": [
+            {
+                "goals": [
+                    {
+                        "identifier": "track1",
+                        "id": 1,
+                        "type": "CUSTOM_GOAL"
+                    },
+                    {
+                        "identifier": "track2",
+                        "id": 2,
+                        "type": "CUSTOM_GOAL"
+                    },
+                    {
+                        "identifier": "track3",
+                        "id": 3,
+                        "type": "REVENUE_TRACKING",
+                        "revenueProp": "abcd"
+                    },
+                    {
+                        "identifier": "track4",
+                        "id": 4,
+                        "type": "REVENUE_TRACKING",
+                        "mca" : -1
+                    }
+                ],
+                "variations": [
+                    {
+                        "id": 1,
+                        "name": "Control",
+                        "changes": {},
+                        "weight": 50
+                    },
+                    {
+                        "id": 2,
+                        "name": "Variation-1",
+                        "changes": {},
+                        "weight": 50
+                    }
+                ],
+                "id": 231,
+                "percentTraffic": 100,
+                "name": "track",
+                "key": "track",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "segments": {}
+            }
+        ],
+        "accountId": 888888,
+        "version": 1,
+        "groups": {},
+        "campaignGroups":{},
+        "isEventArchEnabled": True
     }
 }
