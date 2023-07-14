@@ -112,7 +112,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
 
         if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
             impression = impression_util.create_impression(
-                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+                vwo_instance, campaign.get("id"), variation.get("id"), user_id
             )
 
             vwo_instance.event_dispatcher.dispatch(impression)

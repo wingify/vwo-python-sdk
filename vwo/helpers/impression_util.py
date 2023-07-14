@@ -33,7 +33,7 @@ except ImportError:
 FILE = FileNameEnum.Helpers.ImpressionUtil
 
 
-def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id=None, revenue=None):
+def create_impression(vwo_instance, campaign_id, variation_id, user_id, event_properties=None, goal=None, goal_id=None, revenue=None):
     """Creates the impression from the arguments passed according to
     call type
 
@@ -58,7 +58,7 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
     if goal_id is not None:
         is_track_user_api = False
 
-    impression = get_common_properties(user_id, settings_file)
+    impression = get_common_properties(user_id, vwo_instance.settings_file)
 
     impression.update(experiment_id=campaign_id, combination=variation_id)
 
@@ -80,6 +80,8 @@ def create_impression(settings_file, campaign_id, variation_id, user_id, goal_id
         impression.update(goal_id=goal_id)
         if revenue:
             impression.update(r=revenue)
+        elif(vwo_instance.is_event_arch_enabled and event_properties is not None and goal.get('revenueProp') in event_properties ):
+            impression.update(r=event_properties[goal.get('revenueProp')])
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.IMPRESSION_FOR_TRACK_GOAL.format(
@@ -159,7 +161,7 @@ def create_track_user_events_impression(settings_file, campaign_id, variation_id
 
 
 def create_track_goal_events_impression(
-    settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, revenue=None
+    settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, event_properties=None, revenue=None
 ):
     """Creates the event impression for track goal call from the arguments passed accordingly
 
@@ -195,6 +197,10 @@ def create_track_goal_events_impression(
             campaign_ids=[campaign_id for campaign_id, _, _ in campaign_goal_revenue_prop_list],
         ),
     )
+    if event_properties is not None and len(event_properties) > 0:
+        for prop in event_properties:
+            impression["d"]["event"]["props"].update({prop:event_properties[prop]})
+
     return impression
 
 

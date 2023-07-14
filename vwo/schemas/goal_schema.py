@@ -20,6 +20,7 @@ GOAL = {
             "id": {"type": "number"},
             "type": {"type": "string"},
             "revenueProp": {"type": "string"},
+            "mca" :{"type": "number"},
         },
         "required": ["identifier", "id", "type"],
     }
