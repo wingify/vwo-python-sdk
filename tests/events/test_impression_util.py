@@ -31,6 +31,8 @@ class ImpressionTest(unittest.TestCase):
             constants.EVENTS.VWO_VARIATION_SHOWN,
             "test_goal_identifier",
         ]
+        self.visitor_ua = "user_agent"
+        self.visitor_ip = "user_ip"
 
     def test_create_impression_string_id(self):
         result = impression_util.create_impression(self.settings_file, "123", "456", self.user_id)
@@ -319,3 +321,18 @@ class ImpressionTest(unittest.TestCase):
             )
 
             self.assertDictEqual(result, expected)
+
+    def test_common_properties_with_ua_and_ip(self):
+        common_properties = impression_util.get_common_properties(
+            self.user_id, self.settings_file, self.visitor_ua, self.visitor_ip
+        )
+        expected_properties_subset = {
+            constants.VISITOR.USER_AGENT: self.visitor_ua,
+            constants.VISITOR.IP: self.visitor_ip,
+        }
+        self.assertDictContainsSubset(expected_properties_subset, common_properties)
+
+    def test_event_params_with_ua_and_ip(self):
+        event_params = impression_util.get_events_params(self.settings_file, "", self.visitor_ua, self.visitor_ip)
+        expected_params_subset = {constants.VISITOR.USER_AGENT: self.visitor_ua, constants.VISITOR.IP: self.visitor_ip}
+        self.assertDictContainsSubset(expected_params_subset, event_params)
