@@ -129,4 +129,4 @@ class VISITOR:
     USER_AGENT = "visitor_ua"
     CUSTOM_HEADER_USER_AGENT = "X-Device-User-Agent"
     IP = "visitor_ip"
-    CUSTOM_HEADER_IP = "X-Forwarded-For"
+    CUSTOM_HEADER_IP = "VWO_X-Forwarded-For"
