@@ -127,7 +127,7 @@ class BucketerTest(unittest.TestCase):
         # and bucketValue:53. So, MUST be a part of campaign as per campaign
         # percentTraffic
         variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
-        self.assertIsNone(variation)
+        self.assertIsNotNone(variation)
 
     def test_bucket_user_to_variation_should_return_Control(self):
         user_id = "Sarah"
