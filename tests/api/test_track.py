@@ -664,3 +664,43 @@ class TrackTest(unittest.TestCase):
 
         result = vwo_instance.track("AB_T_100_W_50_50", "user", "CUSTOM")
         self.assertIs(result, None)
+
+    def test_when_revenueValue_not_passed_in_goal(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_EVENTPROPERTIES")),
+            is_development_mode=True,
+            log_level=40
+        )
+
+        result = vwo_instance.track("track", "ashley", "track3")
+        self.assertEqual(result, {u"track": False})
+
+    def test_when_revenueValue_not_passed_for_metric_of_type_numberOfTimesEvent_is_triggered(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_EVENTPROPERTIES")),
+            is_development_mode=True,
+            log_level=40
+        )
+
+        result = vwo_instance.track("track", "ashley", "track4")
+        self.assertEqual(result, {u"track": True})
+
+    def test_if_eventProperties_is_passed_instead_of_revenueValue(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_EVENTPROPERTIES")),
+            is_development_mode=True,
+            log_level=40
+        )
+        
+        result = vwo_instance.track("track", "ashley", "track3",event_properties={'abcd':'100'})
+        self.assertEqual(result, {u"track": True})
+
+    def test_when_revenueValue_not_passed_for_metric_of_type_numberOfTimesEvent_is_triggered2(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_EVENTPROPERTIES")),
+            is_development_mode=True,
+            log_level=40
+        )
+
+        result = vwo_instance.track("track", "ashley", "track3",event_properties={'ab':'100'})
+        self.assertEqual(result, {u"track": False})

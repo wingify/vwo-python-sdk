@@ -185,7 +185,7 @@ class ImpressionTest(unittest.TestCase):
             }
 
             result = impression_util.create_track_goal_events_impression(
-                self.settings_file, TEST_USER_ID, "test_goal_identifier", [(1, 1, "revKey")], 100
+                self.settings_file, TEST_USER_ID, "test_goal_identifier", [(1, 1, "revKey")], [], 100
             )
 
             self.assertDictEqual(result, expected)
@@ -227,7 +227,7 @@ class ImpressionTest(unittest.TestCase):
                 self.settings_file,
                 TEST_USER_ID,
                 "test_goal_identifier",
-                [(1, 1, "revKey1"), (2, 2, "revKey2"), (3, 3, "revKey3")],
+                [(1, 1, "revKey1"), (2, 2, "revKey2"), (3, 3, "revKey3")], [],
                 100,
             )
 

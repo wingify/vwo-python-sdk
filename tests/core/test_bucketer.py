@@ -43,11 +43,11 @@ class BucketerTest(unittest.TestCase):
         campaign_util.set_allocation_ranges(self.variations)
 
     def test_user_part_of_campaign_none_campaign_passed(self):
-        result = self.bucketer.is_user_part_of_campaign(self.user_id, None)
+        result = self.bucketer.is_user_part_of_campaign(self.user_id, None, False)
         self.assertIs(result, False)
 
     def test_user_part_of_campaign_none_userid_passed(self):
-        result = self.bucketer.is_user_part_of_campaign(None, self.dummy_campaign)
+        result = self.bucketer.is_user_part_of_campaign(None, self.dummy_campaign, False)
         self.assertIs(result, False)
 
     def test_user_part_of_campaign_should_return_true(self):
@@ -55,7 +55,7 @@ class BucketerTest(unittest.TestCase):
         # Bob, with above campaign settings, will get hashValue:2033809345 and
         # bucketValue:48. So, MUST be a part of campaign as per campaign
         # percentTraffic
-        result = self.bucketer.is_user_part_of_campaign(user_id, self.dummy_campaign)
+        result = self.bucketer.is_user_part_of_campaign(user_id, self.dummy_campaign, False)
         self.assertIs(result, True)
 
     def test_user_part_of_campaign_should_return_false(self):
@@ -63,37 +63,41 @@ class BucketerTest(unittest.TestCase):
         # Lucian, with above campaign settings, will get hashValue:2251780191
         # and bucketValue:53. So, must NOT be a part of campaign as per campaign
         # percentTraffic
-        result = self.bucketer.is_user_part_of_campaign(user_id, self.dummy_campaign)
+        result = self.bucketer.is_user_part_of_campaign(user_id, self.dummy_campaign, False)
         self.assertIs(result, False)
 
     def test_user_part_of_campaign_should_return_false_as_T_is_0(self):
         campaign = copy.deepcopy(self.dummy_campaign)
         campaign["percentTraffic"] = 0
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
-            self.assertIs(False, self.bucketer.is_user_part_of_campaign(test["user"], campaign))
+            self.assertIs(False, self.bucketer.is_user_part_of_campaign(test["user"], campaign, False))
 
     def test_user_part_of_campaign_should_return_true_as_T_is_100(self):
         campaign = copy.deepcopy(self.dummy_campaign)
         campaign["percentTraffic"] = 100
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
-            self.assertIs(True, self.bucketer.is_user_part_of_campaign(test["user"], campaign))
+            self.assertIs(True, self.bucketer.is_user_part_of_campaign(test["user"], campaign, False))
 
     def test_user_part_of_campaign_AB_T_50_W_50_50(self):
         campaign = copy.deepcopy(SETTINGS_FILES["AB_T_50_W_50_50"]["campaigns"][0])
         for test in USER_EXPECTATIONS["AB_T_50_W_50_50"]:
-            self.assertIs(test["variation"] is not None, self.bucketer.is_user_part_of_campaign(test["user"], campaign))
+            self.assertIs(
+                test["variation"] is not None, self.bucketer.is_user_part_of_campaign(test["user"], campaign, False)
+            )
 
     def test_user_part_of_campaign_T_25_W_10_20_30_40(self):
         campaign = copy.deepcopy(SETTINGS_FILES["FT_T_25_W_10_20_30_40"]["campaigns"][0])
         for test in USER_EXPECTATIONS["T_25_W_10_20_30_40"]:
-            self.assertIs(test["variation"] is not None, self.bucketer.is_user_part_of_campaign(test["user"], campaign))
+            self.assertIs(
+                test["variation"] is not None, self.bucketer.is_user_part_of_campaign(test["user"], campaign, False)
+            )
 
     def test_bucket_user_to_variation_none_campaign_passed(self):
-        result = self.bucketer.bucket_user_to_variation(self.user_id, None)
+        result = self.bucketer.bucket_user_to_variation(self.user_id, None, False)
         self.assertIsNone(result)
 
     def test_bucket_user_to_variation_none_userid_passed(self):
-        result = self.bucketer.bucket_user_to_variation(None, self.dummy_campaign)
+        result = self.bucketer.bucket_user_to_variation(None, self.dummy_campaign, False)
         self.assertIsNone(result)
 
     def test_bucket_user_to_variation_return_control(self):
@@ -101,7 +105,7 @@ class BucketerTest(unittest.TestCase):
         # Sarah, with above campaign settings, will get hashValue:69650962 and
         # bucketValue:326. So, MUST be a part of Control, as per campaign
         # settings
-        result = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
+        result = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
         self.assertEqual(result.get("name"), "Control")
 
     def test_bucket_user_to_variation_return_variation_1(self):
@@ -109,7 +113,7 @@ class BucketerTest(unittest.TestCase):
         # Varun, with above campaign settings, will get hashValue:69650962 and
         # bucketValue:326. So, MUST be a part of Variation-1, as per campaign
         # settings
-        result = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
+        result = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
         self.assertEqual(result.get("name"), "Variation-1")
 
     def test_bucket_user_to_variation_should_return_true(self):
@@ -117,7 +121,7 @@ class BucketerTest(unittest.TestCase):
         # Allie, with above campaign settings, will get hashValue:362121553
         # and bucketValue:1688. So, MUST be a part of campaign as per campaign
         # percentTraffic
-        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
+        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
         self.assertEqual(variation.get("id"), "1")
         self.assertEqual(variation.get("name"), "Control")
 
@@ -126,15 +130,15 @@ class BucketerTest(unittest.TestCase):
         # Lucian, with above campaign settings, will get hashValue:2251780191
         # and bucketValue:53. So, MUST be a part of campaign as per campaign
         # percentTraffic
-        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
-        self.assertIsNotNone(variation)
+        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
+        self.assertIsNone(variation)
 
     def test_bucket_user_to_variation_should_return_Control(self):
         user_id = "Sarah"
         # Sarah, with above campaign settings, will get hashValue:69650962
         # and bucketValue:326. So, MUST be a part of Control, as per campaign
         # settings
-        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
+        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
         self.assertEqual(variation.get("name"), "Control")
 
     def test_bucket_user_to_variation_should_return_Variation(self):
@@ -142,7 +146,7 @@ class BucketerTest(unittest.TestCase):
         # Varun, with above campaign settings, will get hashValue:2025462540
         # and bucketValue:9433. So, MUST be a part of Variation, as per campaign
         # settings
-        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign)
+        variation = self.bucketer.bucket_user_to_variation(user_id, self.dummy_campaign, False)
         self.assertEqual(variation.get("name"), "Variation-1")
 
     def test_get_allocated_item_return_control_below_border(self):
@@ -175,7 +179,9 @@ class BucketerTest(unittest.TestCase):
 
     def test_get_bucket_value_for_multiple_user_ids(self):
         for test in USER_EXPECTATIONS["USER_AND_BUCKET_VALUES"]:
-            user_seed = campaign_util.get_bucketing_seed(user_id=test["user"], campaign=test["campaign"])
+            user_seed = campaign_util.get_bucketing_seed(
+                is_new_bucketing_enabled=False, user_id=test["user"], campaign=test["campaign"]
+            )
             bucket_value = self.bucketer.get_bucket_value_for_user(user_seed, test["user"], 10000)
             self.assertEquals(bucket_value, test["bucket_value"])
 
@@ -184,13 +190,17 @@ class BucketerTest(unittest.TestCase):
         user_id = "someone@mail.com"
 
         bucket_value = self.bucketer.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=False, user_id=user_id, campaign=campaign),
+            user_id,
+            100,
         )
         self.assertEquals(bucket_value, 25)
 
         campaign["isBucketingSeedEnabled"] = False
         bucket_value = self.bucketer.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=False, user_id=user_id, campaign=campaign),
+            user_id,
+            100,
         )
         self.assertEquals(bucket_value, 64)
 
@@ -200,12 +210,16 @@ class BucketerTest(unittest.TestCase):
 
         campaign = {"id": 1, "isBucketingSeedEnabled": True}
         bucket_value = self.bucketer.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=False, user_id=user_id, campaign=campaign),
+            user_id,
+            100,
         )
         self.assertEquals(bucket_value, 82)
 
         campaign["isBucketingSeedEnabled"] = False
         bucket_value = self.bucketer.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign), user_id, 100
+            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=False, user_id=user_id, campaign=campaign),
+            user_id,
+            100,
         )
         self.assertEquals(bucket_value, 50)

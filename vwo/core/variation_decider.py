@@ -102,6 +102,12 @@ class VariationDecider(object):
         )
         group_algo = MEG_ALGO_RANDOM
 
+        # get is_new_bucleting_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
+
         decision = {
             # campaign info
             "campaign_id": campaign.get("id"),
@@ -232,7 +238,7 @@ class VariationDecider(object):
 
         is_presegmentation_and_traffic_passed = self.evaluate_pre_segmentation(
             user_id, campaign, custom_variables
-        ) and self.is_user_part_of_campaign(user_id, campaign)
+        ) and self.is_user_part_of_campaign(user_id, campaign, is_new_bucketing_enabled)
 
         # Group check
         if is_presegmentation_and_traffic_passed and is_campaign_part_of_group:
@@ -418,6 +424,13 @@ class VariationDecider(object):
             targeted_variation (dict|None): Dict object containing the information regarding forced
             variation assigned else None
         """
+
+        # get is_new_bucleting_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
+
         if campaign.get("isForcedVariationEnabled") is not True:
             self.logger.log(
                 LogLevelEnum.DEBUG,
@@ -443,7 +456,9 @@ class VariationDecider(object):
                 campaign_util.set_allocation_ranges(white_listed_variations_list)
                 # Now retrieve the variation from the modified_campaign_for_whitelisting
                 bucket_value = self.bucketer.get_bucket_value_for_user(
-                    campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
+                    campaign_util.get_bucketing_seed(
+                        is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, campaign=campaign
+                    ),
                     user_id,
                     constants.MAX_TRAFFIC_VALUE,
                 )
@@ -555,7 +570,13 @@ class VariationDecider(object):
             bool: True if user should become part of campaign, else False
         """
 
-        if self.bucketer.is_user_part_of_campaign(user_id, campaign, disable_logs):
+        # get is_new_bucleting_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
+
+        if self.bucketer.is_user_part_of_campaign(user_id, campaign, is_new_bucketing_enabled, disable_logs):
             return True
         else:
             # not part of campaign
@@ -757,7 +778,15 @@ class VariationDecider(object):
             assigned else None
         """
 
-        variation = self.bucketer.bucket_user_to_variation(user_id, campaign)
+        # get is_new_bucleting_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
+
+        variation = self.bucketer.bucket_user_to_variation(
+            user_id, campaign, is_new_bucketing_enabled=is_new_bucketing_enabled
+        )
         new_user_storage_data = self._create_user_storage_data(
             user_id, campaign.get("key"), variation.get("name"), goal_data=goal_data
         )
@@ -879,6 +908,12 @@ class VariationDecider(object):
             winner_campaign (dict): winner campaign from eligible_campaigns
         """
 
+        # get is_new_bucleting_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
+
         if len(eligible_campaigns) == 1:
             return eligible_campaigns[0]
 
@@ -888,7 +923,9 @@ class VariationDecider(object):
         campaign_util.set_allocation_ranges(eligible_campaigns)
         # Now retrieve the campaign from the modified_campaign_for_whitelisting
         bucket_value = self.bucketer.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, group_id=group_id),
+            campaign_util.get_bucketing_seed(
+                is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, group_id=group_id
+            ),
             user_id,
             constants.MAX_TRAFFIC_VALUE,
             disable_logs=True,

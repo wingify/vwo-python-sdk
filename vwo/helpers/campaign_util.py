@@ -316,7 +316,7 @@ def get_group_campaigns(settings_file, group_id):
     return group_campaigns
 
 
-def get_bucketing_seed(user_id, campaign=None, group_id=None):
+def get_bucketing_seed(is_new_bucketing_enabled, user_id, campaign=None, group_id=None):
     """Decide the Seed for murmurhash to bucket user.
 
     Args:
@@ -330,7 +330,7 @@ def get_bucketing_seed(user_id, campaign=None, group_id=None):
 
     if group_id:
         return str(group_id) + "_" + user_id
-    elif campaign and campaign.get("isBucketingSeedEnabled"):
+    elif campaign and (is_new_bucketing_enabled or campaign.get("isBucketingSeedEnabled")):
         return str(campaign.get("id")) + "_" + user_id
 
     return user_id

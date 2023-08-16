@@ -66,6 +66,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     visitor_user_agent = kwargs.get("visitor_user_agent")
     visitor_ip = kwargs.get("visitor_ip")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
+    event_properties = kwargs.get("event_properties")
     valid_params = True
     # Check for valid args
     if (
@@ -145,6 +146,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             variation_targeting_variables,
             goal_type_to_track,
             campaign_goal_revenue_prop_list,
+            event_properties,
             visitor_user_agent,
             visitor_ip,
         )
@@ -159,7 +161,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             vwo_instance.settings_file, goal_identifier, visitor_user_agent=visitor_user_agent, visitor_ip=visitor_ip
         )
         impression = impression_util.create_track_goal_events_impression(
-            vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, revenue=revenue_value
+            vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, event_properties, revenue=revenue_value
         )
         vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
 
@@ -176,8 +178,9 @@ def track_campaign_goal(
     variation_targeting_variables,
     goal_type_to_track,
     campaign_goal_revenue_prop_list,
+    event_properties,
     visitor_user_agent,
-    visitor_ip,
+    visitor_ip
 ):
     """
     It marks the conversion of given goal for the given campaign
@@ -223,13 +226,37 @@ def track_campaign_goal(
         return False
 
     if goal_type == constants.GOAL_TYPES.REVENUE and not validate_util.is_valid_value(revenue_value):
-        vwo_instance.logger.log(
-            LogLevelEnum.ERROR,
-            LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(
-                file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key")
-            ),
-        )
-        return False
+        if vwo_instance.is_event_arch_enabled is True:
+        # If it's a metric of type - value of an event property and calculation logic is first Value (mca != -1)
+            if goal.get("mca") != -1:
+                # In this case it is expected that goal will have revenueProp
+                # Error should be logged if eventProperties is not Defined OR eventProperties does not have revenueProp key
+                if event_properties is None or goal.get("revenueProp") not in event_properties:
+                    vwo_instance.logger.log( LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(
+                        file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key")
+                         ),
+                    )
+                    return False
+            else:
+                # here mca == -1 so there could only be 2 scenarios,
+                # 1. If revenueProp is defined then eventProperties should have revenueProp key
+                # 2. if revenueProp is not defined then it's a metric of type - Number of times an event has been triggered.
+                if goal.get("revenueProp"):
+                    # Error should be logged if eventProperties is not Defined OR eventProperties does not have revenueProp key
+                    if event_properties is None or goal.get("revenueProp") not in event_properties:
+                        vwo_instance.logger.log( LogLevelEnum.ERROR, LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(
+                            file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key")
+                            ),
+                        )
+                        return False
+        else:
+            vwo_instance.logger.log(
+                    LogLevelEnum.ERROR,
+                    LogMessageEnum.ERROR_MESSAGES.TRACK_API_REVENUE_NOT_PASSED_FOR_REVENUE_GOAL.format(
+                        file=FILE, user_id=user_id, goal_identifier=goal.get("identifier"), campaign_key=campaign.get("key")
+                    ),
+                )
+            return False
 
     if goal_type == constants.GOAL_TYPES.CUSTOM:
         revenue_value = None
@@ -244,17 +271,18 @@ def track_campaign_goal(
     )
 
     if variation:
-
         if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
             impression = impression_util.create_impression(
-                vwo_instance.settings_file,
+                vwo_instance,
                 campaign.get("id"),
                 variation.get("id"),
                 user_id,
+                event_properties,
+                goal,
                 goal.get("id"),
                 revenue_value,
                 visitor_user_agent=visitor_user_agent,
-                visitor_ip=visitor_ip,
+                visitor_ip=visitor_ip
             )
 
             vwo_instance.event_dispatcher.dispatch(impression)

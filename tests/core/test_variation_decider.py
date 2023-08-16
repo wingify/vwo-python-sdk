@@ -19,6 +19,8 @@ from ..data.settings_files import SETTINGS_FILES
 from vwo.core.variation_decider import VariationDecider
 from vwo.helpers import campaign_util
 from vwo import UserStorage
+import vwo
+import json
 
 
 class ClientUserStorage:
@@ -257,7 +259,7 @@ class VariationDeciderTest(unittest.TestCase):
         variation_decider = VariationDecider()
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
-        status = variation_decider.is_user_part_of_campaign("Sarah", campaign)
+        status = variation_decider.is_user_part_of_campaign("Sarah", campaign, False)
         self.assertTrue(status)
 
     def test_is_user_part_of_campaign_false(self):
@@ -265,7 +267,7 @@ class VariationDeciderTest(unittest.TestCase):
         settings_file = SETTINGS_FILES.get("FT_100_W_33_33_33_WS_WW")
         campaign = copy.deepcopy(settings_file["campaigns"][0])
         campaign["percentTraffic"] = 1
-        status = variation_decider.is_user_part_of_campaign("Sarah", campaign)
+        status = variation_decider.is_user_part_of_campaign("Sarah", campaign, False)
         self.assertFalse(status)
 
     def test_set_user_storage_data_return_true(self):
@@ -348,3 +350,17 @@ class VariationDeciderTest(unittest.TestCase):
             user_storage.storage.get(("user_id", "campaign_key_2")),
             variation_decider._get_user_storage_data("user_id", "campaign_key_2"),
         )
+
+    def test_get_variation_for_new_bucket_algo(self):
+        settings_file = SETTINGS_FILES.get("NEW_BUCKET_ALGO")
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+        campaign_key_old = settings_file["campaigns"][0]["key"]
+        campaign_key_new = settings_file["campaigns"][1]["key"]
+
+        # check for old campaign
+        variation_old = vwo_instance.activate(campaign_key_old, "Sarah")
+        self.assertEqual(variation_old, "Variation-1-Old")
+
+        # check for new campaign
+        variation_new = vwo_instance.activate(campaign_key_new, "Sarah")
+        self.assertEqual(variation_new, "Control-New")

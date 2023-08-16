@@ -96,7 +96,7 @@ class Bucketer(object):
         )
         return bucket_value
 
-    def is_user_part_of_campaign(self, user_id, campaign, disable_logs=False):
+    def is_user_part_of_campaign(self, user_id, campaign, is_new_bucketing_enabled, disable_logs=False):
         """Calculates if the provided user_id should become part of the campaign or not
 
         Args:
@@ -127,7 +127,7 @@ class Bucketer(object):
         traffic_allocation = campaign.get("percentTraffic")
 
         value_assigned_to_user = self.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
+            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, campaign=campaign),
             user_id,
             constants.MAX_TRAFFIC_PERCENT,
             disable_logs=disable_logs,
@@ -142,7 +142,7 @@ class Bucketer(object):
         )
         return is_user_part
 
-    def bucket_user_to_variation(self, user_id, campaign):
+    def bucket_user_to_variation(self, user_id, campaign, is_new_bucketing_enabled):
         """Validates the User ID and
             returns Variation into which the User is bucketed in.
 
@@ -154,6 +154,10 @@ class Bucketer(object):
             (dict|None): variation data into which user is bucketed in
                 or None if not
         """
+
+        # set is_new_bucketing_enabled to False if not present
+        if not is_new_bucketing_enabled:
+            is_new_bucketing_enabled = False
 
         if not validate_util.is_valid_value(user_id):
             self.logger.log(
@@ -192,8 +196,35 @@ class Bucketer(object):
             )
             self.logger.logger(LogLevelEnum.ERROR, log_str)
 
+        # based on bucketing algo flag, determine bucket value
+        if not is_new_bucketing_enabled or campaign.get("isOB"):
+            # use old bucketing algo
+            normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
+            multiplier = normalize / 100
+            bucket_value = self.get_bucket_value_for_user(
+                campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign, is_new_bucketing_enabled=is_new_bucketing_enabled),
+                user_id,
+                constants.MAX_TRAFFIC_VALUE,
+                multiplier,
+            )
+
+            # log old algo
+            self.logger.log(LogLevelEnum.DEBUG, "Using Old Algo!")
+        else:
+            # use new bucketing algo
+            multiplier = 1
+            bucket_value = self.get_bucket_value_for_user(
+                campaign_util.get_bucketing_seed(user_id=user_id, campaign=None, is_new_bucketing_enabled=is_new_bucketing_enabled),
+                user_id,
+                constants.MAX_TRAFFIC_VALUE,
+                multiplier,
+            )
+
+            # log new algo
+            self.logger.log(LogLevelEnum.DEBUG, "Using New Algo!")
+
         # get valid bucket value
-        normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
+        """ normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
         multiplier = normalize / 100
         bucket_value = self.get_bucket_value_for_user(
             campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
@@ -201,6 +232,7 @@ class Bucketer(object):
             constants.MAX_TRAFFIC_VALUE,
             multiplier,
         )
+        """
 
         # logging for problem with bucket value
         if bucket_value is not None and (bucket_value < 1 or bucket_value > 10000):
