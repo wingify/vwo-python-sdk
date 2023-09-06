@@ -59,8 +59,8 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
-    visitor_user_agent = kwargs.get("visitor_user_agent")
-    visitor_ip = kwargs.get("visitor_ip")
+    client_user_agent = kwargs.get("client_user_agent")
+    user_ip_address = kwargs.get("user_ip_address")
 
     # Validate input parameters
     if (
@@ -119,8 +119,8 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
                 campaign.get("id"),
                 variation.get("id"),
                 user_id,
-                visitor_user_agent=visitor_user_agent,
-                visitor_ip=visitor_ip,
+                client_user_agent=client_user_agent,
+                user_ip_address=user_ip_address,
             )
 
             vwo_instance.event_dispatcher.dispatch(impression)
@@ -138,8 +138,8 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
             params = impression_util.get_events_params(
                 vwo_instance.settings_file,
                 constants.EVENTS.VWO_VARIATION_SHOWN,
-                visitor_user_agent=visitor_user_agent,
-                visitor_ip=visitor_ip,
+                client_user_agent=client_user_agent,
+                user_ip_address=user_ip_address,
             )
             impression = impression_util.create_track_user_events_impression(
                 vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id

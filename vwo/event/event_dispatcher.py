@@ -94,10 +94,10 @@ class EventDispatcher(object):
 
         # check if params has visitor IP and add it to header, if exists
         if params is not None and constants.VISITOR.IP in params:
-            visitor_ip = params.get(constants.VISITOR.IP)
-            if visitor_ip is not None and len(visitor_ip) > 0:
+            user_ip_address = params.get(constants.VISITOR.IP)
+            if user_ip_address is not None and len(user_ip_address) > 0:
                 # create and update http headers
-                custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: visitor_ip}
+                custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: user_ip_address}
                 headers.update(custom_header)
 
         if self.is_development_mode:
@@ -150,10 +150,10 @@ class EventDispatcher(object):
 
                 # check if impression has visitor IP and add it to header, if exists
                 if impression is not None and constants.VISITOR.IP in impression:
-                    visitor_ip = impression.get(constants.VISITOR.IP)
-                    if visitor_ip is not None and len(visitor_ip) > 0:
+                    user_ip_address = impression.get(constants.VISITOR.IP)
+                    if user_ip_address is not None and len(user_ip_address) > 0:
                         # create and update http headers
-                        custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: visitor_ip}
+                        custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: user_ip_address}
                         headers.update(custom_header)
 
                 # sync API call
