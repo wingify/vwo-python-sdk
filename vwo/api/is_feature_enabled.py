@@ -61,7 +61,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
-    client_user_agent = kwargs.get("client_user_agent")
+    user_agent = kwargs.get("user_agent")
     user_ip_address = kwargs.get("user_ip_address")
 
     if (
@@ -119,7 +119,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
                 campaign.get("id"),
                 variation.get("id"),
                 user_id,
-                client_user_agent=client_user_agent,
+                user_agent=user_agent,
                 user_ip_address=user_ip_address,
             )
 
@@ -137,7 +137,7 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
             params = impression_util.get_events_params(
                 vwo_instance.settings_file,
                 constants.EVENTS.VWO_VARIATION_SHOWN,
-                client_user_agent=client_user_agent,
+                user_agent=user_agent,
                 user_ip_address=user_ip_address,
             )
             impression = impression_util.create_track_user_events_impression(

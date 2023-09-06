@@ -111,7 +111,7 @@ def _push(vwo_instance, tag_key="", tag_value="", user_id="", custom_dimension_m
             )
     else:
         params = impression_util.get_events_params(
-            vwo_instance.settings_file, constants.EVENTS.VWO_SYNC_VISITOR_PROP, client_user_agent=None, user_ip_address=None
+            vwo_instance.settings_file, constants.EVENTS.VWO_SYNC_VISITOR_PROP, user_agent=None, user_ip_address=None
         )
         impression = impression_util.create_push_events_impression(
             vwo_instance.settings_file, user_id, custom_dimension_map

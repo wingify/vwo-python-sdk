@@ -63,7 +63,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
     # Retrive revenue value and custom_variables
     revenue_value = kwargs.get("revenue_value")
     custom_variables = kwargs.get("custom_variables")
-    client_user_agent = kwargs.get("client_user_agent")
+    user_agent = kwargs.get("user_agent")
     user_ip_address = kwargs.get("user_ip_address")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
     event_properties = kwargs.get("event_properties")
@@ -147,7 +147,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
             goal_type_to_track,
             campaign_goal_revenue_prop_list,
             event_properties,
-            client_user_agent,
+            user_agent,
             user_ip_address,
         )
         ret_value[campaign.get("key")] = result
@@ -158,7 +158,7 @@ def _track(vwo_instance, campaign_specifier, user_id, goal_identifier, **kwargs)
         not vwo_instance.is_event_batching_enabled and vwo_instance.is_event_arch_enabled is True
     ):
         params = impression_util.get_events_params(
-            vwo_instance.settings_file, goal_identifier, client_user_agent=client_user_agent, user_ip_address=user_ip_address
+            vwo_instance.settings_file, goal_identifier, user_agent=user_agent, user_ip_address=user_ip_address
         )
         impression = impression_util.create_track_goal_events_impression(
             vwo_instance.settings_file, user_id, goal_identifier, campaign_goal_revenue_prop_list, event_properties, revenue=revenue_value
@@ -179,7 +179,7 @@ def track_campaign_goal(
     goal_type_to_track,
     campaign_goal_revenue_prop_list,
     event_properties,
-    client_user_agent,
+    user_agent,
     user_ip_address
 ):
     """
@@ -281,7 +281,7 @@ def track_campaign_goal(
                 goal,
                 goal.get("id"),
                 revenue_value,
-                client_user_agent=client_user_agent,
+                user_agent=user_agent,
                 user_ip_address=user_ip_address
             )
 

@@ -41,7 +41,7 @@ def create_impression(
     goal=None,
     goal_id=None,
     revenue=None,
-    client_user_agent=None,
+    user_agent=None,
     user_ip_address=None,
 ):
     """Creates the impression from the arguments passed according to
@@ -68,7 +68,7 @@ def create_impression(
     if goal_id is not None:
         is_track_user_api = False
 
-    impression = get_common_properties(user_id, vwo_instance.settings_file, client_user_agent, user_ip_address)
+    impression = get_common_properties(user_id, vwo_instance.settings_file, user_agent, user_ip_address)
 
     impression.update(experiment_id=campaign_id, combination=variation_id)
 
@@ -101,7 +101,7 @@ def create_impression(
     return impression
 
 
-def get_common_properties(user_id, settings_file, client_user_agent, user_ip_address):
+def get_common_properties(user_id, settings_file, user_agent, user_ip_address):
     """Returns commonly used params for making requests to our servers.
 
     Args:
@@ -114,15 +114,15 @@ def get_common_properties(user_id, settings_file, client_user_agent, user_ip_add
     logger = VWOLogger.getInstance()
 
     # initialize visitor user agent to blank string if None
-    if client_user_agent is None:
-        client_user_agent = ""
+    if user_agent is None:
+        user_agent = ""
     else:
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
                 file=FILE,
                 ua_or_ip="UA",
-                value=client_user_agent,
+                value=user_agent,
             ),
         )
 
@@ -150,7 +150,7 @@ def get_common_properties(user_id, settings_file, client_user_agent, user_ip_add
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
         "env": sdk_key,
-        constants.VISITOR.USER_AGENT: client_user_agent,
+        constants.VISITOR.USER_AGENT: user_agent,
         constants.VISITOR.IP: user_ip_address,
     }
     return properties
@@ -312,7 +312,7 @@ def get_events_common_properties(settings_file, user_id, event_name):
     return properties
 
 
-def get_events_params(settings_file, event_name, client_user_agent, user_ip_address):
+def get_events_params(settings_file, event_name, user_agent, user_ip_address):
     """Returns query params for making requests to our servers using events.
 
     Args:
@@ -325,15 +325,15 @@ def get_events_params(settings_file, event_name, client_user_agent, user_ip_addr
     logger = VWOLogger.getInstance()
 
     # initialize visitor user agent to blank string if None, else log
-    if client_user_agent is None:
-        client_user_agent = ""
+    if user_agent is None:
+        user_agent = ""
     else:
         logger.log(
             LogLevelEnum.DEBUG,
             LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
                 file=FILE,
                 ua_or_ip="UserAgent",
-                value=client_user_agent,
+                value=user_agent,
             ),
         )
 
@@ -359,7 +359,7 @@ def get_events_params(settings_file, event_name, client_user_agent, user_ip_addr
         "eTime": generic_util.get_current_unix_timestamp_milli(),
         "random": generic_util.get_random_number(),
         "p": "FS",
-        constants.VISITOR.USER_AGENT: client_user_agent,
+        constants.VISITOR.USER_AGENT: user_agent,
         constants.VISITOR.IP: user_ip_address,
     }
 
