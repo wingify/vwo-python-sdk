@@ -50,4 +50,8 @@ class CustomDimensionUtilTest(unittest.TestCase):
                 constants.VISITOR.USER_AGENT: "",
                 constants.VISITOR.IP: "",
             }
+
+            print(str(params))
+            print(str(result))
+
             self.assertDictEqual(params, result)
