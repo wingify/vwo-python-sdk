@@ -27,3 +27,4 @@ class UrlManagerTest(unittest.TestCase):
         url_manager.set_config({"collection_prefix": collection_prefix})
 
         self.assertEquals(url_manager.get_base_url(), constants.ENDPOINTS.BASE_URL + "/" + collection_prefix)
+        url_manager.set_config()
