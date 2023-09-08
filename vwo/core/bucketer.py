@@ -28,10 +28,6 @@ from ..logger import VWOLogger
 U_MAX_32_BIT = 0xFFFFFFFF
 FILE = FileNameEnum.Core.Bucketer
 
-# min and max range of bucket value
-MIN_BUCKET_VALUE = 1
-MAX_BUCKET_VALUE = 10000
-
 
 class Bucketer(object):
     """Class consisting the core bucketing/distribution logic for
@@ -63,7 +59,10 @@ class Bucketer(object):
         # log for None item
         self.logger.log(
             LogLevelEnum.ERROR,
-            "tmpLog::bucketer::get_allocated_item() - Variation is None for bucket_value=" + str(bucket_value) + '. Variations details - ' + variations_log_string,
+            "tmpLog::bucketer::get_allocated_item() - Variation is None for bucket_value="
+            + str(bucket_value)
+            + ". Variations details - "
+            + variations_log_string,
         )
 
         return None
@@ -87,12 +86,6 @@ class Bucketer(object):
         ratio = hash_value / (2**32)
         multiplied_value = (max_value * ratio + 1) * multiplier
         bucket_value = int(multiplied_value)
-
-        # set bucket value to the min/max value if outside ranges
-        if bucket_value > MAX_BUCKET_VALUE:
-            bucket_value = MAX_BUCKET_VALUE
-        elif bucket_value < MIN_BUCKET_VALUE:
-            bucket_value = MIN_BUCKET_VALUE
 
         self.logger.log(
             LogLevelEnum.DEBUG,

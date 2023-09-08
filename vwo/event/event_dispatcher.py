@@ -21,6 +21,8 @@ from ..enums.log_level_enum import LogLevelEnum
 from ..logger import VWOLogger
 from ..constants import constants
 from ..services.url_manager import url_manager
+from ..helpers import validate_util
+from ..constants import constants
 
 FILE = FileNameEnum.Event.EventDispatcher
 
@@ -78,8 +80,25 @@ class EventDispatcher(object):
         Returns:
             bool: True if impression is successfully received by our servers, else false
         """
+
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url() + constants.ENDPOINTS.EVENTS
         headers = {"User-Agent": constants.SDK_NAME}
+
+        # check if params has visitor user agent and add it to header, if exists
+        if params is not None and constants.VISITOR.USER_AGENT in params:
+            visitor_ua = params.get(constants.VISITOR.USER_AGENT)
+            if visitor_ua is not None and len(visitor_ua) > 0:
+                # create and update http headers
+                custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
+                headers.update(custom_header)
+
+        # check if params has visitor IP and add it to header, if exists
+        if params is not None and constants.VISITOR.IP in params:
+            user_ip_address = params.get(constants.VISITOR.IP)
+            if user_ip_address is not None and len(user_ip_address) > 0:
+                # create and update http headers
+                custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: user_ip_address}
+                headers.update(custom_header)
 
         if self.is_development_mode:
             result = True
@@ -112,14 +131,33 @@ class EventDispatcher(object):
         Returns:
             bool: True if impression is successfully received by our servers, else false
         """
+
         url = impression.pop("url")
+        headers = {"User-Agent": constants.SDK_NAME}
+
         if self.is_development_mode:
             result = True
         else:
             result = False
             if self.event_batching is False:
+                # check if impression has visitor user agent and add it to header, if exists
+                if impression is not None and constants.VISITOR.USER_AGENT in impression:
+                    visitor_ua = impression.get(constants.VISITOR.USER_AGENT)
+                    if visitor_ua is not None and len(visitor_ua) > 0:
+                        # create and update http headers
+                        custom_header = {constants.VISITOR.CUSTOM_HEADER_USER_AGENT: visitor_ua}
+                        headers.update(custom_header)
+
+                # check if impression has visitor IP and add it to header, if exists
+                if impression is not None and constants.VISITOR.IP in impression:
+                    user_ip_address = impression.get(constants.VISITOR.IP)
+                    if user_ip_address is not None and len(user_ip_address) > 0:
+                        # create and update http headers
+                        custom_header = {constants.VISITOR.CUSTOM_HEADER_IP: user_ip_address}
+                        headers.update(custom_header)
+
                 # sync API call
-                resp = self.connection.get(url, params=impression)
+                resp = self.connection.get(url, params=impression, headers=headers)
                 result = resp.get("status_code") == 200
             else:
                 result = self.async_dispatch(url, impression)
@@ -198,7 +236,12 @@ class EventDispatcher(object):
         url_split = url.split("/")
         event_name = url_split[-1]
 
-        payload = {"u": impression.get("u"), "sId": impression.get("sId")}
+        payload = {
+            "u": impression.get("u"),
+            "sId": impression.get("sId"),
+            constants.VISITOR.USER_AGENT: impression.get(constants.VISITOR.USER_AGENT),
+            constants.VISITOR.IP: impression.get(constants.VISITOR.IP),
+        }
 
         if event_name == constants.EVENTS.TRACK_USER:
             payload.update({"c": impression.get("combination"), "e": impression.get("experiment_id"), "eT": 1})
@@ -225,14 +268,17 @@ class EventDispatcher(object):
         Args:
             events (list): List of events to be synced to VWO servers
         """
-        sync_thread = threading.Thread(target=self.sync_with_vwo, args=(events,))
+        sync_thread = threading.Thread(
+            target=self.sync_with_vwo,
+            args=(events,),
+        )
         sync_thread.start()
 
     def sync_with_vwo(self, events):
         url = constants.HTTPS_PROTOCOL + url_manager.get_base_url()
         url = url + constants.ENDPOINTS.BATCH_EVENTS
         query_params = {"a": self.account_id, "sdk": self.sdk, "sdk-v": self.sdk_v, "env": self.sdk_key}
-        headers = {"Authorization": self.sdk_key}
+        headers = {"Authorization": self.sdk_key, "User-Agent": constants.SDK_NAME}
 
         queue_length = len(events)
         first_event = "No event in queue"

@@ -32,8 +32,18 @@ except ImportError:
 
 FILE = FileNameEnum.Helpers.ImpressionUtil
 
-
-def create_impression(vwo_instance, campaign_id, variation_id, user_id, event_properties=None, goal=None, goal_id=None, revenue=None):
+def create_impression(
+    vwo_instance,
+    campaign_id,
+    variation_id,
+    user_id,
+    event_properties=None,
+    goal=None,
+    goal_id=None,
+    revenue=None,
+    user_agent=None,
+    user_ip_address=None,
+):
     """Creates the impression from the arguments passed according to
     call type
 
@@ -58,7 +68,7 @@ def create_impression(vwo_instance, campaign_id, variation_id, user_id, event_pr
     if goal_id is not None:
         is_track_user_api = False
 
-    impression = get_common_properties(user_id, vwo_instance.settings_file)
+    impression = get_common_properties(user_id, vwo_instance.settings_file, user_agent, user_ip_address)
 
     impression.update(experiment_id=campaign_id, combination=variation_id)
 
@@ -91,7 +101,7 @@ def create_impression(vwo_instance, campaign_id, variation_id, user_id, event_pr
     return impression
 
 
-def get_common_properties(user_id, settings_file):
+def get_common_properties(user_id, settings_file, user_agent, user_ip_address):
     """Returns commonly used params for making requests to our servers.
 
     Args:
@@ -101,6 +111,33 @@ def get_common_properties(user_id, settings_file):
     Returns:
         properties(object): commonly used params for making call to our servers
     """
+    logger = VWOLogger.getInstance()
+
+    # initialize visitor user agent to blank string if None
+    if user_agent is None:
+        user_agent = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="UA",
+                value=user_agent,
+            ),
+        )
+
+    # initialize visitor IP to blank string if None
+    if user_ip_address is None:
+        user_ip_address = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="IP",
+                value=user_ip_address,
+            ),
+        )
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -113,6 +150,8 @@ def get_common_properties(user_id, settings_file):
         "u": uuid_util.generate_for(user_id, account_id),
         "account_id": account_id,
         "env": sdk_key,
+        constants.VISITOR.USER_AGENT: user_agent,
+        constants.VISITOR.IP: user_ip_address,
     }
     return properties
 
@@ -273,7 +312,7 @@ def get_events_common_properties(settings_file, user_id, event_name):
     return properties
 
 
-def get_events_params(settings_file, event_name):
+def get_events_params(settings_file, event_name, user_agent, user_ip_address):
     """Returns query params for making requests to our servers using events.
 
     Args:
@@ -283,6 +322,33 @@ def get_events_params(settings_file, event_name):
     Returns:
         properties(dict): query params for event call
     """
+    logger = VWOLogger.getInstance()
+
+    # initialize visitor user agent to blank string if None, else log
+    if user_agent is None:
+        user_agent = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="UserAgent",
+                value=user_agent,
+            ),
+        )
+
+    # initialize visitor IP to blank string if None, else log
+    if user_ip_address is None:
+        user_ip_address = ""
+    else:
+        logger.log(
+            LogLevelEnum.DEBUG,
+            LogMessageEnum.DEBUG_MESSAGES.VISITOR_DATA.format(
+                file=FILE,
+                ua_or_ip="IP",
+                value=user_ip_address,
+            ),
+        )
 
     account_id = settings_file.get("accountId")
     sdk_key = settings_file.get("sdkKey")
@@ -293,6 +359,8 @@ def get_events_params(settings_file, event_name):
         "eTime": generic_util.get_current_unix_timestamp_milli(),
         "random": generic_util.get_random_number(),
         "p": "FS",
+        constants.VISITOR.USER_AGENT: user_agent,
+        constants.VISITOR.IP: user_ip_address,
     }
 
     if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:

@@ -31,6 +31,8 @@ class ImpressionTest(unittest.TestCase):
             constants.EVENTS.VWO_VARIATION_SHOWN,
             "test_goal_identifier",
         ]
+        self.visitor_ua = "user_agent"
+        self.visitor_ip = "user_ip"
 
     def test_create_impression_string_id(self):
         result = impression_util.create_impression(self.settings_file, "123", "456", self.user_id)
@@ -49,12 +51,14 @@ class ImpressionTest(unittest.TestCase):
                     "eTime": generic_util.get_current_unix_timestamp_milli(),
                     "random": generic_util.get_random_number(),
                     "p": "FS",
+                    constants.VISITOR.USER_AGENT: "",
+                    constants.VISITOR.IP: "",
                 }
 
                 if event_name == constants.EVENTS.VWO_VARIATION_SHOWN:
                     expected.update({"_l": 1, "ll": 1})
 
-                result = impression_util.get_events_params(self.settings_file, event_name)
+                result = impression_util.get_events_params(self.settings_file, event_name, None, None)
                 self.assertDictEqual(result, expected)
 
     def test_get_events_common_properties(self):
@@ -317,3 +321,18 @@ class ImpressionTest(unittest.TestCase):
             )
 
             self.assertDictEqual(result, expected)
+
+    def test_common_properties_with_ua_and_ip(self):
+        common_properties = impression_util.get_common_properties(
+            self.user_id, self.settings_file, self.visitor_ua, self.visitor_ip
+        )
+        expected_properties_subset = {
+            constants.VISITOR.USER_AGENT: self.visitor_ua,
+            constants.VISITOR.IP: self.visitor_ip,
+        }
+        self.assertDictContainsSubset(expected_properties_subset, common_properties)
+
+    def test_event_params_with_ua_and_ip(self):
+        event_params = impression_util.get_events_params(self.settings_file, "", self.visitor_ua, self.visitor_ip)
+        expected_params_subset = {constants.VISITOR.USER_AGENT: self.visitor_ua, constants.VISITOR.IP: self.visitor_ip}
+        self.assertDictContainsSubset(expected_params_subset, event_params)

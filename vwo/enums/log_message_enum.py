@@ -60,6 +60,8 @@ class LogMessageEnum:
         CAMPAIGN_NOT_ACTIVATED = "({file}): Campaign:{campaign_key} for User ID:{user_id} is not yet activated for API:{api_method}. Use activate API to activate A/B test or isFeatureEnabled API to activate Feature Test/Rollout"
         GOT_ELIGIBLE_CAMPAIGNS = "({file}): Campaigns:{eligible_campaigns_key} are eligible, {ineligible_campaigns_log_text} are ineligible from the Group:{group_name} for the User ID:{user_id}"
 
+        VISITOR_DATA = "({file}): Visitor {ua_or_ip} added - {value}"
+
     class INFO_MESSAGES:
         """Classobj encapsulating various INFO messages"""
 

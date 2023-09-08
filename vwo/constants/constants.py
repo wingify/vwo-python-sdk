@@ -17,6 +17,7 @@ import pkg_resources
 import logging
 
 SDK_NAME = "vwo-python-sdk"
+# SDK_NAME = "VWO_FULLSTACK_PYTHON_SDK"
 SDK_VERSION = pkg_resources.require(SDK_NAME)[0].version
 API_VERSION = 1
 PLATFORM = "server"
@@ -121,3 +122,11 @@ class LOG_LEVELS:
     INFO = logging.INFO
     WARNING = logging.WARNING
     ERROR = logging.ERROR
+
+
+# visitor user agent
+class VISITOR:
+    USER_AGENT = "visitor_ua"
+    CUSTOM_HEADER_USER_AGENT = "X-Device-User-Agent"
+    IP = "visitor_ip"
+    CUSTOM_HEADER_IP = "VWO-X-Forwarded-For"

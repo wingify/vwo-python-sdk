@@ -57,9 +57,12 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
         )
 
         return False
+
     # Retrieve custom variables
     custom_variables = kwargs.get("custom_variables")
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
+    user_agent = kwargs.get("user_agent")
+    user_ip_address = kwargs.get("user_ip_address")
 
     if (
         not validate_util.is_valid_string(campaign_key)
@@ -112,7 +115,12 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
 
         if not vwo_instance.is_event_arch_enabled or vwo_instance.is_event_batching_enabled is True:
             impression = impression_util.create_impression(
-                vwo_instance, campaign.get("id"), variation.get("id"), user_id
+                vwo_instance,
+                campaign.get("id"),
+                variation.get("id"),
+                user_id,
+                user_agent=user_agent,
+                user_ip_address=user_ip_address,
             )
 
             vwo_instance.event_dispatcher.dispatch(impression)
@@ -126,7 +134,12 @@ def _is_feature_enabled(vwo_instance, campaign_key, user_id, **kwargs):
                 ),
             )
         else:
-            params = impression_util.get_events_params(vwo_instance.settings_file, constants.EVENTS.VWO_VARIATION_SHOWN)
+            params = impression_util.get_events_params(
+                vwo_instance.settings_file,
+                constants.EVENTS.VWO_VARIATION_SHOWN,
+                user_agent=user_agent,
+                user_ip_address=user_ip_address,
+            )
             impression = impression_util.create_track_user_events_impression(
                 vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
             )
