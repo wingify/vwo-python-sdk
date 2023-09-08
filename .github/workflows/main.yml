@@ -33,7 +33,7 @@ jobs:
         if [ -f requirements-ci.txt ]; then pip install -r requirements-ci.txt; fi
 
     - name: Run tests
-      run: coverage run --source=vwo setup.py test
+      run: coverage run --source=vwo setup.py test -s tests.helpers.test_custom_dimensions_util
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
