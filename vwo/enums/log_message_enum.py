@@ -197,3 +197,6 @@ class LogMessageEnum:
         INTEGRATIONS_SERVICE_CALLBACK_EXECUTION_ERROR = (
             "({file}): Error while executing integrations service callback. Error message: {error_message}"
         )
+        NO_USERSTORAGE_WITH_MAB = (
+            "({file}): This campaign:{campaign_key} has MAB configured. Please configure User Storage to proceed."
+        )

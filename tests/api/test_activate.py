@@ -287,3 +287,25 @@ class ActivateTest(unittest.TestCase):
 
         variation1 = vwo_instance.activate("AB_T_100_W_50_50", "user")
         self.assertIs(variation1, None)
+
+    # if MAB is selected and no user storage is connected, then activate should not proceed
+    def test_activate_with_MAB_no_user_storage(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("VALIDATE_USERSTORAGE_WITH_MAB")), is_development_mode=True, log_level=40
+        )
+        variation = vwo_instance.activate("VALIDATE_USERSTORAGE_WITH_MAB", "user")
+
+        # variation should be None as no user storage is used
+        self.assertIsNone(variation)
+
+    def test_activate_with_MAB_user_storage(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("VALIDATE_USERSTORAGE_WITH_MAB")),
+            is_development_mode=True,
+            log_level=40,
+            user_storage=ClientUserStorage(),
+        )
+        variation = vwo_instance.activate("VALIDATE_USERSTORAGE_WITH_MAB", "user")
+
+        # variation should be valid as user storage is used
+        self.assertIsNotNone(variation)

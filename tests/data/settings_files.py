@@ -1480,7 +1480,7 @@ SETTINGS_FILES = {
                 "key": "NEW_BUCKET_ALGO_NEW_CAMPAIGN",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-            }
+            },
         ],
         "accountId": 88888888,
         "version": 1,
@@ -1489,26 +1489,10 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                    "identifier": "CUSTOM",
-                    "id": 213,
-                    "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                    "id": 1,
-                    "name": "Control",
-                    "changes": {},
-                    "weight": 50
-                    },
-                    {
-                    "id": 2,
-                    "name": 'Variation-1',
-                    "changes": {},
-                    "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1516,37 +1500,21 @@ SETTINGS_FILES = {
                 "key": "BUCKET_ALGO_WITHOUT_SEED",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             }
         ],
         "accountId": 888888,
         "version": 1,
-        "isNB": True
+        "isNB": True,
     },
     "SETTINGS_WITH_SEED_WITHOUT_ISOB": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1555,37 +1523,21 @@ SETTINGS_FILES = {
                 "key": "BUCKET_ALGO_WITH_SEED",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             }
         ],
         "accountId": 888888,
         "version": 1,
-        "isNB": True
+        "isNB": True,
     },
     "SETTINGS_WITH_ISNB_WITH_ISOB": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1595,37 +1547,21 @@ SETTINGS_FILES = {
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
                 "segments": {},
-                "isOB": True
+                "isOB": True,
             }
         ],
         "accountId": 888888,
         "version": 1,
-        "isNB": True
+        "isNB": True,
     },
     "SETTINGS_WITH_ISNB_WITHOUT_ISOB": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1634,37 +1570,21 @@ SETTINGS_FILES = {
                 "key": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             }
         ],
         "accountId": 888888,
         "version": 1,
-        "isNB": True
+        "isNB": True,
     },
     "SETTINGS_WITHOUT_SEED_WITH_ISNB_WITHOUT_ISOB": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1672,37 +1592,21 @@ SETTINGS_FILES = {
                 "key": "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             }
         ],
         "accountId": 888888,
         "version": 1,
-        "isNB": True
+        "isNB": True,
     },
     "SETTINGS_MEGNEW_ONLY_PRIORITY": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1710,29 +1614,13 @@ SETTINGS_FILES = {
                 "key": "MEGNEW_ONLY_PRIORITY_0",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             },
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 232,
                 "percentTraffic": 100,
@@ -1740,48 +1628,22 @@ SETTINGS_FILES = {
                 "key": "MEGNEW_ONLY_PRIORITY_1",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
-            }
+                "segments": {},
+            },
         ],
         "accountId": 888888,
         "version": 1,
-        "groups": {
-            "1": {
-                "name": "group1",
-                "campaigns": [231, 232],
-                "et": 2,
-                "p": [231, 232]
-            }
-        },
-        "campaignGroups":{
-            "231": 1,
-            "232": 1
-        }
+        "groups": {"1": {"name": "group1", "campaigns": [231, 232], "et": 2, "p": [231, 232]}},
+        "campaignGroups": {"231": 1, "232": 1},
     },
     "SETTINGS_MEGNEW_ONLY_TRAFFIC": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1789,29 +1651,13 @@ SETTINGS_FILES = {
                 "key": "MEGNEW_ONLY_TRAFFIC_0",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             },
             {
-                "goals": [
-                    {
-                        "identifier": "CUSTOM",
-                        "id": 213,
-                        "type": "CUSTOM_GOAL"
-                    }
-                ],
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 232,
                 "percentTraffic": 100,
@@ -1819,68 +1665,27 @@ SETTINGS_FILES = {
                 "key": "MEGNEW_ONLY_TRAFFIC_1",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
-            }
+                "segments": {},
+            },
         ],
         "accountId": 888888,
         "version": 1,
-        "groups": {
-            "1": {
-                "name": "group1",
-                "campaigns": [231, 232],
-                "et": 2,
-                "wt": {
-                    "231": 80,
-                    "232": 20
-                }
-            }
-        },
-        "campaignGroups":{
-            "231": 1,
-            "232": 1
-        }
+        "groups": {"1": {"name": "group1", "campaigns": [231, 232], "et": 2, "wt": {"231": 80, "232": 20}}},
+        "campaignGroups": {"231": 1, "232": 1},
     },
-    "SETTINGS_FILE_EVENTPROPERTIES" :{
+    "SETTINGS_FILE_EVENTPROPERTIES": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [
             {
                 "goals": [
-                    {
-                        "identifier": "track1",
-                        "id": 1,
-                        "type": "CUSTOM_GOAL"
-                    },
-                    {
-                        "identifier": "track2",
-                        "id": 2,
-                        "type": "CUSTOM_GOAL"
-                    },
-                    {
-                        "identifier": "track3",
-                        "id": 3,
-                        "type": "REVENUE_TRACKING",
-                        "revenueProp": "abcd"
-                    },
-                    {
-                        "identifier": "track4",
-                        "id": 4,
-                        "type": "REVENUE_TRACKING",
-                        "mca" : -1
-                    }
+                    {"identifier": "track1", "id": 1, "type": "CUSTOM_GOAL"},
+                    {"identifier": "track2", "id": 2, "type": "CUSTOM_GOAL"},
+                    {"identifier": "track3", "id": 3, "type": "REVENUE_TRACKING", "revenueProp": "abcd"},
+                    {"identifier": "track4", "id": 4, "type": "REVENUE_TRACKING", "mca": -1},
                 ],
                 "variations": [
-                    {
-                        "id": 1,
-                        "name": "Control",
-                        "changes": {},
-                        "weight": 50
-                    },
-                    {
-                        "id": 2,
-                        "name": "Variation-1",
-                        "changes": {},
-                        "weight": 50
-                    }
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
                 ],
                 "id": 231,
                 "percentTraffic": 100,
@@ -1888,13 +1693,35 @@ SETTINGS_FILES = {
                 "key": "track",
                 "status": "RUNNING",
                 "type": "VISUAL_AB",
-                "segments": {}
+                "segments": {},
             }
         ],
         "accountId": 888888,
         "version": 1,
         "groups": {},
-        "campaignGroups":{},
-        "isEventArchEnabled": True
-    }
+        "campaignGroups": {},
+        "isEventArchEnabled": True,
+    },
+    "VALIDATE_USERSTORAGE_WITH_MAB": {
+        "sdkKey": "someuniquestuff1234567",
+        "isExtraParamPresentInValidation": True,
+        "campaigns": [
+            {
+                "goals": [{"identifier": "CUSTOM", "id": 213, "type": "CUSTOM_GOAL"}],
+                "variations": [
+                    {"id": 1, "name": "Control", "changes": {}, "weight": 50},
+                    {"id": 2, "name": "Variation-1", "changes": {}, "weight": 50},
+                ],
+                "id": 230,
+                "name": "Campaign-230",
+                "percentTraffic": 100,
+                "key": "VALIDATE_USERSTORAGE_WITH_MAB",
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "isMAB": True,
+            }
+        ],
+        "accountId": 88888888,
+        "version": 1,
+    },
 }

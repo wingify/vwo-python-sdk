@@ -83,6 +83,14 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     if not campaign:
         return None
 
+    # check if user storage attached if MAB activated for campaign
+    if campaign.get("isMAB") and vwo_instance.variation_decider.user_storage is None:
+        vwo_instance.logger.log(
+            LogLevelEnum.ERROR,
+            LogMessageEnum.ERROR_MESSAGES.NO_USERSTORAGE_WITH_MAB.format(file=FILE, campaign_key=campaign_key),
+        )
+        return None
+
     # Get campaign type
     campaign_type = campaign.get("type")
 
