@@ -71,14 +71,13 @@ class ImpressionTest(unittest.TestCase):
                     "d": {
                         "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                         + "-"
-                        + str(generic_util.get_current_unix_timestamp()),
+                        + str(generic_util.get_current_unix_timestamp_milli()),
                         "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                         "sessionId": generic_util.get_current_unix_timestamp(),
                         "event": {
                             "props": {
-                                "$visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
-                                "sdkName": constants.SDK_NAME,
-                                "sdkVersion": constants.SDK_VERSION,
+                                "vwo_sdkName": constants.SDK_NAME,
+                                "vwo_sdkVersion": constants.SDK_VERSION,
                             },
                             "name": event_name,
                             "time": generic_util.get_current_unix_timestamp_milli(),
@@ -99,17 +98,16 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
-                            "$visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
                             "id": 1,
                             "variation": 1,
                             "isFirst": 1,
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": constants.EVENTS.VWO_VARIATION_SHOWN,
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -132,16 +130,15 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
                             "isCustomEvent": True,
-                            "$visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
                             "vwoMeta": {"metric": {"id_1": ["g_1"]}},
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -166,16 +163,15 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
                             "isCustomEvent": True,
-                            "$visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
                             "vwoMeta": {"metric": {"id_1": ["g_1"]}, "revKey": 100},
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -200,21 +196,20 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
                             "isCustomEvent": True,
-                            "$visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
                             "vwoMeta": {
                                 "metric": {"id_1": ["g_1"], "id_2": ["g_2"], "id_3": ["g_3"]},
                                 "revKey1": 100,
                                 "revKey2": 100,
                                 "revKey3": 100,
                             },
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -243,20 +238,14 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
                             "isCustomEvent": True,
-                            "$visitor": {
-                                "props": {
-                                    "vwo_fs_environment": self.settings_file.get("sdkKey"),
-                                    "tag_key": "tag_value",
-                                }
-                            },
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": constants.EVENTS.VWO_SYNC_VISITOR_PROP,
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -283,22 +272,14 @@ class ImpressionTest(unittest.TestCase):
                 "d": {
                     "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
                     + "-"
-                    + str(generic_util.get_current_unix_timestamp()),
+                    + str(generic_util.get_current_unix_timestamp_milli()),
                     "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
                     "sessionId": generic_util.get_current_unix_timestamp(),
                     "event": {
                         "props": {
                             "isCustomEvent": True,
-                            "$visitor": {
-                                "props": {
-                                    "vwo_fs_environment": self.settings_file.get("sdkKey"),
-                                    "tag_key_1": "tag_value_1",
-                                    "tag_key_2": "tag_value_2",
-                                    "tag_key_3": "tag_value_3",
-                                }
-                            },
-                            "sdkName": constants.SDK_NAME,
-                            "sdkVersion": constants.SDK_VERSION,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
                         },
                         "name": constants.EVENTS.VWO_SYNC_VISITOR_PROP,
                         "time": generic_util.get_current_unix_timestamp_milli(),

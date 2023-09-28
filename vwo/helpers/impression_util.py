@@ -260,7 +260,6 @@ def create_push_events_impression(settings_file, user_id, custom_dimension_map):
     impression["d"]["event"]["props"].update(isCustomEvent=True)
 
     for tag_key, tag_value in custom_dimension_map.items():
-        impression["d"]["event"]["props"]["$visitor"]["props"].update({str(tag_key): str(tag_value)})
         impression["d"]["visitor"]["props"].update({str(tag_key): str(tag_value)})
 
     logger.log(
@@ -293,14 +292,13 @@ def get_events_common_properties(settings_file, user_id, event_name):
 
     properties = {
         "d": {
-            "msgId": uuid + "-" + str(generic_util.get_current_unix_timestamp()),
+            "msgId": uuid + "-" + str(generic_util.get_current_unix_timestamp_milli()),
             "visId": uuid,
             "sessionId": generic_util.get_current_unix_timestamp(),
             "event": {
                 "props": {
-                    "$visitor": {"props": {"vwo_fs_environment": sdk_key}},
-                    "sdkName": constants.SDK_NAME,
-                    "sdkVersion": constants.SDK_VERSION,
+                    "vwo_sdkName": constants.SDK_NAME,
+                    "vwo_sdkVersion": constants.SDK_VERSION,
                 },
                 "name": event_name,
                 "time": generic_util.get_current_unix_timestamp_milli(),

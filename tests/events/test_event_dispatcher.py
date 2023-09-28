@@ -47,14 +47,13 @@ test_headers = {
 
 test_events_track_impression_properties = {
     "d": {
-        "msgId": "09CD6107E42B51F9BFC3DD97EA900990-1565949670",
+        "msgId": "09CD6107E42B51F9BFC3DD97EA900990-1565949670344",
         "visId": "09CD6107E42B51F9BFC3DD97EA900990",
         "sessionId": 1633330743,
         "event": {
             "props": {
-                "$visitor": {"props": {"vwo_fs_environment": "testenvkey123456789472c212c972e"}},
-                "sdkName": constants.SDK_NAME,
-                "sdkVersion": constants.SDK_VERSION,
+                "vwo_sdkName": constants.SDK_NAME,
+                "vwo_sdkVersion": constants.SDK_VERSION,
                 "variation": 2,
                 "isFirst": 1,
             },
