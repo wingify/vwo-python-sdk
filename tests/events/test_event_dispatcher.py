@@ -54,6 +54,7 @@ test_events_track_impression_properties = {
             "props": {
                 "vwo_sdkName": constants.SDK_NAME,
                 "vwo_sdkVersion": constants.SDK_VERSION,
+                "vwo_envKey": "testenvkey123456789472c212c972e",
                 "variation": 2,
                 "isFirst": 1,
             },

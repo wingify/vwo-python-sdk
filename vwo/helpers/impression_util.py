@@ -299,6 +299,7 @@ def get_events_common_properties(settings_file, user_id, event_name):
                 "props": {
                     "vwo_sdkName": constants.SDK_NAME,
                     "vwo_sdkVersion": constants.SDK_VERSION,
+                    "vwo_envKey": sdk_key
                 },
                 "name": event_name,
                 "time": generic_util.get_current_unix_timestamp_milli(),

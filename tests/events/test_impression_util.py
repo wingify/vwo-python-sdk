@@ -78,6 +78,7 @@ class ImpressionTest(unittest.TestCase):
                             "props": {
                                 "vwo_sdkName": constants.SDK_NAME,
                                 "vwo_sdkVersion": constants.SDK_VERSION,
+                                "vwo_envKey": self.settings_file.get("sdkKey")
                             },
                             "name": event_name,
                             "time": generic_util.get_current_unix_timestamp_milli(),
@@ -108,6 +109,7 @@ class ImpressionTest(unittest.TestCase):
                             "isFirst": 1,
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": constants.EVENTS.VWO_VARIATION_SHOWN,
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -139,6 +141,7 @@ class ImpressionTest(unittest.TestCase):
                             "vwoMeta": {"metric": {"id_1": ["g_1"]}},
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -172,6 +175,7 @@ class ImpressionTest(unittest.TestCase):
                             "vwoMeta": {"metric": {"id_1": ["g_1"]}, "revKey": 100},
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -210,6 +214,7 @@ class ImpressionTest(unittest.TestCase):
                             },
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": "test_goal_identifier",
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -246,6 +251,7 @@ class ImpressionTest(unittest.TestCase):
                             "isCustomEvent": True,
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": constants.EVENTS.VWO_SYNC_VISITOR_PROP,
                         "time": generic_util.get_current_unix_timestamp_milli(),
@@ -280,6 +286,7 @@ class ImpressionTest(unittest.TestCase):
                             "isCustomEvent": True,
                             "vwo_sdkName": constants.SDK_NAME,
                             "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey")
                         },
                         "name": constants.EVENTS.VWO_SYNC_VISITOR_PROP,
                         "time": generic_util.get_current_unix_timestamp_milli(),
