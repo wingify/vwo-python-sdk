@@ -124,6 +124,8 @@ class LogMessageEnum:
         OPT_OUT_API_CALLED = "({file}): You have opted out for not tracking i.e. all API calls will stop functioning and will simply early return"
         API_NOT_ENABLED = "({file}): {api} API is disabled as you opted out for tracking. Reinitialize the SDK to enable the normal functioning of all APIs"
 
+        BUCKETING_ALGO = "({file}): Bucketing Algo used : {algo}"
+
     class WARNING_MESSAGES:
         """Classobj encapsulating various WARNING messages"""
 

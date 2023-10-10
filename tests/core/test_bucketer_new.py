@@ -77,3 +77,29 @@ class BucketerNewTest(unittest.TestCase):
         for test in user_and_variations:
             variation = vwo_instance.get_variation_name(campaign_key, test["user"])
             self.assertEqual(variation, test["variation"])
+
+    def test_same_user_multiple_campaigns_with_isNBv2(self):
+        settings_file = SETTINGS_FILES["SETTINGS_WITH_ISNB_WITH_ISNBv2"]
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+        user_and_variations = USER_EXPECTATIONS["SETTINGS_WITH_ISNB_WITH_ISNBv2"]
+
+        # parse through the user/variation combination and verify results
+        # vertify that different campaigns for the same user are returning DIFFERENT variations
+        for test in user_and_variations:
+            campaign_key = test["campaign"]
+            variation = vwo_instance.get_variation_name(campaign_key, test["user"])
+            self.assertEqual(variation, test["variation"])
+
+    def test_same_user_multiple_campaigns_with_isNB(self):
+        settings_file = SETTINGS_FILES["SETTINGS_WITH_ISNB_WITHOUT_ISOB"]
+        campaign_keys = [
+            "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB",
+            "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB_1",
+            "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB_2",
+        ]
+        vwo_instance = vwo.launch(json.dumps(settings_file))
+
+        # verify that different campaigns for the same user are returning SAME variation
+        for campaign_key in campaign_keys:
+            variation = vwo_instance.get_variation_name(campaign_key, "Ashley")
+            self.assertEqual(variation, "Control")

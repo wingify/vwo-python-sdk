@@ -784,8 +784,24 @@ class VariationDecider(object):
         else:
             is_new_bucketing_enabled = False
 
+        # get is_new_bucleting_v2_enabled flag from settings file
+        if self.settings_file:
+            is_new_bucketing_v2_enabled = self.settings_file.get("isNBv2")
+        else:
+            is_new_bucketing_v2_enabled = False
+
+        # get account id from settings file
+        if self.settings_file:
+            account_id = self.settings_file.get("accountId")
+        else:
+            account_id = None
+
         variation = self.bucketer.bucket_user_to_variation(
-            user_id, campaign, is_new_bucketing_enabled=is_new_bucketing_enabled
+            user_id,
+            campaign,
+            is_new_bucketing_enabled=is_new_bucketing_enabled,
+            is_new_bucketing_v2_enabled=is_new_bucketing_v2_enabled,
+            account_id=account_id,
         )
         new_user_storage_data = self._create_user_storage_data(
             user_id, campaign.get("key"), variation.get("name"), goal_data=goal_data

@@ -574,5 +574,10 @@ USER_EXPECTATIONS = {
         { "user": "Chris", "variation":"Variation-1"},
         { "user": "Dominic", "variation":"Variation-1"},
         { "user": "Emma", "variation":"Control"},
+    ],
+    "SETTINGS_WITH_ISNB_WITH_ISNBv2": [
+        { "user": "Ashley", "campaign": "BUCKET_ALGO_WITH_isNB_WITH_isNBv2", "variation":"Variation-1"},
+        { "user": "Ashley", "campaign": "BUCKET_ALGO_WITH_isNB_WITH_isNBv2_1", "variation":"Control"},
+        { "user": "Ashley", "campaign": "BUCKET_ALGO_WITH_isNB_WITH_isNBv2_2", "variation":"Control"}
     ]
 }

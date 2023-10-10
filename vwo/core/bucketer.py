@@ -127,7 +127,9 @@ class Bucketer(object):
         traffic_allocation = campaign.get("percentTraffic")
 
         value_assigned_to_user = self.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, campaign=campaign),
+            campaign_util.get_bucketing_seed(
+                is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, campaign=campaign
+            ),
             user_id,
             constants.MAX_TRAFFIC_PERCENT,
             disable_logs=disable_logs,
@@ -142,7 +144,9 @@ class Bucketer(object):
         )
         return is_user_part
 
-    def bucket_user_to_variation(self, user_id, campaign, is_new_bucketing_enabled):
+    def bucket_user_to_variation(
+        self, user_id, campaign, is_new_bucketing_enabled, is_new_bucketing_v2_enabled=False, account_id=None
+    ):
         """Validates the User ID and
             returns Variation into which the User is bucketed in.
 
@@ -155,9 +159,23 @@ class Bucketer(object):
                 or None if not
         """
 
-        # set is_new_bucketing_enabled to False if not present
+        is_bucketing_done = False
+
+        # initialize new_bucketing_enabled and old_bucketing flags
         if not is_new_bucketing_enabled:
             is_new_bucketing_enabled = False
+        if campaign is None or campaign.get("isOB") is None:
+            is_old_bucketing_enabled = False
+        else:
+            is_old_bucketing_enabled = True
+
+        # initialize new_bucketing_v2_enabled and old_bucketing_v2 flags
+        if not is_new_bucketing_v2_enabled:
+            is_new_bucketing_v2_enabled = False
+        if campaign is None or campaign.get("isOBv2") is None:
+            is_old_bucketing_v2_enabled = False
+        else:
+            is_old_bucketing_v2_enabled = True
 
         if not validate_util.is_valid_value(user_id):
             self.logger.log(
@@ -197,42 +215,69 @@ class Bucketer(object):
             self.logger.logger(LogLevelEnum.ERROR, log_str)
 
         # based on bucketing algo flag, determine bucket value
-        if not is_new_bucketing_enabled or campaign.get("isOB"):
+        # old bucketing
+        if (not is_new_bucketing_enabled and not is_new_bucketing_v2_enabled) or (
+            is_new_bucketing_enabled and campaign.get("isOB")
+        ):
             # use old bucketing algo
             normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
             multiplier = normalize / 100
             bucket_value = self.get_bucket_value_for_user(
-                campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign, is_new_bucketing_enabled=is_new_bucketing_enabled),
+                campaign_util.get_bucketing_seed(
+                    user_id=user_id, campaign=campaign, is_new_bucketing_enabled=is_new_bucketing_enabled
+                ),
                 user_id,
                 constants.MAX_TRAFFIC_VALUE,
                 multiplier,
             )
 
-            # log old algo
-            self.logger.log(LogLevelEnum.DEBUG, "Using Old Algo!")
-        else:
-            # use new bucketing algo
+            # log
+            self.logger.log(
+                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.BUCKETING_ALGO.format(file=FILE, algo="Old")
+            )
+
+            # set flag
+            is_bucketing_done = True
+
+        # new bucketing
+        if not is_bucketing_done and (
+            (is_new_bucketing_enabled and not is_old_bucketing_enabled and not is_new_bucketing_v2_enabled)
+            or (is_new_bucketing_v2_enabled and is_old_bucketing_v2_enabled)
+        ):
             multiplier = 1
             bucket_value = self.get_bucket_value_for_user(
-                campaign_util.get_bucketing_seed(user_id=user_id, campaign=None, is_new_bucketing_enabled=is_new_bucketing_enabled),
+                campaign_util.get_bucketing_seed(
+                    user_id=user_id, campaign=None, is_new_bucketing_enabled=is_new_bucketing_enabled
+                ),
                 user_id,
                 constants.MAX_TRAFFIC_VALUE,
                 multiplier,
             )
 
-            # log new algo
-            self.logger.log(LogLevelEnum.DEBUG, "Using New Algo!")
+            # log
+            self.logger.log(
+                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.BUCKETING_ALGO.format(file=FILE, algo="New")
+            )
 
-        # get valid bucket value
-        """ normalize = constants.MAX_TRAFFIC_VALUE / campaign.get("percentTraffic")
-        multiplier = normalize / 100
-        bucket_value = self.get_bucket_value_for_user(
-            campaign_util.get_bucketing_seed(user_id=user_id, campaign=campaign),
-            user_id,
-            constants.MAX_TRAFFIC_VALUE,
-            multiplier,
-        )
-        """
+            # set flag
+            is_bucketing_done = True
+
+        # new bucketing v2
+        if not is_bucketing_done:
+            multiplier = 1
+            bucket_value = self.get_bucket_value_for_user(
+                campaign_util.get_bucketing_seed(
+                    user_id=str(account_id) + "_" + str(user_id), campaign=campaign, is_new_bucketing_enabled=True
+                ),
+                user_id,
+                constants.MAX_TRAFFIC_VALUE,
+                multiplier,
+            )
+
+            # log
+            self.logger.log(
+                LogLevelEnum.INFO, LogMessageEnum.INFO_MESSAGES.BUCKETING_ALGO.format(file=FILE, algo="New_V2")
+            )
 
         # logging for problem with bucket value
         if bucket_value is not None and (bucket_value < 1 or bucket_value > 10000):
