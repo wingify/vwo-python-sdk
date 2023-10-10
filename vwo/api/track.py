@@ -292,7 +292,7 @@ def track_campaign_goal(
         campaign,
         custom_variables=custom_variables,
         variation_targeting_variables=variation_targeting_variables,
-        goal_data={"identifier": goal.get("identifier")},
+        goal_data={"identifier": goal.get("identifier"),"mca": goal.get("mca"),"hasProps": goal.get("hasProps")},
         api_method=constants.API_METHODS.TRACK,
     )
 

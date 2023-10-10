@@ -1407,6 +1407,62 @@ SETTINGS_FILES = {
         "sdkKey": "someuniquestuff1234567",
         "version": 1,
     },
+    "SETTINGS_FILE_WITH_MCA": {
+        "accountId": 88888888,
+        "campaigns": [
+            {
+                "goals": [
+                    {"id": 1, "identifier": "track1", "type": "CUSTOM_GOAL"},
+                    {"id": 2, "identifier": "track2", "type": "REVENUE_TRACKING"},
+                    {"id": 3, "identifier": "track3", "type": "REVENUE_TRACKING", "mca": -1}
+                ],
+                "id": 1,
+                "name": "Campaign-1",
+                "isForcedVariationEnabled": False,
+                "key": "mca_test_1",
+                "percentTraffic": 100,
+                "segments": {},
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "variations": [
+                    {"changes": {}, "id": 1, "name": "Control", "weight": 33.3333},
+                    {"changes": {}, "id": 2, "name": "Variation-1", "weight": 33.3333},
+                    {"changes": {}, "id": 3, "name": "Variation-2", "weight": 33.3333},
+                ],
+            }
+        ],
+        "sdkKey": "someuniquestuff1234567",
+        "isEventArchEnabled": True,
+        "version": 1,
+    },
+    "SETTINGS_FILE_WITH_HAS_PROPS": {
+        "accountId": 88888888,
+        "campaigns": [
+            {
+                "goals": [
+                    {"id": 1, "identifier": "track1", "type": "CUSTOM_GOAL","hasProps": True},
+                    {"id": 2, "identifier": "track2", "type": "REVENUE_TRACKING"},
+                    {"id": 3, "identifier": "track3", "type": "REVENUE_TRACKING"}
+                ],
+                "id": 1,
+                "name": "Campaign-1",
+                "isForcedVariationEnabled": False,
+                "key": "hasProps_test_1",
+                "percentTraffic": 100,
+                "segments": {},
+                "status": "RUNNING",
+                "type": "VISUAL_AB",
+                "variations": [
+                    {"changes": {}, "id": 1, "name": "Control", "weight": 33.3333},
+                    {"changes": {}, "id": 2, "name": "Variation-1", "weight": 33.3333},
+                    {"changes": {}, "id": 3, "name": "Variation-2", "weight": 33.3333},
+                ],
+            }
+        ],
+        "sdkKey": "someuniquestuff1234567",
+        "isEventArchEnabled": True,
+        "version": 1,
+    },
     "VALIDATE_EXTRA_PARAM_IN_CAMPAIGN": {
         "sdkKey": "someuniquestuff1234567",
         "campaigns": [

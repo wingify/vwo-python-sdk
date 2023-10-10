@@ -204,7 +204,7 @@ class VariationDecider(object):
             # If being called by track, check for goals identified
             if goal_data:
                 is_goal_tracked = self.identify_tracked_goal_from_user_storage(goal_data, user_storage_data)
-                if is_goal_tracked:
+                if is_goal_tracked and (not goal_data.get("mca") == -1) and (not goal_data.get("hasProps") == True):
                     self.logger.log(
                         LogLevelEnum.INFO,
                         LogMessageEnum.INFO_MESSAGES.GOAL_ALREADY_TRACKED.format(
@@ -369,6 +369,8 @@ class VariationDecider(object):
         """
         goals_tracked = user_storage_data.get("goalIdentifiers")
         if goals_tracked:
+            if (goal_data.get("identifier") in goals_tracked.split("_vwo_")):
+                return
             updated_goals_tracked = goals_tracked + "_vwo_" + goal_data.get("identifier")
         else:
             updated_goals_tracked = goal_data.get("identifier")

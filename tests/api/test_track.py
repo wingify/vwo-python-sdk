@@ -704,3 +704,46 @@ class TrackTest(unittest.TestCase):
 
         result = vwo_instance.track("track", "ashley", "track3",event_properties={'ab':'100'})
         self.assertEqual(result, {u"track": False})
+    
+    def test_track_with_mca_and_user_storage(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_WITH_MCA")),
+            is_development_mode=True,
+            log_level=40,
+            user_storage=ClientUserStorage(),
+        )
+        vwo_instance.activate("mca_test_1", "user")
+        result1 = vwo_instance.track("mca_test_1", "user", "track3")
+        result2 = vwo_instance.track("mca_test_1", "user", "track3")
+        expected = {"mca_test_1": True}
+        self.assertEqual(result1, expected)
+        self.assertEqual(result2, expected)
+
+    def test_track_without_mca_and_user_storage(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_WITH_MCA")),
+            is_development_mode=True,
+            log_level=40,
+            user_storage=ClientUserStorage(),
+        )
+        vwo_instance.activate("mca_test_1", "user")
+        result1 = vwo_instance.track("mca_test_1", "user", "track1")
+        result2 = vwo_instance.track("mca_test_1", "user", "track1")
+        expectedResult1 = {"mca_test_1": True}
+        expectedResult2 = {"mca_test_1": False}
+        self.assertEqual(result1, expectedResult1)
+        self.assertEqual(result2, expectedResult2)
+
+    def test_track_with_hasProps_and_user_storage(self):
+        vwo_instance = vwo.launch(
+            json.dumps(SETTINGS_FILES.get("SETTINGS_FILE_WITH_HAS_PROPS")),
+            is_development_mode=True,
+            log_level=40,
+            user_storage=ClientUserStorage(),
+        )
+        vwo_instance.activate("hasProps_test_1", "user")
+        result1 = vwo_instance.track("hasProps_test_1", "user", "track1")
+        result2 = vwo_instance.track("hasProps_test_1", "user", "track1")
+        expected = {"hasProps_test_1": True}
+        self.assertEqual(result1, expected)
+        self.assertEqual(result2, expected)
