@@ -964,6 +964,10 @@ class VariationDecider(object):
         Returns:
             winner_campaign (dict): winner campaign from eligible_campaigns
         """
+        if self.settings_file:
+            is_new_bucketing_enabled = self.settings_file.get("isNB")
+        else:
+            is_new_bucketing_enabled = False
 
         winner_campaign = None
 
@@ -1016,15 +1020,26 @@ class VariationDecider(object):
 
                 if str(eligible_campaign.get("id")) in traffic_weightage_campaigns:
                     # Get campaign and percentage traffic
+                    eligible_campaign["weight"] = traffic_weightage_campaigns.get(str(eligible_campaign.get("id")))
                     eligible_traffic_weightage_campaigns.append(eligible_campaign)
-                    percentage_traffic_for_weightage_campaigns.append(
-                        traffic_weightage_campaigns.get(str(eligible_campaign.get("id")))
-                    )
 
-            # Select winner based on traffic weightage from eligible campaigns
-            winner_campaign = self._get_campaign_based_on_traffic_weightage(
-                eligible_traffic_weightage_campaigns, percentage_traffic_for_weightage_campaigns
+                """ Finding winner campaign using weighted Distibution :
+                    1. Re-distribute the traffic by assigning range values for each camapign in particaptingCampaignList 
+                    2. Calculate bucket value for the given userId and groupId
+                    3. Get the winnerCampaign by checking the Start and End Bucket Allocations of each campaign
+                """
+            # Allocate new range for campaigns
+            campaign_util.set_allocation_ranges(eligible_traffic_weightage_campaigns)
+            # Now retrieve the campaign from the modified_campaign_for_whitelisting
+            bucket_value = self.bucketer.get_bucket_value_for_user(
+                campaign_util.get_bucketing_seed(
+                    is_new_bucketing_enabled=is_new_bucketing_enabled, user_id=user_id, group_id=group_id
+                ),
+                user_id,
+                constants.MAX_TRAFFIC_VALUE,
+                disable_logs=True,
             )
+            winner_campaign = self.bucketer.get_allocated_item(eligible_traffic_weightage_campaigns, bucket_value)
 
             # log traffic weightage campaign winner
             self.logger.log(
@@ -1036,32 +1051,3 @@ class VariationDecider(object):
             )
 
         return winner_campaign
-
-    def _get_campaign_based_on_traffic_weightage(self, campaigns, traffic_weightage):
-        """Returns a campaign based on traffic weightage of campaigns
-
-        Args:
-            campaigns (list): campaigns eligible for traffic weightage
-            traffic_weightage (list): traffic distribution for each of the campaigns
-
-        Returns:
-            campaign (dict): selected campaign based on random weighted traffic
-        """
-
-        cumulative_weights = []
-        total_weight = 0
-
-        # Get the cumulative weights for the campaigns
-        for weight in traffic_weightage:
-            total_weight += weight
-            cumulative_weights.append(total_weight)
-
-        # Get a weighted random
-        random_num = random.randint(0, total_weight - 1)
-        index = bisect.bisect_left(cumulative_weights, random_num)
-
-        # Binary search returns a negative value when the generated number is between cumulative weights
-        if index < 0:
-            index = -(index + 1)
-
-        return campaigns[index]

@@ -64,18 +64,20 @@ class test_mutually_exclusive_newimpl(unittest.TestCase):
         low_traffic_count = 0
 
         # run through 1000 iterations of called campaign is high traffic campaign
-        for _ in range(1000):
+        for i in range(1000):
+            user_id = "user" + str(i)
             # call activate on local vwo instance and get variation
-            variation = vwo_instance.get_variation_name(high_traffic_campaign_key, self.user_id)
+            variation = vwo_instance.get_variation_name(high_traffic_campaign_key, user_id)
 
             # if valid variation returned, increment high count
             if variation:
                 high_traffic_count += 1
 
         # run through 1000 iterations of called campaign is low traffic campaign
-        for _ in range(1000):
+        for i in range(1000):
+            user_id = "user" + str(i)
             # call activate on local vwo and get variation
-            variation = vwo_instance.get_variation_name(low_traffic_campaign_key, self.user_id)
+            variation = vwo_instance.get_variation_name(low_traffic_campaign_key, user_id)
 
             # if valid variation returned, increment low count
             if variation:
