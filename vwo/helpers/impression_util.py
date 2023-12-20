@@ -170,7 +170,7 @@ def get_stringified_log_impression(impression):
     return json.dumps(log_impression)
 
 
-def create_track_user_events_impression(settings_file, campaign_id, variation_id, user_id):
+def create_track_user_events_impression(settings_file, campaign_id, variation_id, user_id, custom_properties=None):
     """Creates the event impression for track user call from the arguments passed accordingly
 
     Args:
@@ -188,6 +188,8 @@ def create_track_user_events_impression(settings_file, campaign_id, variation_id
 
     # impression["d"]["event"]["props"].update(UsageStats.get_usage_stats())
     impression["d"]["event"]["props"].update({"id": campaign_id, "variation": variation_id, "isFirst": 1})
+    if custom_properties is not None:
+        impression["d"]["event"]["props"].update({"vwoMeta": custom_properties})
 
     logger.log(
         LogLevelEnum.DEBUG,

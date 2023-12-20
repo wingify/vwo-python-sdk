@@ -122,6 +122,39 @@ class ImpressionTest(unittest.TestCase):
 
             self.assertDictEqual(result, expected)
 
+    def test_create_track_user_events_impression_custom_property(self):
+        with mock.patch("vwo.helpers.generic_util.get_random_number", return_value="0.123456789"), mock.patch(
+            "vwo.helpers.generic_util.get_current_unix_timestamp", return_value="123456789"
+        ), mock.patch("vwo.helpers.generic_util.get_current_unix_timestamp_milli", return_value="123456789000"):
+
+            expected = {
+                "d": {
+                    "msgId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID)
+                    + "-"
+                    + str(generic_util.get_current_unix_timestamp_milli()),
+                    "visId": uuid_util.generate_for(TEST_USER_ID, TEST_ACCOUNT_ID),
+                    "sessionId": generic_util.get_current_unix_timestamp(),
+                    "event": {
+                        "props": {
+                            "id": 1,
+                            "variation": 1,
+                            "isFirst": 1,
+                            "vwo_sdkName": constants.SDK_NAME,
+                            "vwo_sdkVersion": constants.SDK_VERSION,
+                            "vwo_envKey": self.settings_file.get("sdkKey"),
+                            "vwoMeta": { "textProperty": "python"}
+                        },
+                        "name": constants.EVENTS.VWO_VARIATION_SHOWN,
+                        "time": generic_util.get_current_unix_timestamp_milli(),
+                    },
+                    "visitor": {"props": {"vwo_fs_environment": self.settings_file.get("sdkKey")}},
+                }
+            }
+
+            result = impression_util.create_track_user_events_impression(self.settings_file, 1, 1, TEST_USER_ID, custom_properties={'textProperty': 'python'})
+
+            self.assertDictEqual(result, expected)
+
     def test_create_track_goal_events_impression_without_revenue(self):
 
         with mock.patch("vwo.helpers.generic_util.get_random_number", return_value="0.123456789"), mock.patch(

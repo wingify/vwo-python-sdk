@@ -61,6 +61,7 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
     variation_targeting_variables = kwargs.get("variation_targeting_variables")
     user_agent = kwargs.get("user_agent")
     user_ip_address = kwargs.get("user_ip_address")
+    custom_properties = kwargs.get("custom_properties")    # to support custom properties in variationShown
 
     # Validate input parameters
     if (
@@ -150,7 +151,7 @@ def _activate(vwo_instance, campaign_key, user_id, **kwargs):
                 user_ip_address=user_ip_address,
             )
             impression = impression_util.create_track_user_events_impression(
-                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id
+                vwo_instance.settings_file, campaign.get("id"), variation.get("id"), user_id, custom_properties
             )
             vwo_instance.event_dispatcher.dispatch_events(params=params, impression=impression)
 
