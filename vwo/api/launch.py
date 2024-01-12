@@ -19,6 +19,7 @@ from ..helpers import validate_util
 from ..services.usage_stats_manager import UsageStats
 from ..vwo import VWO
 from ..logger import VWOLogger
+from ..storage.redis import RedisUserStorage
 
 FILE = FileNameEnum.Api.Launch
 
@@ -56,6 +57,11 @@ def launch(settings_file, logger=None, user_storage=None, is_development_mode=Fa
     goal_type_to_track = kwargs.get("goal_type_to_track")
     batch_event_settings = kwargs.get("batch_events")
     integrations = kwargs.get("integrations")
+    redis_creds = kwargs.get("redis_creds")
+
+    # if user storage not set, but redis creds are set, set redis to default user storage
+    if not user_storage and redis_creds:
+        user_storage = RedisUserStorage(redis_creds.get("url"), redis_creds.get("user_id"), redis_creds.get("password"))
 
     invalid_log_level = False
     if log_level and not validate_util.is_valid_log_level(log_level):

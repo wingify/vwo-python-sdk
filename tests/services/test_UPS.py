@@ -13,6 +13,9 @@
 # limitations under the License.
 
 import unittest
+from ..data.settings_files import SETTINGS_FILES
+import json
+import vwo
 
 from vwo.storage.user import UserStorage
 
@@ -31,3 +34,12 @@ class UPSTest(unittest.TestCase):
     def test_check_set_is_present(self):
         ups = UserStorage()
         self.assertIsNone(ups.set(123))
+
+    """ def test_redis(self):
+        settings_file = SETTINGS_FILES["SETTINGS_WITH_ISNB_WITHOUT_ISOB"]
+        campaign_key = "BUCKET_ALGO_WITH_SEED_WITH_isNB_WITHOUT_isOB"
+        redis_creds = {"url": "127.0.0.1", "user_id": None, "password": None}
+        vwo_instance = vwo.launch(json.dumps(settings_file), redis_creds=redis_creds)
+
+        vwo_instance.activate(campaign_key, "RD")
+    """
