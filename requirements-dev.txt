@@ -3,3 +3,4 @@ coverage==4.5.4
 mock==3.0.5
 pre-commit==1.17.0
 apache-license-check==0.1.3
+redis==5.0.1
