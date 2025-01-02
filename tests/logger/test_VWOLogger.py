@@ -115,7 +115,10 @@ class VWOLoggerTest(unittest.TestCase):
     def test_getInstance_logging_logger_passed(self):
         logger = VWOLogger.getInstance(logger=logging.getLogger())
         self.assertIsInstance(logger, VWOLogger.VWOLogger)
-        self.assertIs(logger.logger.level, 30)  # Default log level of logging.Logger is INFO, ie 30
+        if sys.version_info >= (3, 10):
+          self.assertIs(logger.logger.level, 20)  # In Python >=3.10, the default log level is 20 (INFO)
+        else:
+          self.assertIs(logger.logger.level, 30)  # In Python <3.10, the default log level is 30 (WARNING)
 
     def test_getInstance_custom_logger_passed(self):
         class Logger:
