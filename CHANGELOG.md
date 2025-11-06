@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.68.2] - 2025-11-06
+
+### Fixed
+
+- The backoff factor used for all retry attempts has been increased from 1 to 3. This means that the wait time between consecutive retry attempts will now increase more rapidly, allowing for more time between each retry. This helps to reduce repeated rapid requests to the server in case of failures and improves overall stability when transient errors occur.
+
 ## [1.68.1] - 2024-01-12
 
 ### Added
